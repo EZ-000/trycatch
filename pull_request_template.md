@@ -1,24 +1,24 @@
-##Changed Module(s)
+## Changed Module(s)
  * 
 
-##Category
+## Category
 - [ ] Major 
 - [X] Minor
 
-##Type
+## Type
 - [ ] BF = BugFix
 - [ ] FE = Feature Implementation
 - [ ] OP = Optimization
 - [ ] TP = Test purpose
 - [X] OT = Other
 
-##Implemented Status(Percentage:   %)
+## Implemented Status(Percentage:   %)
 - [ ] Mainly = feature is mainly working but not completed
 - [X] Implemented = feature is implemented completely
 - [ ] Qualified = no bug any more
 
-##Change Description
+## Change Description
  * KOR: 
 
-##Jira number(s)
+## Jira number(s)
  *
