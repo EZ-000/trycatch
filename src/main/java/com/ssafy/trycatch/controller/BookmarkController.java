@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bookmark")
+@RequestMapping("/${apiPrefix}/bookmark")
 public class BookmarkController {
 	@GetMapping()
 	public String readBookmark() {

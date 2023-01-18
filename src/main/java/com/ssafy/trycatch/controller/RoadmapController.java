@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/roadmap")
+@RequestMapping("/${apiPrefix}/roadmap")
 public class RoadmapController {
     @GetMapping("/list")
     public String readRoadmap() {

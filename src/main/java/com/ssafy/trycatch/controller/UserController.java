@@ -3,7 +3,7 @@ package com.ssafy.trycatch.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/${apiPrefix}/user")
 public class UserController {
 	@GetMapping("/{userId}")
 	public String readUser(@PathVariable String userId) {

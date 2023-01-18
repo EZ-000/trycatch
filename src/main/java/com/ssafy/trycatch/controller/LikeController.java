@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/like")
+@RequestMapping("/${apiPrefix}/like")
 public class LikeController {
 	@PostMapping()
 	public String like() {

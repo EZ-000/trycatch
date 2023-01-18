@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rank")
+@RequestMapping("/${apiPrefix}/rank")
 public class RankController {
 	@GetMapping("/list")
 	public String readRanking() {

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/${apiPrefix}/report")
 public class ReportController {
 	@PostMapping()
 	public String report() {

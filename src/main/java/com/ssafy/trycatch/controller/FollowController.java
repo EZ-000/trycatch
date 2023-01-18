@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/follow")
+@RequestMapping("/${apiPrefix}/follow")
 public class FollowController {
 	@PostMapping("/{userId}")
 	public String followUser(@PathVariable String userId) {

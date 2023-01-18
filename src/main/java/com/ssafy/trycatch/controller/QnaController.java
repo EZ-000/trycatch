@@ -3,7 +3,7 @@ package com.ssafy.trycatch.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/qna")
+@RequestMapping("/${apiPrefix}/qna")
 public class QnaController {
 	@GetMapping()
 	public String readQna() {

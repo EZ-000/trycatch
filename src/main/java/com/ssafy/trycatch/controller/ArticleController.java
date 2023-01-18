@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("${apiPrefix}/feed")
+@RequestMapping("/${apiPrefix}/feed")
 public class ArticleController {
     @GetMapping("/list")
     public String readFeed() {

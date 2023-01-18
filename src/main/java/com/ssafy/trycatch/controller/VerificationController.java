@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/verification")
+@RequestMapping("/${apiPrefix}/verification")
 public class VerificationController {
 	@GetMapping("/{userId}")
 	public String isConfirmed(@PathVariable String userId) {

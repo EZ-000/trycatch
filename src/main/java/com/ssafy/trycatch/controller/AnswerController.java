@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/answer")
+@RequestMapping("/${apiPrefix}/answer")
 public class AnswerController {
 	@GetMapping("/{contentId}")
 	public String readAnswer() {

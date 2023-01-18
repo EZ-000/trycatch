@@ -6,4 +6,4 @@ spring:
     password: LGBmz7o81b
 
 apiPrefix:
-  /api
+  v1
