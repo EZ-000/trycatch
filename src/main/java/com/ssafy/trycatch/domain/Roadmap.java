@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.roadmap;
+package com.ssafy.trycatch.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

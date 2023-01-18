@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.user;
+package com.ssafy.trycatch.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Getter
 @Entity
-public class User {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
