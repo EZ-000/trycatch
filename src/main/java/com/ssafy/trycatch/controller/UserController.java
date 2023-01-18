@@ -66,27 +66,27 @@ public class UserController {
 	}
 
 	@PostMapping("/{userId}/tag")
-	public String createTag(@PathVariable String userId) {
+	public String addTag(@PathVariable String userId) {
 		return "사용자가 관심태그를 등록합니다.";
 	}
 
 	@DeleteMapping("/{userId}/tag/{tagId}")
-	public String deleteTage(@PathVariable String tagId) {
+	public String deleteTag(@PathVariable String tagId) {
 		return "사용자가 관심태그를 삭제합니다.";
 	}
 
 	@PostMapping("/news")
-	public String requestNewsletter() {
+	public String subscribeNewsletter() {
 		return	"뉴스레터 받기를 등록합니다.";
 	}
 
 	@PutMapping("/news")
-	public String stopNewsletter() {
+	public String unsubscribeNewsletter() {
 		return	"뉴스레터 받기를 취소합니다.";
 	}
 
 	@PutMapping("/ck")
-	public String commonKnowledge() {
+	public String exceptCK() {
 		return "개발 상식 글을 피드에서 완전히 제외합니다.";
 	}
 }

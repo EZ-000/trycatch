@@ -11,8 +11,8 @@ public class QnaController {
 	}
 
 	@PostMapping()
-	public String createCodeQuestion() {
-		return "코드 관련 질문을 생성합니다.";
+	public String createQuestion() {
+		return "질문을 생성합니다.";
 	}
 
 	@GetMapping("/{id}")
