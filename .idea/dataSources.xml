@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mariadb://try-catch.duckdns.org:4406</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="TRY_CATCH@try-catch.duckdns.org" uuid="50e2316d-6183-4e4e-9e1e-7188d7644ed2">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://try-catch.duckdns.org:4406/TRY_CATCH</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
