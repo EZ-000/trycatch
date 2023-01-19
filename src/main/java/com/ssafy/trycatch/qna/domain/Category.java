@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.qna.domain;
 
-import com.ssafy.trycatch.common.domain.Ranking;
 import lombok.*;
 
 import javax.persistence.*;

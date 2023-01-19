@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.common.domain;
+package com.ssafy.trycatch.qna.domain;
 
 import com.ssafy.trycatch.qna.domain.Category;
 import lombok.*;
