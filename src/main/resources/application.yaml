@@ -4,3 +4,5 @@ spring:
     url: jdbc:mariadb://try-catch.duckdns.org:4406/TRY_CATCH?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: S08P12E108
     password: LGBmz7o81b
+apiPrefix:
+  v1
