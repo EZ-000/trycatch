@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.domain.entity;
+package com.ssafy.trycatch.gamification;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +11,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Getter
 @Entity
-public class Badge {
-
+public class Challenge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
