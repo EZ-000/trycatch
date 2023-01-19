@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.roadmap;
+package com.ssafy.trycatch.roadmap.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

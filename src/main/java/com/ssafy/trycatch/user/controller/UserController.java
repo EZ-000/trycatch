@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.user;
+package com.ssafy.trycatch.user.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

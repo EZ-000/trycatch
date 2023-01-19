@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.qna;
+package com.ssafy.trycatch.qna.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

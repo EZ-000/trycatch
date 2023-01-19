@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.feed;
+package com.ssafy.trycatch.feed.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
