@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.domain;
+package com.ssafy.trycatch.domain.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Getter
 @Entity
-public class Roadmap {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
