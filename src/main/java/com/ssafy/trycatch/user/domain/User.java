@@ -68,33 +68,43 @@ public class User {
     private Integer points;
 
     @OneToMany(mappedBy = "follower")
+    @ToString.Exclude
     private Set<Follow> followers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "followee")
+    @ToString.Exclude
     private Set<Follow> followees = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<ChallengeGroup> challengeGroups = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<Subscription> subscriptions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<Question> questions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<Read> reads = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<MyBadge> myBadges = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<MyChallenge> myChallenges = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<History> histories = new LinkedHashSet<>();
 
 }
