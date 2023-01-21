@@ -45,16 +45,17 @@ class QuestionControllerTest {
     @DisplayName("CreateQuestionRequestDto 를 받아 데이터베이스에 저장")
     void createQuestion() throws Exception {
 
-        final String newQuestion = new StringBuilder('{')
-                .append("authorId: 1,")
-                .append("categoryId: 1,")
-                .append("title: \"test title\",")
-                .append("content: {},")
-                .append("hidden: false")
-                .append('}').toString();
+        final String newQuestion = "{" +
+                "\"authorId\": 1," +
+                "\"categoryId\": 1," +
+                "\"title\": \"test title\"," +
+                "\"content\": \"{}\"," +
+                "\"hidden\": false" +
+                '}';
 
         this.mockMvc.perform(
                         post("/" + apiVersion + "/question")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(newQuestion)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
@@ -66,7 +67,7 @@ class QuestionControllerTest {
     @Order(2)
     @DisplayName("Question id로 Question 을 찾아 DTO 로 변환 후 반환")
     void findQuestionById() throws Exception {
-        this.mockMvc.perform(get("/", apiVersion, "/question", "/1")
+        this.mockMvc.perform(get("/" + apiVersion + "/question/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("index"));

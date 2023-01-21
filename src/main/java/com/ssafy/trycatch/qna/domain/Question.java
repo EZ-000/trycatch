@@ -70,6 +70,4 @@ public class Question {
     @OneToMany(mappedBy = "question")
     @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
-
-
 }

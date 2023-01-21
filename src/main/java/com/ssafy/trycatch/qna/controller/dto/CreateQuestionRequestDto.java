@@ -11,28 +11,22 @@ import com.ssafy.trycatch.user.service.UserService;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class CreateQuestionRequestDto {
 
-    private final Long categoryId;
+    private Long categoryId;
 
-    private final Long authorId;
+    private Long authorId;
 
-    private final String title;
+    private String title;
 
-    private final String content;
+    private String content;
 
-    private final Boolean hidden;
-
-    @Builder
-    public CreateQuestionRequestDto(Long categoryId, Long authorId, String title, String content, Boolean hidden) {
-        this.categoryId = categoryId;
-        this.authorId = authorId;
-        this.title = title;
-        this.content = content;
-        this.hidden = hidden;
-    }
+    private Boolean hidden;
 
     public Question newQuestion(
             CategoryService categoryService,

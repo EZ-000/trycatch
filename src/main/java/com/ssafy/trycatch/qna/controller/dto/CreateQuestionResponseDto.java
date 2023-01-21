@@ -31,7 +31,6 @@ public class CreateQuestionResponseDto implements Serializable {
     private final Integer viewCount;
     private final Integer likes;
     private final Boolean hidden;
-    private final Set<Long> answerIds;
 
     @Builder
     public CreateQuestionResponseDto(String categoryName, String authorUsername, String title, String content, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
@@ -44,7 +43,6 @@ public class CreateQuestionResponseDto implements Serializable {
         this.viewCount = viewCount;
         this.likes = likes;
         this.hidden = hidden;
-        this.answerIds = answerIds;
     }
 
     /**
@@ -56,10 +54,6 @@ public class CreateQuestionResponseDto implements Serializable {
 
         final Category category = question.getCategory();
         final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers()
-                .stream()
-                .map(Answer::getId)
-                .collect(Collectors.toSet());
 
         return CreateQuestionResponseDto.builder()
                 .categoryName(category.getName())
@@ -71,7 +65,6 @@ public class CreateQuestionResponseDto implements Serializable {
                 .viewCount(question.getViewCount())
                 .likes(question.getLikes())
                 .hidden(question.getHidden())
-                .answerIds(answerIds)
                 .build();
     }
 }
