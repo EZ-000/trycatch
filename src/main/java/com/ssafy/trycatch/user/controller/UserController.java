@@ -1,11 +1,32 @@
 package com.ssafy.trycatch.user.controller;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.trycatch.user.service.UserService;
 
 @RestController
 @RequestMapping("/${apiPrefix}/user")
 public class UserController {
+	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private final UserService userService;
+
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
+
 	@GetMapping("/{userId}")
 	public ResponseEntity<String> findUser(@PathVariable Long userId) {
 		return ResponseEntity.ok("사용자를 조회합니다.");
@@ -61,7 +82,6 @@ public class UserController {
 		return ResponseEntity.ok("회사 인증 이메일을 전송합니다.");
 	}
 
-
 	@PostMapping("/follow/{userId}")
 	public ResponseEntity<String> followUser(@PathVariable Long userId) {
 		return ResponseEntity.ok("다른 사용자를 팔로우합니다.");
@@ -73,8 +93,9 @@ public class UserController {
 	}
 
 	@GetMapping("/login")
-	public ResponseEntity<String> login() {
-		return ResponseEntity.ok("로그인합니다.");
+	public ResponseEntity<String> login(@PathParam("code") String code, HttpServletResponse response) {
+		userService.login(code);
+		return ResponseEntity.ok("로그인성공");
 	}
 }
 
