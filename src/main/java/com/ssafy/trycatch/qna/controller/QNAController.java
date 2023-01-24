@@ -6,24 +6,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/${apiPrefix}/qna")
 public class QNAController {
-	@GetMapping()
-	public ResponseEntity<String> findQNAs() {
-		return ResponseEntity.ok("전체 질문 리스트를 조회합니다.");
-	}
-
-	@PostMapping()
-	public ResponseEntity<String> createQuestion() {
-		return ResponseEntity.ok("질문을 생성합니다.");
-	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<String> readQNA(@PathVariable Long id) {
 		return ResponseEntity.ok("질문 id에 해당하는 글과 그 글에 달린 답변을 조회합니다.");
-	}
-
-	@PutMapping("/{id}")
-	public ResponseEntity<String> putQNA(@PathVariable Long id) {
-		return ResponseEntity.ok("질문 id에 해당하는 글을 수정합니다.");
 	}
 
 	@PostMapping("/ec")
