@@ -23,8 +23,9 @@ public class TokenController {
 		String token = request.getHeader("Refresh");
 
 		if (token != null && tokenService.verifyToken(token)) {
-			String email = tokenService.getUid(token);
-			Token newToken = tokenService.generateToken(email, "USER");
+			String uid = tokenService.getUid(token);
+			String accessToken = tokenService.getAccessToken(token);
+			Token newToken = tokenService.generateToken(uid, "USER");
 
 			response.addHeader("Auth", newToken.getToken());
 			response.addHeader("Refresh", newToken.getRefreshToken());

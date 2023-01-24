@@ -21,7 +21,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
 		OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-		log.info("Access Token : " + userRequest.getAccessToken().getTokenValue());
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		String userNameAttributeName = userRequest.getClientRegistration()
 			.getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
@@ -32,9 +31,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		log.info("{}", oAuth2Attribute);
 
 		Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
+		memberAttribute.put("AC_TOKEN",userRequest.getAccessToken().getTokenValue());
  		DefaultOAuth2User defaultOAuth2User = new DefaultOAuth2User(
 			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-			memberAttribute, "node_id");
+			memberAttribute, "nodeId");
 		return defaultOAuth2User;
 	}
 }

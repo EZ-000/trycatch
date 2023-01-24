@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,10 +26,10 @@ public class SecurityConfig {
 			.antMatchers("/token/**","/test").permitAll()
 			.anyRequest().authenticated()
 			.and()
-			.oauth2Login()//.loginPage("/token/expired")
+			.addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
+			.oauth2Login()
 			.successHandler(successHandler)
 			.userInfoEndpoint().userService(oAuth2UserService);
-		http.addFilterBefore(new JwtAuthFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 
 		// test
 		// http.httpBasic().disable()

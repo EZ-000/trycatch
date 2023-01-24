@@ -15,6 +15,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
+import com.ssafy.trycatch.user.domain.User;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -26,22 +28,21 @@ public class JwtAuthFilter extends GenericFilterBean {
 		ServletException {
 		String token = ((HttpServletRequest)request).getHeader("Auth");
 
-		if (token != null && tokenService.verifyToken(token)) {
-			String email = tokenService.getUid(token);
+		if (null != token && tokenService.verifyToken(token)) {
+			String nodeId = tokenService.getUid(token);
 
-			UserDto userDto = UserDto.builder()
-				.email(email)
-				.name("이름이에용")
-				.picture("프로필 이미지에요").build();
+			User user = User.builder()
+				.githubNodeId(nodeId)
+				.username("이름").build();
 
-			Authentication auth = getAuthentication(userDto);
+			Authentication auth = getAuthentication(user);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		}
 
 		chain.doFilter(request, response);
 	}
 
-	public Authentication getAuthentication(UserDto member) {
+	public Authentication getAuthentication(User member) {
 		return new UsernamePasswordAuthenticationToken(member, "",
 			Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
 	}

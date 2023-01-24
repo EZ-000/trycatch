@@ -19,7 +19,6 @@ class OAuth2Attribute {
 	private String url;
 	private String name;
 	private String picture;
-
 	static OAuth2Attribute of(String provider, String attributeKey,
 		Map<String, Object> attributes) {
 
@@ -51,6 +50,8 @@ class OAuth2Attribute {
 		map.put("name", name);
 		map.put("email", email);
 		map.put("picture", picture);
+		map.put("nodeId", nodeId);
+		map.put("url", url);
 
 		return map;
 	}

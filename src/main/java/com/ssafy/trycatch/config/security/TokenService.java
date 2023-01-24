@@ -20,12 +20,12 @@ public class TokenService {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	public Token generateToken(String uid, String role) {
+	public Token generateToken(String uid, String token) {
 		long tokenPeriod = 1000L * 60L * 10L;
 		long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
 
-		Claims claims = Jwts.claims().setSubject(uid);
-		claims.put("role", role);
+		Claims claims = Jwts.claims().setSubject(token);
+		claims.put("id", uid);
 
 		Date now = new Date();
 		return new Token(
@@ -57,6 +57,9 @@ public class TokenService {
 	}
 
 	public String getUid(String token) {
+		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("id",String.class);
+	}
+	public String getAccessToken(String token) {
 		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
 	}
 }

@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +25,24 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final TokenService tokenService;
 	private final UserRequestMapper userRequestMapper;
 	private final ObjectMapper objectMapper;
+	private final UserService userService;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException,
 		ServletException {
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
-		UserDto userDto = userRequestMapper.toDto(oAuth2User);
+		User currnetUser = userRequestMapper.toDto(oAuth2User);
+		User dbUser = userService.loadUserByUserNodeId(currnetUser.getGithubNodeId());
+		if(null == dbUser){
+			log.info("신규 User");
+			userService.enrollUser(currnetUser);
+			dbUser = userService.loadUserByUserNodeId(currnetUser.getGithubNodeId());
+		}else{
+			log.info("기존 User");
+		}
 
-		Token token = tokenService.generateToken(userDto.getEmail(), "USER");
+		Token token = tokenService.generateToken(dbUser.getId().toString(), oAuth2User.getAttribute("AC_TOKEN"));
 		log.info("{}", token);
 
 		writeTokenResponse(response, token);

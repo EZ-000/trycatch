@@ -94,7 +94,6 @@ public class UserController {
 
 	@GetMapping("/login")
 	public ResponseEntity<String> login(@PathParam("code") String code, HttpServletResponse response) {
-		userService.login(code);
 		return ResponseEntity.ok("로그인성공");
 	}
 }
