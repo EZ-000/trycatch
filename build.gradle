@@ -22,6 +22,7 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
+    jwtVersion='0.11.5'
 }
 
 dependencies {
@@ -34,6 +35,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'com.h2database:h2:1.4.200'
+
+    // JWT
+    implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
 
     // Git
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
