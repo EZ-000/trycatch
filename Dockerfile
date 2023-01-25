@@ -10,4 +10,4 @@ RUN ./gradlew bootJAR
 FROM openjdk:11-jdk-slim
 COPY --from=builder build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
