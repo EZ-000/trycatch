@@ -4,6 +4,7 @@ spring:
     url: jdbc:mariadb://try-catch.duckdns.org:4406/TRY_CATCH?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: S08P12E108
     password: LGBmz7o81b
+
   security:
     oauth2:
       client:
@@ -11,6 +12,7 @@ spring:
           github:
             clientId: 7b4fb4e472ba8a793c1b
             client-secret: 4f5672997fa38b23f9d8641f85cd1ea3cca44abf
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
             scope:
               - user:email
               - read:user

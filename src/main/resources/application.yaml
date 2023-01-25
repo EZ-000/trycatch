@@ -10,8 +10,6 @@ logging:
 spring:
   jwt:
     key: 23bb6d094d1c598485c055907272ede0ec9ce8239b3edf662f2df67ee7c76b065003f5ab3a43bc7f4af8a345f064129f64f4354c12ff493a7225cbe00dbd00ce
-  profiles:
-    include: oauth
   main:
     banner-mode: console
   profiles:
