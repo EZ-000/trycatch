@@ -11,13 +11,12 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A DTO for the {@link Question} entity
  */
 @Data
-public class CreateQuestionResponseDto implements Serializable {
+public class PutQuestionResponseDto implements Serializable {
     @Size(max = 30)
     private final String categoryName;
     @Size(max = 50)
@@ -32,7 +31,7 @@ public class CreateQuestionResponseDto implements Serializable {
     private final Boolean hidden;
 
     @Builder
-    public CreateQuestionResponseDto(String categoryName, String authorUsername, String title, String content, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public PutQuestionResponseDto(String categoryName, String authorUsername, String title, String content, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
@@ -44,17 +43,12 @@ public class CreateQuestionResponseDto implements Serializable {
         this.hidden = hidden;
     }
 
-    /**
-     * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
-     * @param question 엔티티
-     * @return 새로운 DTO 인스턴스
-     */
-    public static CreateQuestionResponseDto from(Question question) {
+    public static PutQuestionResponseDto from(Question question) {
 
         final Category category = question.getCategory();
         final User author = question.getUser();
 
-        return CreateQuestionResponseDto.builder()
+        return PutQuestionResponseDto.builder()
                 .categoryName(category.getName())
                 .authorUsername(author.getUsername())
                 .title(question.getTitle())
