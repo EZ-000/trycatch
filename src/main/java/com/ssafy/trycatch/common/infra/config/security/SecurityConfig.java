@@ -7,10 +7,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.trycatch.common.infra.config.auth.CustomOAuth2UserService;
 import com.ssafy.trycatch.common.infra.config.jwt.JwtAuthFilter;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import com.ssafy.trycatch.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,10 +30,11 @@ public class SecurityConfig {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/token/**","/test").permitAll()
+			.antMatchers("/token/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
-			.addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
+			// .addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login()
 			.successHandler(successHandler)
 			.userInfoEndpoint().userService(oAuth2UserService);
