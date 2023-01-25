@@ -2,14 +2,12 @@ package com.ssafy.trycatch.qna.controller;
 
 import com.ssafy.trycatch.qna.controller.dto.*;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.domain.QuestionRepository;
 import com.ssafy.trycatch.qna.service.CategoryService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +21,6 @@ public class QuestionController {
     private final QuestionService questionService;
     private final CategoryService categoryService;
     private final UserService userService;
-    private final QuestionRepository questionRepository;
 
     /**
      Question 엔티티 리스트를 FindQuestionResponseDto 리스트로 변환하여 반환
@@ -67,7 +64,7 @@ public class QuestionController {
     @DeleteMapping
     public ResponseEntity<String> deleteQuestion (Long questionId) {
         questionService.deleteQuestion(questionId);
-        return ResponseEntity.status(HttpStatus.OK).body("정상적으로 삭제되었습니다.");
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -145,10 +142,8 @@ public class QuestionController {
         return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
     }
 
-
-
     // MOCK API: 질문 좋아요 취소
-    @PutMapping("/like")
+    @PutMapping("/{questionId}/like")
     public ResponseEntity<LikeQuestionResponseDto> Unlike(
             @PathVariable("questionId") Long questionId
     )
@@ -158,7 +153,7 @@ public class QuestionController {
     }
 
     // MOCK API: 질문 북마크 취소
-    @PutMapping("/bookmark")
+    @PutMapping("/{questionId}/bookmark")
     public ResponseEntity<BookmarkQuestionResponseDto> removeBookmark(
             @PathVariable("questionId") Long questionId
     )
@@ -172,12 +167,11 @@ public class QuestionController {
     public QuestionController(
             QuestionService questionService,
             CategoryService categoryService,
-            UserService userService,
-            QuestionRepository questionRepository) {
+            UserService userService
+    ) {
         this.questionService = questionService;
         this.categoryService = categoryService;
         this.userService = userService;
-        this.questionRepository = questionRepository;
     }
 
 }

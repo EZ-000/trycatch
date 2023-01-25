@@ -1,29 +1,28 @@
 package com.ssafy.trycatch.qna.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequestMapping("/${apiPrefix}/answer")
 public class AnswerController {
-    @PostMapping("/answer/{contentId}")
-    public ResponseEntity<String> createAnswers(@PathVariable Long contentId) {
+    @PostMapping("/{answerId}")
+    public ResponseEntity<String> createAnswers(@PathVariable Long answerId) {
         return ResponseEntity.ok("contentId에 해당하는 글에 답변을 등록합니다.");
     }
 
-    @GetMapping("/answer/{contentId}")
-    public ResponseEntity<String> findAnswers(@PathVariable Long contentId) {
+    @GetMapping("/{answerId}")
+    public ResponseEntity<String> findAnswers(@PathVariable Long answerId) {
         return ResponseEntity.ok("contentId에 해당하는 글의 답변을 조회합니다.");
     }
 
-    @PostMapping("/like")
-    public ResponseEntity<String> like() {
+    @PostMapping("/{answerId}/like")
+    public ResponseEntity<String> like(@PathVariable Long answerId) {
         return ResponseEntity.ok("좋아요합니다.");
     }
 
-    @PutMapping("/like")
-    public ResponseEntity<String> unlike() {
+    @PutMapping("/{answerId}/unlike")
+    public ResponseEntity<String> unlike(@PathVariable Long answerId) {
         return ResponseEntity.ok("좋아요를 취소합니다.");
     }
 
