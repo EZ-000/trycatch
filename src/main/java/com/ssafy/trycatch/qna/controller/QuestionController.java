@@ -10,12 +10,13 @@ import com.ssafy.trycatch.qna.service.CategoryService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,10 +58,12 @@ public class QuestionController {
      Question 엔티티 리스트를 FindQuestionResponseDto 리스트로 변환하여 반환
      */
     @GetMapping
-    public ResponseEntity<List<FindQuestionResponseDto>> findQuestions() {
-        List<Question> entities = questionService.findQuestions();
+    public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
+            @PageableDefault Pageable pageable
+    ) {
+        List<Question> entities = questionService.findAllQuestions(pageable);
         List<FindQuestionResponseDto> questions = entities.stream()
-                .map(e -> FindQuestionResponseDto.from(e))
+                .map(FindQuestionResponseDto::from)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questions);
     }
@@ -72,18 +75,13 @@ public class QuestionController {
     @PutMapping
     public ResponseEntity<CreateQuestionResponseDto> putQuestion (
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
-    ) throws Exception {
-        final Question entity = questionService.putQuestion(
-                putQuestionRequestDto.getId(),
-                putQuestionRequestDto.getTitle(),
-                putQuestionRequestDto.getContent(),
-                putQuestionRequestDto.getHidden()
-        );
+    ) {
+        final Question entity = questionService.putQuestion(putQuestionRequestDto);
         return ResponseEntity.ok(CreateQuestionResponseDto.from(entity));
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteQuestion (Long questionId) throws Exception {
+    public ResponseEntity<String> deleteQuestion (Long questionId) {
         questionService.deleteQuestion(questionId);
         return ResponseEntity.status(HttpStatus.OK).body("정상적으로 삭제되었습니다.");
     }

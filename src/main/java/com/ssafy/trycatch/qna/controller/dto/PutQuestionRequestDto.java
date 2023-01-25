@@ -42,4 +42,16 @@ public class PutQuestionRequestDto {
 
     public void setHidden(Boolean hidden) { this.hidden = hidden; }
 
+    public Question updateTo(Question entity) {
+        if (!entity.getTitle().equals(title)) {
+            entity.setTitle(title);
+        }
+        if (!entity.getContent().equals(content)) {
+            entity.setContent(content);
+        }
+        if (!entity.getHidden().equals(hidden)) {
+            entity.setHidden(hidden);
+        }
+        return entity;
+    }
 }

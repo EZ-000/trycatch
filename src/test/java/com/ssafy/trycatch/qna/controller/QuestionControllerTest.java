@@ -76,8 +76,8 @@ class QuestionControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("Question 리스트를 조회")
-    void findQuestions() throws Exception {
+    @DisplayName("모든 Question 리스트를 조회")
+    void findAllQuestions() throws Exception {
         this.mockMvc.perform(get("/" + apiVersion + "/question")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
