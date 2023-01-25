@@ -7,6 +7,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.ssafy.trycatch.config.auth.CustomOAuth2UserService;
+import com.ssafy.trycatch.config.auth.OAuth2SuccessHandler;
+import com.ssafy.trycatch.config.jwt.JwtAuthFilter;
+import com.ssafy.trycatch.config.jwt.TokenService;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

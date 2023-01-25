@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.security;
+package com.ssafy.trycatch.config.auth;
 
 import java.util.Collections;
 import java.util.Map;

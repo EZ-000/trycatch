@@ -1,10 +1,11 @@
-package com.ssafy.trycatch.config.security;
+package com.ssafy.trycatch.config.jwt;
 
 import java.util.Base64;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -13,7 +14,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 public class TokenService {
-	private String secretKey = "23bb6d094d1c598485c055907272ede0ec9ce8239b3edf662f2df67ee7c76b065003f5ab3a43bc7f4af8a345f064129f64f4354c12ff493a7225cbe00dbd00ce";
+	@Value("${spring.jwt.key}")
+	private String secretKey;
 
 	@PostConstruct
 	protected void init() {
@@ -30,12 +32,14 @@ public class TokenService {
 		Date now = new Date();
 		return new Token(
 			Jwts.builder()
+				.setHeaderParam("typ","JWT")
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(new Date(now.getTime() + tokenPeriod))
 				.signWith(SignatureAlgorithm.HS256, secretKey)
 				.compact(),
 			Jwts.builder()
+				.setHeaderParam("typ","JWT")
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(new Date(now.getTime() + refreshPeriod))

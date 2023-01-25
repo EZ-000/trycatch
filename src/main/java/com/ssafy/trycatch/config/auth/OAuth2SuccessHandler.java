@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.security;
+package com.ssafy.trycatch.config.auth;
 
 import java.io.IOException;
 
@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.trycatch.config.jwt.Token;
+import com.ssafy.trycatch.config.jwt.TokenService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 

@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.security;
+package com.ssafy.trycatch.config.jwt;
 
 import java.io.IOException;
 import java.util.Arrays;

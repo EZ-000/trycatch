@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.security;
+package com.ssafy.trycatch.config.jwt;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

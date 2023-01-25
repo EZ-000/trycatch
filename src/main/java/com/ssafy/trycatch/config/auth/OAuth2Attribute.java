@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.security;
+package com.ssafy.trycatch.config.auth;
 
 import java.util.HashMap;
 import java.util.Map;
