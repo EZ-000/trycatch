@@ -10,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -33,6 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'com.h2database:h2:1.4.200'
 
     // JWT
     implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
@@ -43,6 +45,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation group: 'org.kohsuke', name: 'github-api', version:'1.125'
+
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -55,12 +59,20 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
-tasks.named('test') {
+test {
     outputs.dir snippetsDir
     useJUnitPlatform()
 }
 
-tasks.named('asciidoctor') {
+asciidoctor {
     inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
     dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
+        into 'static/docs'
+    }
 }
