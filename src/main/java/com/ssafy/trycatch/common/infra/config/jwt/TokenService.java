@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.jwt;
+package com.ssafy.trycatch.common.infra.config.jwt;
 
 import java.util.Base64;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.config.auth;
+package com.ssafy.trycatch.common.infra.config.auth;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import com.ssafy.trycatch.user.domain.User;
 
 @Component
 public class UserRequestMapper {
-	public User toDto(OAuth2User oAuth2User) {
+	public User newEntity(OAuth2User oAuth2User) {
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 		return User.builder()
 			.email((String)attributes.get("email"))
