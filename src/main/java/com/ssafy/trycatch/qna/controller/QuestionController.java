@@ -79,6 +79,12 @@ public class QuestionController {
         return ResponseEntity.ok(FindQuestionResponseDto.from(entity));
     }
 
+    // MOCK API: 질문에 해당하는 답변 모두 조회
+    @GetMapping("/{questionId}/answers")
+    public ResponseEntity<String> findAnswers(@PathVariable Long questionId) {
+        return ResponseEntity.ok("questionId에 해당하는 글의 답변을 조회합니다.");
+    }
+
     // MOCK API: 질문 검색
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
