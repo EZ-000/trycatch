@@ -54,4 +54,10 @@ public class UserActivityController {
 		return ResponseEntity.ok("사람, 게시글, 답변, 피드 등을 신고합니다.");
 	}
 
+
+	@GetMapping("/qna/rank")
+	public ResponseEntity<String> findRanks() {
+		return ResponseEntity.ok("질문답변 활동에서 가장 높은 포인트를 얻은 사람 목록을 조회합니다.");
+	}
+
 }
