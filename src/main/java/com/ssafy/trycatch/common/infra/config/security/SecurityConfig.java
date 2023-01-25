@@ -29,7 +29,9 @@ public class SecurityConfig {
 			.and()
 			.authorizeRequests()
 			.antMatchers("/token/**","/test").permitAll()
-			.anyRequest().authenticated()
+			.anyRequest()
+//				.authenticated() 미완성
+				.permitAll()
 			.and()
 			.addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
 			.oauth2Login()
