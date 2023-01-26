@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @Configuration
@@ -27,21 +26,16 @@ public class SecurityConfig {
 			.and()
 			.authorizeRequests()
 			.antMatchers("/token/**", "/v1/**").permitAll()
-			.anyRequest().authenticated()
+			.anyRequest()
+			// 인증이 모두 필요
+			.authenticated()
+			// 인증을 모두 허용
+			//.permitAll()
 			.and()
-			// .addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
-			.addFilterBefore(new JwtAuthFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login()
 			.successHandler(successHandler)
 			.userInfoEndpoint().userService(oAuth2UserService);
-
-		// test
-		// http.httpBasic().disable()
-		// 	.csrf().disable()
-		// 	.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		// 	.and()
-		// 	.authorizeRequests()
-		// 	.anyRequest().permitAll();
+		http.addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class);
 
 		return http.build();
 	}

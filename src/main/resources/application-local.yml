@@ -26,10 +26,8 @@ spring:
           github:
             clientId: cab357ccdc1b39a9a54b
             client-secret: 8d114cb3161d503734e173fd3e4b6fb118c5fca5
-            redirect-uri: https://api.try-catch.duckdns.org/login/oauth2/code/github
             scope:
-              - user:email
-              - read:user
+              - user
 
 apiPrefix:
   v1
