@@ -15,12 +15,8 @@ spring:
   profiles:
     active: local
 
-application:
-  elastic:
-    host: search.try-catch.duckdns.org:80
-    port: 9200
-    username: elasticsearch
-    password: xSuJB2k8wCcqAa!
+elasticsearch:
+  host: search.try-catch.duckdns.org:80
 
 apiPrefix:
   v1

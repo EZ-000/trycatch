@@ -1,5 +1,7 @@
 package com.ssafy.trycatch.feed.domain;
 
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,7 @@ class ESFeedRepositoryTest {
 
     @Test
     public void testSearch() {
-        List<ESFeed> feeds = esFeedRepository.findByTags(List.of("react"));
+        List<ESFeed> feeds = esFeedRepository.searchByContent("react");
         System.out.println(feeds);
     }
 }
