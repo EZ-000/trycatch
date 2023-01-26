@@ -53,7 +53,7 @@ public class QuestionController {
      PutQuestionRequestDto로 받은 수정 요청을 처리하고,
      CreateQuestionResponseDto로 반환
      */
-    @PutMapping
+    @PutMapping("/{questionId}")
     public ResponseEntity<CreateQuestionResponseDto> putQuestion (
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
@@ -61,7 +61,7 @@ public class QuestionController {
         return ResponseEntity.ok(CreateQuestionResponseDto.from(entity));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/questionId")
     public ResponseEntity<String> deleteQuestion (Long questionId) {
         questionService.deleteQuestion(questionId);
         return ResponseEntity.ok().build();
@@ -79,12 +79,6 @@ public class QuestionController {
         return ResponseEntity.ok(FindQuestionResponseDto.from(entity));
     }
 
-    // MOCK API: 질문에 해당하는 답변 모두 조회
-    @GetMapping("/{questionId}/answers")
-    public ResponseEntity<String> findAnswers(@PathVariable Long questionId) {
-        return ResponseEntity.ok("questionId에 해당하는 글의 답변을 조회합니다.");
-    }
-
     // MOCK API: 질문 검색
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
@@ -97,7 +91,7 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
-    // MOCK API: 질문 북마크
+    // MOCK API: 북마크한 질문 조회
     @GetMapping("/bookmark")
     public ResponseEntity<List<BookmarkQuestionResponseDto>> findBookmarks(
             @PageableDefault Pageable pageable
@@ -109,6 +103,26 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
+    // MOCK API: 질문 북마크
+    @PostMapping("bookmark/{questionId}")
+    public ResponseEntity<BookmarkQuestionResponseDto> bookmark(
+            @PathVariable("questionId") Long questionId
+    )
+    {
+        final Question entity = questionService.findQuestionById(questionId);
+        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
+    }
+
+    // MOCK API: 질문 북마크 취소
+    @PutMapping("/bookmark/{questionId}")
+    public ResponseEntity<BookmarkQuestionResponseDto> removeBookmark(
+            @PathVariable("questionId") Long questionId
+    )
+    {
+        final Question entity = questionService.findQuestionById(questionId);
+        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
+    }
+
     // MOCK API: 답변 채택
     @PostMapping("/{questionId}/{answerId}")
     public ResponseEntity<AcceptQuestionResponseDto> acceptAnswer(@PathVariable Long questionId, @PathVariable Long answerId) {
@@ -117,7 +131,7 @@ public class QuestionController {
     }
 
     // MOCK API: 에러코드 기반 질문 추천
-    @PostMapping("/ec")
+    @GetMapping("/ec")
     public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions(
             @PageableDefault Pageable pageable
     ) {
@@ -138,16 +152,6 @@ public class QuestionController {
         return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
     }
 
-    // MOCK API: 질문 북마크
-    @PostMapping("{questionId}/bookmark")
-    public ResponseEntity<BookmarkQuestionResponseDto> bookmark(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
-    }
-
     // MOCK API: 질문 좋아요 취소
     @PutMapping("/{questionId}/like")
     public ResponseEntity<LikeQuestionResponseDto> Unlike(
@@ -157,17 +161,6 @@ public class QuestionController {
         final Question entity = questionService.findQuestionById(questionId);
         return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
     }
-
-    // MOCK API: 질문 북마크 취소
-    @PutMapping("/{questionId}/bookmark")
-    public ResponseEntity<BookmarkQuestionResponseDto> removeBookmark(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
-    }
-
 
     @Autowired
     public QuestionController(

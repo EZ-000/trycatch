@@ -81,7 +81,6 @@ class QuestionControllerTest {
         this.mockMvc.perform(get("/" + apiVersion + "/question")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("index"))
-                .andDo(print());
+                .andDo(document("index"));
     }
 }

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 public class FindAnswerResponseDto {
 
+    private final Long answerId;
+
     private final Long questionId;
 
     private final String username;
@@ -24,7 +26,8 @@ public class FindAnswerResponseDto {
     private final Boolean hidden;
 
     @Builder
-    public FindAnswerResponseDto(Long questionId, String username, String content, LocalDateTime createdAt, Boolean chosen, Integer likes, Boolean hidden) {
+    public FindAnswerResponseDto(Long answerId, Long questionId, String username, String content, LocalDateTime createdAt, Boolean chosen, Integer likes, Boolean hidden) {
+        this.answerId = answerId;
         this.questionId = questionId;
         this.username = username;
         this.content = content;
@@ -45,6 +48,7 @@ public class FindAnswerResponseDto {
         final User user = answer.getUser();
 
         return FindAnswerResponseDto.builder()
+                .answerId(answer.getId())
                 .questionId(question.getId())
                 .username(user.getUsername())
                 .content(answer.getContent())
