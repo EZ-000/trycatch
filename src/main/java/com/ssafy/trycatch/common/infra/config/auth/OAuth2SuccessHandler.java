@@ -67,8 +67,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HeaderRefreshTokenAttributeKey, token.getRefreshToken());
         response.setContentType("application/json;charset=UTF-8");
 
-        var writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(token));
-        writer.flush();
+        response.sendRedirect("https://i8e108.p.ssafy.io/");
+        // var writer = response.getWriter();
+        // writer.println(objectMapper.writeValueAsString(token));
+        // writer.flush();
     }
 }

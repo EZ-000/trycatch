@@ -1,14 +1,20 @@
 package com.ssafy.trycatch.feed.controller;
 
+import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/${apiPrefix}/feed")
 public class FeedController {
+
+    /**
+     * 포스트 리스트를 최신순으로 반환합니다.
+     * TODO : 토큰이 있을 경우 연관도 순으로 반영합니다.
+     */
     @GetMapping("/list")
-    public ResponseEntity<String> findPosts() {
-        return ResponseEntity.ok("포스트 리스트를 최신순으로 반환합니다. 토큰이 있을 경우 연관도 순으로 반영합니다.");
+    public ResponseEntity<FindFeedResponseDto> findFeeds() {
+        return ResponseEntity.ok(FindFeedResponseDto.newDummy(10));
     }
 
     @GetMapping("/bookmark")
