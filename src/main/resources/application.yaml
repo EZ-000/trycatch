@@ -15,6 +15,9 @@ spring:
   profiles:
     active: local
 
+elasticsearch:
+  host: search.try-catch.duckdns.org:80
+
 apiPrefix:
   v1
 

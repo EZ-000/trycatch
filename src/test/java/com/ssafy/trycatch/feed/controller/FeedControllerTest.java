@@ -41,7 +41,6 @@ class FeedControllerTest {
 
     @Test
     void findFeeds() throws Exception {
-
         this.mockMvc.perform(
                 get("/" + apiVersion + "/feed/list")
         )
