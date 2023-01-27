@@ -1,14 +1,37 @@
 package com.ssafy.trycatch.feed.controller;
 
+import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
+import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto.Feed;
+import com.ssafy.trycatch.feed.service.FeedService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@CrossOrigin(origins = {
+    "http://beta.try-catch.duckdns.org",
+    "https://i8e108.p.ssafy.io"
+}, maxAge = 3600)
 @RestController
 @RequestMapping("/${apiPrefix}/feed")
 public class FeedController {
+
+    private final FeedService feedService;
+
+    @Autowired
+    public FeedController(FeedService feedService) {
+        this.feedService = feedService;
+    }
+
+    /**
+     * 포스트 리스트를 최신순으로 반환합니다.
+     * TODO : 토큰이 있을 경우 연관도 순으로 반영합니다.
+     */
     @GetMapping("/list")
-    public ResponseEntity<String> findPosts() {
-        return ResponseEntity.ok("포스트 리스트를 최신순으로 반환합니다. 토큰이 있을 경우 연관도 순으로 반영합니다.");
+    public ResponseEntity<FindFeedResponseDto> findFeeds() {
+        return ResponseEntity.ok(FindFeedResponseDto.newDummy(10));
     }
 
     @GetMapping("/bookmark")
@@ -37,8 +60,13 @@ public class FeedController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<String> search() {
-        return ResponseEntity.ok("Q&A나 피드 등의 타입 구분하여 원하는 필터로 검색합니다.");
-    }
+    public ResponseEntity<FindFeedResponseDto> search(@RequestParam String content) {
 
+        final List<Feed> feeds = feedService.searchByContent(content)
+                .stream()
+                .map(Feed::newFeed)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new FindFeedResponseDto(feeds));
+    }
 }

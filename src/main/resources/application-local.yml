@@ -5,7 +5,7 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
 
@@ -24,12 +24,10 @@ spring:
       client:
         registration:
           github:
-            clientId: 7b4fb4e472ba8a793c1b
-            client-secret: 4f5672997fa38b23f9d8641f85cd1ea3cca44abf
-            redirect-uri: http://localhost:8080/login/oauth2/code/github
+            clientId: cab357ccdc1b39a9a54b
+            client-secret: 8d114cb3161d503734e173fd3e4b6fb118c5fca5
             scope:
-              - user:email
-              - read:user
+              - user
 
 apiPrefix:
   v1

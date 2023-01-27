@@ -4,6 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = {
+		"http://beta.try-catch.duckdns.org",
+		"https://i8e108.p.ssafy.io"
+}, maxAge = 3600)
 @Slf4j
 @RestController
 @RequestMapping("/${apiPrefix}/user-activity")
