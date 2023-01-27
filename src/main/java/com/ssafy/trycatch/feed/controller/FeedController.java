@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.feed.controller;
 
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
 import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto.Feed;
 import com.ssafy.trycatch.feed.service.FeedService;
@@ -11,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = {
+    "http://beta.try-catch.duckdns.org",
+    "https://i8e108.p.ssafy.io"
+}, maxAge = 3600)
 @RestController
 @RequestMapping("/${apiPrefix}/feed")
 public class FeedController {

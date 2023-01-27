@@ -18,3 +18,8 @@ public interface ESFeedRepository extends ElasticsearchRepository<ESFeed, String
     @Query("{\"match\": {\"company_ko\": {\"query\": \"?0\"}}}")
     List<ESFeed> findByCompanyKo(String companyKo);
 }
+
+
+
+
+
