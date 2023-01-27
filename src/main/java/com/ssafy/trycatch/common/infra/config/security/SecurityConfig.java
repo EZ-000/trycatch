@@ -30,7 +30,7 @@ public class SecurityConfig {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/token/**","v1/**").permitAll()
+			.antMatchers("/token/**", "/v1/**").permitAll()
 			.anyRequest()
 			// 인증이 모두 필요
 			.authenticated()
