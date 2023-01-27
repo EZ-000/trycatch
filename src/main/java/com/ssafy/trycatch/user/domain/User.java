@@ -8,6 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.gamification.domain.ChallengeGroup;
 import com.ssafy.trycatch.gamification.domain.MyBadge;
@@ -29,6 +31,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
+@DynamicInsert
 @Table(name = "user")
 public class User {
 	@Id

@@ -1,6 +1,6 @@
 package com.ssafy.trycatch.common.infra.config.jwt;
 
-import java.util.Base64;
+import java.security.Key;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
@@ -12,19 +12,23 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 @Service
 public class TokenService {
 	@Value("${spring.jwt.key}")
 	private String secretKey;
 
+	private Key key;
+
 	@PostConstruct
 	protected void init() {
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		key = Keys.hmacShaKeyFor(secretKey.getBytes());
 	}
 
 	public Token generateToken(String uid, String token) {
-		long tokenPeriod = 1000L * 60L * 10L;
-		long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
+		long tokenPeriod = 1000L * 60L * 10L; // 10 Min
+		long refreshPeriod = 1000L * 60L * 60L * 24; // 1Day
 
 		Claims claims = Jwts.claims().setSubject(token);
 		claims.put("id", uid);
@@ -32,25 +36,25 @@ public class TokenService {
 		Date now = new Date();
 		return new Token(
 			Jwts.builder()
-				.setHeaderParam("typ","JWT")
+				.setHeaderParam("typ", "JWT")
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(new Date(now.getTime() + tokenPeriod))
-				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.signWith(key, SignatureAlgorithm.HS256)
 				.compact(),
 			Jwts.builder()
-				.setHeaderParam("typ","JWT")
+				.setHeaderParam("typ", "JWT")
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(new Date(now.getTime() + refreshPeriod))
-				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.signWith(key, SignatureAlgorithm.HS256)
 				.compact());
 	}
 
 	public boolean verifyToken(String token) {
 		try {
-			Jws<Claims> claims = Jwts.parser()
-				.setSigningKey(secretKey)
+			Jws<Claims> claims = Jwts.parserBuilder()
+				.setSigningKey(key).build()
 				.parseClaimsJws(token);
 			return claims.getBody()
 				.getExpiration()
@@ -61,9 +65,11 @@ public class TokenService {
 	}
 
 	public String getUid(String token) {
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("id",String.class);
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("id", String.class);
+		//return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("id",String.class);
 	}
+
 	public String getAccessToken(String token) {
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 	}
 }

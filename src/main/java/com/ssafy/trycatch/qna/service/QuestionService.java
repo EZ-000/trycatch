@@ -1,5 +1,7 @@
 package com.ssafy.trycatch.qna.service;
 
+import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESQuestionRepository;
 import com.ssafy.trycatch.qna.controller.dto.PutQuestionRequestDto;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.domain.QuestionRepository;
@@ -9,19 +11,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final ESQuestionRepository esQuestionRepository;
+
+    @Autowired
+    public QuestionService(QuestionRepository questionRepository, ESQuestionRepository esQuestionRepository) {
+        this.questionRepository = questionRepository;
+        this.esQuestionRepository = esQuestionRepository;
+    }
 
     public Question saveQuestion(Question question) {
-        return questionRepository.save(question);
+        final Question entity = questionRepository.save(question);
+        esQuestionRepository.save(ESQuestion.of(entity));
+        return entity;
     }
 
     public Question findQuestionById(Long questionId) {
@@ -52,8 +60,4 @@ public class QuestionService {
         questionRepository.deleteById(questionId);
     }
 
-    @Autowired
-    public QuestionService(QuestionRepository questionRepository) {
-        this.questionRepository = questionRepository;
-    }
 }
