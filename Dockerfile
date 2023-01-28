@@ -1,3 +1,6 @@
+# local, dev, prod
+ENV RUN_ENV dev
+
 FROM openjdk:11-jdk-slim AS builder
 COPY gradlew .
 COPY gradle gradle
@@ -10,4 +13,4 @@ RUN ./gradlew bootJAR
 FROM openjdk:11-jdk-slim
 COPY --from=builder build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=$RUN_ENV", "/app.jar"]
