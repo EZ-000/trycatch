@@ -29,5 +29,12 @@ spring:
             scope:
               - user
 
+logging:
+  level:
+    root: info
+
+settings:
+  cross-origin: "*"
+
 apiPrefix:
   v1
