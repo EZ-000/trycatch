@@ -17,5 +17,9 @@ spring:
               - user:email
               - read:user
 
+settings:
+  cross-origin: >
+    https://i8e108.p.ssafy.io
+
 apiPrefix:
   v1

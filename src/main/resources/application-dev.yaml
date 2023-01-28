@@ -15,6 +15,10 @@ spring:
             scope:
               - user
 
+settings:
+  cross-origin: >
+    http://localhost:5173,
+    http://beta.try-catch.duckdns.org
 
 apiPrefix:
   v1

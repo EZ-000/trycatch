@@ -1,23 +1,18 @@
 package com.ssafy.trycatch.user.controller;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ssafy.trycatch.user.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.trycatch.user.service.UserService;
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 
-@CrossOrigin(origins = {
-		"http://beta.try-catch.duckdns.org",
-		"https://i8e108.p.ssafy.io"
-}, maxAge = 3600)
+@Slf4j
 @RestController
 @RequestMapping("/${apiPrefix}/user")
 public class UserController {
-	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
 	private final UserService userService;
 
 	public UserController(UserService userService) {
