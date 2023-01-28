@@ -26,6 +26,7 @@ spring:
           github:
             clientId: cab357ccdc1b39a9a54b
             client-secret: 8d114cb3161d503734e173fd3e4b6fb118c5fca5
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
             scope:
               - user
 
@@ -35,6 +36,12 @@ logging:
 
 settings:
   cross-origin: "*"
+
+  login:
+    on_success:
+      redirect_uri: http://beta.try-catch.duckdns.org
+    on_fail:
+      redirect_uri: https://i8e108.p.ssafy.io/error
 
 apiPrefix:
   v1

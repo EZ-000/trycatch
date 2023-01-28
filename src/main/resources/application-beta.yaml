@@ -18,9 +18,17 @@ spring:
               - read:user
 
 settings:
+  login:
+    on_success:
+      redirect_uri: http://beta.try-catch.duckdns.org/
+    on_fail:
+      redirect_uri: https://i8e108.p.ssafy.io/error
+
   cross-origin: >
     http://localhost:5173,
     http://beta.try-catch.duckdns.org
+
+  
 
 apiPrefix:
   v1

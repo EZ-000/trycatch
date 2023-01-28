@@ -21,5 +21,12 @@ settings:
   cross-origin: >
     https://i8e108.p.ssafy.io
 
+  login:
+    on_success:
+      redirect_uri: http://beta.try-catch.duckdns.org
+    on_fail:
+      redirect_uri: https://i8e108.p.ssafy.io/error
+
+
 apiPrefix:
   v1

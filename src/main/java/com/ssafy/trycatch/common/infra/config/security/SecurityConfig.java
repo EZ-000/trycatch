@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationF
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.ssafy.trycatch.common.infra.config.auth.CustomOAuth2UserService;
-import com.ssafy.trycatch.common.infra.config.auth.OAtuh2FailureHandler;
+import com.ssafy.trycatch.common.infra.config.auth.OAuth2FailureHandler;
 import com.ssafy.trycatch.common.infra.config.auth.OAuth2SuccessHandler;
 import com.ssafy.trycatch.common.infra.config.jwt.JwtAuthFilter;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private final CustomOAuth2UserService oAuth2UserService;
 	private final OAuth2SuccessHandler successHandler;
-	private final OAtuh2FailureHandler failureHandler;
+	private final OAuth2FailureHandler failureHandler;
 	private final TokenService tokenService;
 
 	@Bean
