@@ -10,10 +10,11 @@ spring:
       client:
         registration:
           github:
-            clientId: 7b4fb4e472ba8a793c1b
-            client-secret: 4f5672997fa38b23f9d8641f85cd1ea3cca44abf
+            clientId: 59337ab984d458daff27
+            client-secret: 514d47261ada2a2d6b0569c17ad6b88d8ecd504b
             scope:
-              - user
+              - user:email
+              - read:user
 
 settings:
   cross-origin: >
