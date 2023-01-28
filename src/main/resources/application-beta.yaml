@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://mariadb_dev:3306/TRY_CATCH?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    username: S08P12E108
+    password: LGBmz7o81b
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: 59337ab984d458daff27
+            client-secret: 514d47261ada2a2d6b0569c17ad6b88d8ecd504b
+            redirect-uri: https://beta.api.try-catch.duckdns.org/login/oauth2/code/github
+            scope:
+              - user:email
+              - read:user
+
+settings:
+  login:
+    on_success:
+      redirect_uri: http://beta.try-catch.duckdns.org/
+    on_fail:
+      redirect_uri: https://i8e108.p.ssafy.io/error
+
+  cross-origin: >
+    http://localhost:5173,
+    http://beta.try-catch.duckdns.org
+
+  
+
+apiPrefix:
+  v1

@@ -1,0 +1,47 @@
+spring:
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: cab357ccdc1b39a9a54b
+            client-secret: 8d114cb3161d503734e173fd3e4b6fb118c5fca5
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+            scope:
+              - user
+
+logging:
+  level:
+    root: info
+
+settings:
+  cross-origin: "*"
+
+  login:
+    on_success:
+      redirect_uri: http://beta.try-catch.duckdns.org
+    on_fail:
+      redirect_uri: https://i8e108.p.ssafy.io/error
+
+apiPrefix:
+  v1
