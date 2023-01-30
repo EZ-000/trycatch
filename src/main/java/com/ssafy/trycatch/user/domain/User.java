@@ -122,11 +122,23 @@ public class User {
 	@Column(name = "introduction", length = 200)
 	private String introduction;
 
+	@Size(max = 100)
+	@Column(name = "image_src", length = 100)
+	private String imageSrc;
+
 	@Builder
-	public User(String email, String name,String url, String nodeId){
+	public User(String githubNodeId, String username, String gitAddress, Boolean activated, String email,
+		String calendarMail, Integer confirmationCode, Long companyId, LocalDate createdAt, Integer points, String imageSrc) {
+		this.githubNodeId = githubNodeId;
+		this.username = username;
+		this.gitAddress = gitAddress;
+		this.activated = activated;
 		this.email = email;
-		this.username = name;
-		this.gitAddress = url;
-		this.githubNodeId = nodeId;
+		this.calendarMail = calendarMail;
+		this.confirmationCode = confirmationCode;
+		this.companyId = companyId;
+		this.createdAt = createdAt;
+		this.points = points;
+		this.imageSrc = imageSrc;
 	}
 }
