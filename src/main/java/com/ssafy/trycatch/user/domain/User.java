@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.ssafy.trycatch.feed.domain.Company;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.ssafy.trycatch.feed.domain.Read;
@@ -66,8 +67,8 @@ public class User {
 	private Integer confirmationCode;
 
 	@NotNull
-	@Column(name = "confirmed", nullable = false)
-	private Boolean confirmed = false;
+	@Column(name = "company_id", nullable = false)
+	private Long companyId;
 
 	@NotNull
 	@Column(name = "created_at", nullable = false)
@@ -117,8 +118,9 @@ public class User {
 	@ToString.Exclude
 	private Set<History> histories = new LinkedHashSet<>();
 
-	@Transient
-	private String image;
+	@Size(max = 200)
+	@Column(name = "introduction", length = 200)
+	private String introduction;
 
 	@Builder
 	public User(String email, String name,String url, String nodeId){

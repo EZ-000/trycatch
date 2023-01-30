@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -28,6 +29,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final TokenService tokenService;
 	private final UserRequestMapper userRequestMapper;
 	private final UserRepository userRepository;
+
+	@Value("${settings.login.on_success.redirect_uri}")
+	private String redirectUri;
 
 	@Override
 	public void onAuthenticationSuccess(
@@ -67,7 +71,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		log.warn("{}", request.getHeader("Referer"));
 		//response.sendRedirect(request.getHeader("Referer"));
-		response.sendRedirect("https://i8e108.p.ssafy.io/");
+		response.sendRedirect(redirectUri);
 	}
 
 	private void initNullValue(User user) {
@@ -80,8 +84,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			user.setPoints(0);
 		}
 		// Step3. is_confirmed 이 NULL일 경우, false로 변경
-		if (null == user.getConfirmed()) {
-			user.setConfirmed(false);
+		if (null == user.getCompanyId()) {
+			user.setCompanyId(0L);
 		}
 	}
 }

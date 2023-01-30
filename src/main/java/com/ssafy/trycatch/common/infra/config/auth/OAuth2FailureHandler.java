@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class OAtuh2FailureHandler implements AuthenticationFailureHandler {
+public class OAuth2FailureHandler implements AuthenticationFailureHandler {
+
+	@Value("${settings.login.on_fail.redirect_uri}")
+	private String redirectUri;
+
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException exception) throws IOException {
-		response.sendRedirect("https://i8e108.p.ssafy.io/error");
+		response.sendRedirect(redirectUri);
 	}
 }

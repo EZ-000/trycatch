@@ -22,10 +22,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = {
-        "http://beta.try-catch.duckdns.org",
-        "https://i8e108.p.ssafy.io"
-}, maxAge = 3600)
+
 @RestController
 @RequestMapping("/${apiPrefix}/question")
 public class QuestionController {

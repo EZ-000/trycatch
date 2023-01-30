@@ -2,9 +2,9 @@ INSERT INTO category VALUES
   (1, 'test category 1'),
   (2, 'test category 2');
 
-INSERT INTO user VALUES
- (1, true, 'mail', 1234, false, '2023-01-01', 'email', 'address 1', 'node id 1', 0, 'user 1'),
- (2, true, 'mail', 1234, false, '2023-01-02', 'email', 'address 2', 'node id 2', 0, 'user 2');
+INSERT INTO user(company_id, github_node_id, username, git_address, email, activated, calendar_mail, confirmation_code, introduction, created_at, points) VALUES
+ (1, 'AAA', '1', 'git_add1', 'mail1', true, 'c1_mail',111,'i am first','2023-01-29',0),
+ (0, 'BBB', '2', 'git_add2', 'mail2', false, 'c2_mail',222,'i am second','2023-01-30',0);
 
 INSERT INTO badge VALUES
                       (1, 'super', 'test badge 1'),
