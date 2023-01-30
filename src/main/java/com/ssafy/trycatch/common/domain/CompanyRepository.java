@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.feed.domain;
+package com.ssafy.trycatch.common.domain;
 
 import org.springframework.data.repository.CrudRepository;
 

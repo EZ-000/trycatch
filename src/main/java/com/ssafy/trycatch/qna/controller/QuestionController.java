@@ -1,6 +1,7 @@
 package com.ssafy.trycatch.qna.controller;
 
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.controller.dto.*;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,25 +32,52 @@ public class QuestionController {
     private final UserService userService;
     private final TokenService tokenService;
 
+    private final CompanyService companyService;
+
+    @Autowired
+    public QuestionController(
+            QuestionService questionService,
+            AnswerService answerService, CategoryService categoryService,
+            UserService userService,
+            TokenService tokenService, CompanyService companyService) {
+        this.questionService = questionService;
+        this.answerService = answerService;
+        this.categoryService = categoryService;
+        this.userService = userService;
+        this.tokenService = tokenService;
+        this.companyService = companyService;
+    }
+
     /**
      Question 엔티티 리스트를 FindQuestionResponseDto 리스트로 변환하여 반환
      */
     @GetMapping
     public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
             @PageableDefault Pageable pageable,
-            @RequestHeader("Authorization") String token
-    ) {
-        List<Question> entities = questionService.findAllQuestions(pageable);
-        List<FindQuestionResponseDto> questions = entities.stream()
-                .map(question -> {
-                    User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
-//                    User user = userService.findUserById(1L);
-                    List<Answer> answers = answerService.findByQuestionId(question.getId());
-                    FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user);
-                    return from;
-                })
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(questions);
+            @RequestHeader("Authorization") String token ) {
+            List<Question> entities = questionService.findAllQuestions(pageable);
+            List<FindQuestionResponseDto> questions = entities.stream()
+                    .map(question -> {
+                        User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+                        List<Answer> answers = answerService.findByQuestionId(question.getId());
+                        FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user, companyService);
+                        return from;
+                    })
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping("/guest")
+    public ResponseEntity<List<FindQuestionResponseNotLoginDto>> findAllQuestions( @PageableDefault Pageable pageable ) {
+            List<Question> entities = questionService.findAllQuestions(pageable);
+            List<FindQuestionResponseNotLoginDto> questions = entities.stream()
+                    .map(question -> {
+                        List<Answer> answers = answerService.findByQuestionId(question.getId());
+                        FindQuestionResponseNotLoginDto from = FindQuestionResponseNotLoginDto.from(question, answers, companyService);
+                        return from;
+                    })
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(questions);
     }
 
     /**
@@ -96,7 +123,7 @@ public class QuestionController {
         final Question question = questionService.findQuestionById(questionId);
         final List<Answer> answer = answerService.findByQuestionId(questionId);
         final User user = userService.findUserById(Long.valueOf(principal.getName()));
-        return ResponseEntity.ok(FindQuestionResponseDto.from(question, answer, user));
+        return ResponseEntity.ok(FindQuestionResponseDto.from(question, answer, user, companyService));
     }
 
     // MOCK API: 질문 검색
@@ -182,17 +209,6 @@ public class QuestionController {
         return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
     }
 
-    @Autowired
-    public QuestionController(
-            QuestionService questionService,
-            AnswerService answerService, CategoryService categoryService,
-            UserService userService,
-            TokenService tokenService) {
-        this.questionService = questionService;
-        this.answerService = answerService;
-        this.categoryService = categoryService;
-        this.userService = userService;
-        this.tokenService = tokenService;
-    }
+
 
 }

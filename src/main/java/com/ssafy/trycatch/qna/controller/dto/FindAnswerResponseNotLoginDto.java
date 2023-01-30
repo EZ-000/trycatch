@@ -4,6 +4,7 @@ import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
+import com.ssafy.trycatch.user.controller.dto.FindUserInQNANotLoginDto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +13,9 @@ import java.io.Serializable;
 import java.time.ZoneId;
 
 @Data
-public class FindAnswerResponseDto implements Serializable {
+public class FindAnswerResponseNotLoginDto implements Serializable {
     private final Long answerId;
-    private final FindUserInQNADto author;
+    private final FindUserInQNANotLoginDto author;
     private final String content;
     private final Long timestamp;
     private final Integer likecount;
@@ -22,7 +23,7 @@ public class FindAnswerResponseDto implements Serializable {
 
 
     @Builder
-    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, Long timestamp, Integer likecount, Boolean isLiked) {
+    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Integer likecount, Boolean isLiked) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
@@ -36,14 +37,14 @@ public class FindAnswerResponseDto implements Serializable {
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindAnswerResponseDto from(Answer answer, User user, CompanyService companyService) {
+    public static FindAnswerResponseNotLoginDto from(Answer answer, CompanyService companyService) {
 
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
 
-        return FindAnswerResponseDto.builder()
+        return FindAnswerResponseNotLoginDto.builder()
                 .answerId(answer.getId())
-                .author(FindUserInQNADto.from(user, author, companyService))
+                .author(FindUserInQNANotLoginDto.from(author, companyService))
                 .content(answer.getContent())
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))

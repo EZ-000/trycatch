@@ -8,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.ssafy.trycatch.feed.domain.Company;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.ssafy.trycatch.feed.domain.Read;
@@ -121,6 +120,10 @@ public class User {
 	@Size(max = 200)
 	@Column(name = "introduction", length = 200)
 	private String introduction;
+
+	@Size(max = 100)
+	@Column(name = "image_src", length = 100)
+	private String imageSrc;
 
 	@Builder
 	public User(String email, String name,String url, String nodeId){

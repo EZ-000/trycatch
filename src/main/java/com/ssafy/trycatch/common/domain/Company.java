@@ -1,5 +1,7 @@
-package com.ssafy.trycatch.feed.domain;
+package com.ssafy.trycatch.common.domain;
 
+import com.ssafy.trycatch.feed.domain.Conference;
+import com.ssafy.trycatch.feed.domain.Feed;
 import com.ssafy.trycatch.user.domain.Subscription;
 import lombok.*;
 
