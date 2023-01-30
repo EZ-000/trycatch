@@ -8,30 +8,25 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Data
 public class CreateAnswerResponseDto implements Serializable {
 
     private final Long questionId;
-
     private final String username;
-
     private final String content;
-
-    private final LocalDateTime createdAt;
-
+    private final Long timestamp;
     private final Boolean chosen;
-
     private final Integer likes;
-
     private final Boolean hidden;
 
     @Builder
-    public CreateAnswerResponseDto(Long questionId, String username, String content, LocalDateTime createdAt, Boolean chosen, Integer likes, Boolean hidden) {
+    public CreateAnswerResponseDto(Long questionId, String username, String content, Long timestamp, Boolean chosen, Integer likes, Boolean hidden) {
         this.questionId = questionId;
         this.username = username;
         this.content = content;
-        this.createdAt = createdAt;
+        this.timestamp = timestamp;
         this.chosen = chosen;
         this.likes = likes;
         this.hidden = hidden;
@@ -51,7 +46,9 @@ public class CreateAnswerResponseDto implements Serializable {
                 .questionId(question.getId())
                 .username(user.getUsername())
                 .content(answer.getContent())
-                .createdAt(answer.getCreatedAt())
+                .timestamp(question.getCreatedAt()
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .toInstant().toEpochMilli())
                 .chosen(answer.getChosen())
                 .likes(answer.getLikes())
                 .hidden(answer.getHidden())

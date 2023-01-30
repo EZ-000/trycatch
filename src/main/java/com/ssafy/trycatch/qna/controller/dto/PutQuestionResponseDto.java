@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class PutQuestionResponseDto implements Serializable {
     @Size(max = 50)
     private final String title;
     private final String content;
-    private final LocalDate createdAt;
+    private final Long timestamp;
     private final Instant updatedAt;
     private final Integer viewCount;
     private final Integer likes;
@@ -35,12 +36,12 @@ public class PutQuestionResponseDto implements Serializable {
     private final Set<Long> answerIds;
 
     @Builder
-    public PutQuestionResponseDto(String categoryName, String authorUsername, String title, String content, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public PutQuestionResponseDto(String categoryName, String authorUsername, String title, String content, Long timestamp, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
         this.content = content;
-        this.createdAt = createdAt;
+        this.timestamp = timestamp;
         this.updatedAt = updatedAt;
         this.viewCount = viewCount;
         this.likes = likes;
@@ -62,7 +63,9 @@ public class PutQuestionResponseDto implements Serializable {
                 .authorUsername(author.getUsername())
                 .title(question.getTitle())
                 .content(question.getTitle())
-                .createdAt(question.getCreatedAt())
+                .timestamp(question.getCreatedAt()
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .toInstant().toEpochMilli())
                 .updatedAt(question.getUpdatedAt())
                 .viewCount(question.getViewCount())
                 .likes(question.getLikes())

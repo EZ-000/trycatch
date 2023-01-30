@@ -8,24 +8,24 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Data
 public class FindAnswerResponseDto implements Serializable {
     private final Long answerId;
     private final FindUserInQNADto author;
     private final String content;
-    private final LocalDateTime createdAt;
+    private final Long timestamp;
     private final Integer likecount;
     private final Boolean isLiked;
 
 
     @Builder
-    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, LocalDateTime createdAt, Integer likecount, Boolean isLiked) {
+    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, Long timestamp, Integer likecount, Boolean isLiked) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
-        this.createdAt = createdAt;
+        this.timestamp = timestamp;
         this.likecount = likecount;
         this.isLiked = isLiked;
     }
@@ -44,7 +44,9 @@ public class FindAnswerResponseDto implements Serializable {
                 .answerId(answer.getId())
                 .author(FindUserInQNADto.from(user, author))
                 .content(answer.getContent())
-                .createdAt(answer.getCreatedAt())
+                .timestamp(question.getCreatedAt()
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .toInstant().toEpochMilli())
                 .likecount(answer.getLikes())
                 .isLiked(false)
                 .build();
