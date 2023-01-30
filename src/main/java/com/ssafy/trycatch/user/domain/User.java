@@ -4,16 +4,11 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.ssafy.trycatch.feed.domain.Company;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.ssafy.trycatch.feed.domain.Read;
@@ -72,8 +67,8 @@ public class User {
 	private Integer confirmationCode;
 
 	@NotNull
-	@Column(name = "confirmed", nullable = false)
-	private Boolean confirmed = false;
+	@Column(name = "company_id", nullable = false)
+	private Long companyId;
 
 	@NotNull
 	@Column(name = "created_at", nullable = false)
@@ -122,6 +117,10 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	@ToString.Exclude
 	private Set<History> histories = new LinkedHashSet<>();
+
+	@Size(max = 200)
+	@Column(name = "introduction", length = 200)
+	private String introduction;
 
 	@Builder
 	public User(String email, String name,String url, String nodeId){

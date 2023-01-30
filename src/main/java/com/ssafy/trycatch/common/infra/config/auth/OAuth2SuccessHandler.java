@@ -84,8 +84,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			user.setPoints(0);
 		}
 		// Step3. is_confirmed 이 NULL일 경우, false로 변경
-		if (null == user.getConfirmed()) {
-			user.setConfirmed(false);
+		if (null == user.getCompanyId()) {
+			user.setCompanyId(0L);
 		}
 	}
 }
