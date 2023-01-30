@@ -4,7 +4,7 @@ import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
+import com.ssafy.trycatch.user.controller.dto.FindUserInQNANotLoginDto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
@@ -17,14 +17,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * A DTO for the {@link com.ssafy.trycatch.qna.domain.Question} entity
- */
 @Data
-public class FindQuestionResponseDto implements Serializable {
+public class FindQuestionResponseNotLoginDto implements Serializable {
     private final Long questionId;
     @Size(max = 50)
-    private final FindUserInQNADto author;
+    private final FindUserInQNANotLoginDto author;
     @Size(max = 30)
     private final String category;
     @Size(max = 50)
@@ -39,10 +36,10 @@ public class FindQuestionResponseDto implements Serializable {
     private final Boolean isLiked;
     private final Boolean isSolved;
     private final Boolean isBookmarked;
-    private final List<FindAnswerResponseDto> answers;
+    private final List<FindAnswerResponseNotLoginDto> answers;
 
     @Builder
-    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -65,17 +62,17 @@ public class FindQuestionResponseDto implements Serializable {
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindQuestionResponseDto from(Question question, List<Answer> answers, User user, CompanyService companyService) {
+    public static FindQuestionResponseNotLoginDto from(Question question, List<Answer> answers, CompanyService companyService) {
         final Category category = question.getCategory();
         final User author = question.getUser();
-        final List<FindAnswerResponseDto> answerDtos = answers.stream()
-                .map((Answer answer) -> FindAnswerResponseDto.from(answer, user, companyService))
+        final List<FindAnswerResponseNotLoginDto> answerDtos = answers.stream()
+                .map((Answer answer) -> FindAnswerResponseNotLoginDto.from(answer, companyService))
                 .collect(Collectors.toList());
         final List<String> temptags = new ArrayList<String>(Arrays.asList("42good", "1stprizeisours"));
 
-        return FindQuestionResponseDto.builder()
+        return FindQuestionResponseNotLoginDto.builder()
                 .questionId(question.getId())
-                .author(FindUserInQNADto.from(user, author, companyService))
+                .author(FindUserInQNANotLoginDto.from(author, companyService))
                 .category(category.getName())
                 .title(question.getTitle())
                 .content(question.getContent())
@@ -87,7 +84,7 @@ public class FindQuestionResponseDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
-                .isLiked(true)
+                .isLiked(false)
                 .isSolved(question.getChosen())
                 .isBookmarked(false)
                 .answers(answerDtos)
