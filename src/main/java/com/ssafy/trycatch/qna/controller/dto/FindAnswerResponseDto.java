@@ -2,39 +2,32 @@ package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
+import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class FindAnswerResponseDto {
-
+@Data
+public class FindAnswerResponseDto implements Serializable {
     private final Long answerId;
-
-    private final Long questionId;
-
-    private final String username;
-
+    private final FindUserInQNADto author;
     private final String content;
-
     private final LocalDateTime createdAt;
+    private final Integer likecount;
+    private final Boolean isLiked;
 
-    private final Boolean chosen;
-
-    private final Integer likes;
-
-    private final Boolean hidden;
 
     @Builder
-    public FindAnswerResponseDto(Long answerId, Long questionId, String username, String content, LocalDateTime createdAt, Boolean chosen, Integer likes, Boolean hidden) {
+    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, LocalDateTime createdAt, Integer likecount, Boolean isLiked) {
         this.answerId = answerId;
-        this.questionId = questionId;
-        this.username = username;
+        this.author = author;
         this.content = content;
         this.createdAt = createdAt;
-        this.chosen = chosen;
-        this.likes = likes;
-        this.hidden = hidden;
+        this.likecount = likecount;
+        this.isLiked = isLiked;
     }
 
     /**
@@ -42,20 +35,17 @@ public class FindAnswerResponseDto {
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindAnswerResponseDto from(Answer answer) {
+    public static FindAnswerResponseDto from(Answer answer, User user) {
 
         final Question question = answer.getQuestion();
-        final User user = answer.getUser();
+        final User author = answer.getUser();
 
         return FindAnswerResponseDto.builder()
                 .answerId(answer.getId())
-                .questionId(question.getId())
-                .username(user.getUsername())
+                .author(FindUserInQNADto.from(user, author))
                 .content(answer.getContent())
-                .createdAt(answer.getCreatedAt())
-                .chosen(answer.getChosen())
-                .likes(answer.getLikes())
-                .hidden(answer.getHidden())
+                .likecount(answer.getLikes())
+                .isLiked(false)
                 .build();
     }
 }

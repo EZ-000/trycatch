@@ -1,17 +1,24 @@
 package com.ssafy.trycatch.qna.controller;
 
+import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.qna.controller.dto.*;
+import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.CategoryService;
 import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,19 +30,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/${apiPrefix}/question")
 public class QuestionController {
     private final QuestionService questionService;
+    private final AnswerService answerService;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final TokenService tokenService;
 
     /**
      Question 엔티티 리스트를 FindQuestionResponseDto 리스트로 변환하여 반환
      */
     @GetMapping
     public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
-            @PageableDefault Pageable pageable
+            @PageableDefault Pageable pageable,
+            @RequestHeader("Authorization") String token
     ) {
         List<Question> entities = questionService.findAllQuestions(pageable);
         List<FindQuestionResponseDto> questions = entities.stream()
-                .map(FindQuestionResponseDto::from)
+                .map(question -> {
+                    User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+//                    User user = userService.findUserById(1L);
+                    List<Answer> answers = answerService.findByQuestionId(question.getId());
+                    FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user);
+                    return from;
+                })
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questions);
     }
@@ -77,10 +93,13 @@ public class QuestionController {
      */
     @GetMapping("/{questionId}")
     public ResponseEntity<FindQuestionResponseDto> findQuestionById(
-            @PathVariable("questionId") Long questionId
+            @PathVariable("questionId") Long questionId,
+            Principal principal
     ) {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(FindQuestionResponseDto.from(entity));
+        final Question question = questionService.findQuestionById(questionId);
+        final List<Answer> answer = answerService.findByQuestionId(questionId);
+        final User user = userService.findUserById(Long.valueOf(principal.getName()));
+        return ResponseEntity.ok(FindQuestionResponseDto.from(question, answer, user));
     }
 
     // MOCK API: 질문 검색
@@ -169,12 +188,14 @@ public class QuestionController {
     @Autowired
     public QuestionController(
             QuestionService questionService,
-            CategoryService categoryService,
-            UserService userService
-    ) {
+            AnswerService answerService, CategoryService categoryService,
+            UserService userService,
+            TokenService tokenService) {
         this.questionService = questionService;
+        this.answerService = answerService;
         this.categoryService = categoryService;
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
 }

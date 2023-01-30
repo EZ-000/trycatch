@@ -2,13 +2,17 @@ package com.ssafy.trycatch.qna.domain;
 
 import com.ssafy.trycatch.user.domain.User;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -70,4 +74,7 @@ public class Question {
     @OneToMany(mappedBy = "question")
     @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
+
+    @Transient
+    private List<String> tags = new ArrayList<String>();
 }

@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends PagingAndSortingRepository<Question, Long> {
     List<Question> findByTitleLike(String title, Pageable pageable);
-
 }
