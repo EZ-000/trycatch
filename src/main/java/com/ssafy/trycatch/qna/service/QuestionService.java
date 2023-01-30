@@ -53,7 +53,6 @@ public class QuestionService {
     }
 
     /**
-     *
      * @param questionId
      * @throws IllegalArgumentException questionId가 없는 경우
      */

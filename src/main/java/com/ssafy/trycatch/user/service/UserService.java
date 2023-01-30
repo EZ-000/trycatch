@@ -9,6 +9,8 @@ import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 
+import java.security.Principal;
+
 @Service
 public class UserService {
 

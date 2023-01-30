@@ -22,6 +22,9 @@ public class AcceptQuestionResponseDto {
     @Size(max = 50)
     private final String title;
     private final String content;
+
+    private final String errorCode;
+
     private final LocalDate createdAt;
     private final Instant updatedAt;
     private final Integer viewCount;
@@ -30,11 +33,12 @@ public class AcceptQuestionResponseDto {
     private final Set<Long> answerIds;
 
     @Builder
-    public AcceptQuestionResponseDto(String categoryName, String authorUsername, String title, String content, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public AcceptQuestionResponseDto(String categoryName, String authorUsername, String title, String content, String errorCode, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
         this.content = content;
+        this.errorCode = errorCode;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.viewCount = viewCount;
