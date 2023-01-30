@@ -3,7 +3,6 @@ package com.ssafy.trycatch.qna.controller.dto;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
@@ -11,11 +10,10 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -36,14 +34,14 @@ public class FindQuestionResponseDto implements Serializable {
     private final Integer likeCount;
     private final Integer answerCount;
     private final Integer viewCount;
-    private final LocalDate timeStamp;
+    private final Long timestamp;
     private final Boolean isLiked;
     private final Boolean isSolved;
     private final Boolean isBookmarked;
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, LocalDate timeStamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -54,7 +52,7 @@ public class FindQuestionResponseDto implements Serializable {
         this.likeCount = likeCount;
         this.answerCount = answerCount;
         this.viewCount = viewCount;
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
         this.isLiked = isLiked;
         this.isSolved = isSolved;
         this.isBookmarked = isBookmarked;
@@ -85,7 +83,9 @@ public class FindQuestionResponseDto implements Serializable {
                 .likeCount(question.getLikes())
                 .answerCount(answerDtos.size())
                 .viewCount(question.getViewCount())
-                .timeStamp(question.getCreatedAt())
+                .timestamp(question.getCreatedAt()
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .toInstant().toEpochMilli())
                 .isLiked(false)
                 .isSolved(false)
                 .isBookmarked(false)
