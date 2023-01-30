@@ -12,6 +12,8 @@ import lombok.Data;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,6 +72,7 @@ public class FindQuestionResponseDto implements Serializable {
         final List<FindAnswerResponseDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseDto.from(answer, user))
                 .collect(Collectors.toList());
+        final List<String> temptags = new ArrayList<String>(Arrays.asList("42good", "1stprizeisours"));
 
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())
@@ -78,7 +81,7 @@ public class FindQuestionResponseDto implements Serializable {
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())
-                .tags(question.getTags())
+                .tags(temptags)
                 .likeCount(question.getLikes())
                 .answerCount(answerDtos.size())
                 .viewCount(question.getViewCount())
