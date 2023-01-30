@@ -44,6 +44,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .answerId(answer.getId())
                 .author(FindUserInQNADto.from(user, author))
                 .content(answer.getContent())
+                .createdAt(answer.getCreatedAt())
                 .likecount(answer.getLikes())
                 .isLiked(false)
                 .build();
