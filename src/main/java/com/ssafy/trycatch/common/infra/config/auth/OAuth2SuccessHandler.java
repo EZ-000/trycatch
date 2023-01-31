@@ -47,6 +47,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		User tempUser = userRepository.findByGithubNodeId(currentUserNodeId)
 			.orElse(userRequestMapper.newEntity(oAuth2User));
 
+		tempUser.setActivated(true);
 		final User savedUser = userRepository.save(tempUser);
 
 
