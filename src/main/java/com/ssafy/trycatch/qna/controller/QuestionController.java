@@ -103,7 +103,7 @@ public class QuestionController {
     ) {
         final Question newEntity = createQuestionRequestDto.newQuestion(categoryService, userService);
         final Question savedEntity = questionService.saveQuestion(newEntity);
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity));
+        return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity, companyService));
     }
 
     /**
@@ -115,7 +115,7 @@ public class QuestionController {
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
         final Question entity = questionService.putQuestion(putQuestionRequestDto);
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(entity));
+        return ResponseEntity.ok(CreateQuestionResponseDto.from(entity, companyService));
     }
 
     @DeleteMapping("/questionId")

@@ -14,6 +14,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 public class CreateQuestionRequestDto {
@@ -26,7 +29,9 @@ public class CreateQuestionRequestDto {
 
     private String content;
 
-    private Boolean hidden;
+    private String errorCode;
+
+    private LocalDateTime createdAt;
 
     public Question newQuestion(
             CategoryService categoryService,
@@ -39,7 +44,8 @@ public class CreateQuestionRequestDto {
                 .user(author)
                 .title(title)
                 .content(content)
-                .hidden(hidden)
+                .errorCode(errorCode)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }
