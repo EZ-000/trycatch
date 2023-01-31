@@ -26,4 +26,10 @@ public class UserService {
 	public User findUserById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 	}
+
+	public void inActivateUser(long parseLong) {
+		User savedUser = userRepository.findById(parseLong).orElseThrow();
+		savedUser.setActivated(false);
+		userRepository.save(savedUser);
+	}
 }
