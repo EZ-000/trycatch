@@ -43,8 +43,7 @@ public class FindUserInQNADto implements Serializable {
         return FindUserInQNADto.builder()
                 .userId(author.getId())
                 .userName(author.getUsername())
-//                .profileImage(author.getImageSrc())
-                .profileImage("https://avatars.githubusercontent.com/user1")
+                .profileImage(author.getImageSrc())
                 .companyName(companyName)
                 .isFollowed(followees.contains(author.getId()))
                 .build();

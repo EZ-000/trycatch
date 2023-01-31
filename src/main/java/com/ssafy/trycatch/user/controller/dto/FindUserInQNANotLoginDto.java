@@ -40,8 +40,7 @@ public class FindUserInQNANotLoginDto implements Serializable {
         return FindUserInQNANotLoginDto.builder()
                 .userId(author.getId())
                 .userName(author.getUsername())
-//                .profileImage(author.getImageSrc())
-                .profileImage("https://avatars.githubusercontent.com/user1")
+                .profileImage(author.getImageSrc())
                 .companyName(companyName)
                 .isFollowed(false)
                 .build();

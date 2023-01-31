@@ -65,7 +65,10 @@ public class FindQuestionResponseDto implements Serializable {
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindQuestionResponseDto from(Question question, List<Answer> answers, User user, CompanyService companyService) {
+    public static FindQuestionResponseDto from(
+            Question question, List<Answer> answers, User user,
+            CompanyService companyService,
+            Boolean isLiked, Boolean isBookmarked ) {
         final Category category = question.getCategory();
         final User author = question.getUser();
         final List<FindAnswerResponseDto> answerDtos = answers.stream()
@@ -87,9 +90,9 @@ public class FindQuestionResponseDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
-                .isLiked(true)
+                .isLiked(isLiked)
                 .isSolved(question.getChosen())
-                .isBookmarked(false)
+                .isBookmarked(isBookmarked)
                 .answers(answerDtos)
                 .build();
     }
