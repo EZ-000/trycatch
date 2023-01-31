@@ -2,6 +2,8 @@ package com.ssafy.trycatch.common.domain;
 
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface BookmarkRepository extends CrudRepository<Bookmark, Long> {
-    Bookmark findByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, String targetType);
+    Optional<Bookmark> findByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, String targetType);
 }

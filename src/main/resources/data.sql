@@ -183,3 +183,6 @@ INSERT INTO answer VALUES
  (1, false, 'answer content', '2023-01-01', false, 1, 1, 1),
  (2, false, 'answer content', '2023-01-01', false, 2, 2, 2);
 
+INSERT INTO likes VALUES (1, 1, 1, 'question', 1);
+
+INSERT INTO bookmark VALUES (1, 1, 1, 'question', 1);
