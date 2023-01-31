@@ -1,7 +1,9 @@
 package com.ssafy.trycatch.qna.controller;
 
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.CompanyService;
+import com.ssafy.trycatch.common.service.LikesService;
 import com.ssafy.trycatch.qna.controller.dto.*;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -31,45 +34,35 @@ public class QuestionController {
     private final CategoryService categoryService;
     private final UserService userService;
     private final TokenService tokenService;
-
     private final CompanyService companyService;
+    private final LikesService likesService;
+    private final BookmarkService bookmarkService;
 
     @Autowired
     public QuestionController(
             QuestionService questionService,
             AnswerService answerService, CategoryService categoryService,
             UserService userService,
-            TokenService tokenService, CompanyService companyService) {
+            TokenService tokenService, CompanyService companyService, LikesService likesService, BookmarkService bookmarkService) {
         this.questionService = questionService;
         this.answerService = answerService;
         this.categoryService = categoryService;
         this.userService = userService;
         this.tokenService = tokenService;
         this.companyService = companyService;
+        this.likesService = likesService;
+        this.bookmarkService = bookmarkService;
     }
 
     /**
      Question 엔티티 리스트를 FindQuestionResponseDto 리스트로 변환하여 반환
      */
     @GetMapping
-    public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
+    public ResponseEntity<List<?>> findAllQuestions(
             @PageableDefault Pageable pageable,
-            @RequestHeader("Authorization") String token ) {
-            List<Question> entities = questionService.findAllQuestions(pageable);
-            List<FindQuestionResponseDto> questions = entities.stream()
-                    .map(question -> {
-                        User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
-                        List<Answer> answers = answerService.findByQuestionId(question.getId());
-                        FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user, companyService);
-                        return from;
-                    })
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(questions);
-    }
-
-    @GetMapping("/guest")
-    public ResponseEntity<List<FindQuestionResponseNotLoginDto>> findAllQuestions( @PageableDefault Pageable pageable ) {
-            List<Question> entities = questionService.findAllQuestions(pageable);
+            @RequestHeader(value = "Authorization", defaultValue = "NONE") String token ) {
+        List<Question> entities = questionService.findAllQuestions(pageable);
+        if (Objects.equals(token, "NONE")) {
             List<FindQuestionResponseNotLoginDto> questions = entities.stream()
                     .map(question -> {
                         List<Answer> answers = answerService.findByQuestionId(question.getId());
@@ -78,6 +71,20 @@ public class QuestionController {
                     })
                     .collect(Collectors.toList());
             return ResponseEntity.ok(questions);
+        }
+        else {
+            List<FindQuestionResponseDto> questions = entities.stream()
+                    .map(question -> {
+                        User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+                        List<Answer> answers = answerService.findByQuestionId(question.getId());
+                        Boolean isLiked = likesService.getLikes(user.getId(), question.getId(), "question").getActivated();
+                        Boolean isBookmarked = bookmarkService.getBookmark(user.getId(), question.getId(), "question").getActivated();
+                        FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
+                        return from;
+                    })
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(questions);
+        }
     }
 
     /**
@@ -123,7 +130,7 @@ public class QuestionController {
         final Question question = questionService.findQuestionById(questionId);
         final List<Answer> answer = answerService.findByQuestionId(questionId);
         final User user = userService.findUserById(Long.valueOf(principal.getName()));
-        return ResponseEntity.ok(FindQuestionResponseDto.from(question, answer, user, companyService));
+        return ResponseEntity.ok(FindQuestionResponseDto.from(question, answer, user, companyService, true, true));
     }
 
     // MOCK API: 질문 검색
