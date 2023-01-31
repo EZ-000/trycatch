@@ -5,6 +5,8 @@ import com.ssafy.trycatch.common.domain.BookmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookmarkService {
 
@@ -16,6 +18,6 @@ public class BookmarkService {
     }
 
     public Bookmark getBookmark(Long userId, Long targetId, String targetType) {
-        return bookmarkRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
+        return bookmarkRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(() -> new Bookmark());
     }
 }

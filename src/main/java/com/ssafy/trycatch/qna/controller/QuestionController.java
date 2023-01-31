@@ -1,5 +1,7 @@
 package com.ssafy.trycatch.qna.controller;
 
+import com.ssafy.trycatch.common.domain.Bookmark;
+import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.CompanyService;
@@ -13,6 +15,7 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,6 +26,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -75,10 +79,12 @@ public class QuestionController {
         else {
             List<FindQuestionResponseDto> questions = entities.stream()
                     .map(question -> {
-                        User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
-                        List<Answer> answers = answerService.findByQuestionId(question.getId());
-                        Boolean isLiked = likesService.getLikes(user.getId(), question.getId(), "question").getActivated();
-                        Boolean isBookmarked = bookmarkService.getBookmark(user.getId(), question.getId(), "question").getActivated();
+                        final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+                        final List<Answer> answers = answerService.findByQuestionId(question.getId());
+                        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), "question").getActivated())
+                                .orElse(false);
+                        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), "question").getActivated())
+                                .orElse(false);
                         FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
                         return from;
                     })
@@ -123,14 +129,25 @@ public class QuestionController {
      * @param questionId {@code Question}의 id
      */
     @GetMapping("/{questionId}")
-    public ResponseEntity<FindQuestionResponseDto> findQuestionById(
+    public ResponseEntity<?> findQuestionById(
             @PathVariable("questionId") Long questionId,
-            Principal principal
+            @RequestHeader(value = "Authorization", defaultValue = "NONE") String token
     ) {
-        final Question question = questionService.findQuestionById(questionId);
-        final List<Answer> answer = answerService.findByQuestionId(questionId);
-        final User user = userService.findUserById(Long.valueOf(principal.getName()));
-        return ResponseEntity.ok(FindQuestionResponseDto.from(question, answer, user, companyService, true, true));
+        final Question before = questionService.findQuestionById(questionId);
+        final List<Answer> answers = answerService.findByQuestionId(before.getId());
+        if (Objects.equals(token, "NONE")) {
+            final FindQuestionResponseNotLoginDto question = FindQuestionResponseNotLoginDto.from(before, answers, companyService);
+            return ResponseEntity.ok(question);
+        }
+        else {
+            final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+            final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), before.getId(), "question").getActivated())
+                    .orElse(false);
+            final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), before.getId(), "question").getActivated())
+                    .orElse(false);
+            final FindQuestionResponseDto question = FindQuestionResponseDto.from(before, answers, user, companyService, isLiked, isBookmarked);
+            return ResponseEntity.ok(question);
+        }
     }
 
     // MOCK API: 질문 검색
