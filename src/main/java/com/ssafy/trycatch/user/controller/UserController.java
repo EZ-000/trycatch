@@ -1,10 +1,12 @@
 package com.ssafy.trycatch.user.controller;
 
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import com.ssafy.trycatch.user.controller.dto.ReportRequestDto;
 import com.ssafy.trycatch.user.controller.dto.UserRequestDto;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.FollowService;
+import com.ssafy.trycatch.user.service.ReportService;
 import com.ssafy.trycatch.user.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +27,17 @@ public class UserController {
 	private final UserService userService;
 	private final TokenService tokenService;
 	private final FollowService followService;
+	private final ReportService reportService;
 
 	@Autowired
 	public UserController(UserService userService,
 		TokenService tokenService,
-		FollowService followService) {
+		FollowService followService,
+		ReportService reportService) {
 		this.userService = userService;
 		this.tokenService = tokenService;
 		this.followService = followService;
+		this.reportService = reportService;
 	}
 
 	@GetMapping("/{userId}")
@@ -49,11 +54,13 @@ public class UserController {
 
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<String> removeUser(@PathVariable Long userId,
-		@RequestHeader(value = "Authorization", defaultValue = "NONE") String token) {
+		@RequestHeader(value = "Authorization", defaultValue = "NONE") String token,
+		@RequestBody ReportRequestDto reason) {
 		if (!tokenService.verifyToken(token)) {
 			throw new ValidateException("Invalid Token");
 		}
 		userService.inActivateUser(Long.parseLong(tokenService.getAccessToken(token)));
+		reportService.registerReason(reason);
 		return ResponseEntity.ok("사용자가 탈퇴합니다. 단, 테이블에서는 활성 상태가 수정됩니다.");
 	}
 
