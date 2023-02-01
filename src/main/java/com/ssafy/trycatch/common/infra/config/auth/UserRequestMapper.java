@@ -20,7 +20,7 @@ public class UserRequestMapper {
 			.email((String)attributes.get("email"))
 			.calendarMail(null)
 			.confirmationCode(0)
-			.companyId(0L)
+			.company(null)
 			.createdAt(LocalDate.now())
 			.points(0)
 			.imageSrc((String)attributes.get("imageSrc"))

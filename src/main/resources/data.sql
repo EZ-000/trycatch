@@ -1,6 +1,11 @@
+INSERT INTO company(id, name) VALUES
+    (1, 'defualt'),
+    (2, 'try fall'),
+    (3, 'try catch');
+
 INSERT INTO user(company_id, github_node_id, username, git_address, email, activated, calendar_mail, confirmation_code, introduction, created_at, points, image_src) VALUES
  (1, 'AAA', '1', 'git_add1', 'mail1', true, 'c1_mail',111,'i am first','2023-01-29',0,'null'),
- (0, 'BBB', '2', 'git_add2', 'mail2', false, 'c2_mail',222,'i am second','2023-01-30',0,'null');
+ (2, 'BBB', '2', 'git_add2', 'mail2', false, 'c2_mail',222,'i am second','2023-01-30',0,'null');
 
 INSERT INTO badge VALUES
                       (1, 'super', 'test badge 1'),
@@ -13,10 +18,6 @@ INSERT INTO banner VALUES
 INSERT INTO challenge VALUES
                           (1, 'super', '2023-02-01', 'test challenge 1', '2023-01-01'),
                           (2, 'doper', '2023-02-02', 'test challenge 2', '2023-01-02');
-
-INSERT INTO company VALUES
-                        (1, 'try catch'),
-                        (2, 'try fall');
 
 INSERT INTO conference VALUES
                            (1, 'summary 1', 'title 1', 'url 1', 1),
@@ -60,7 +61,7 @@ INSERT INTO report VALUES
                        (1, 'content 1', '2023-01-01 12:00:00', 1, 1, 'feed'),
                        (2, 'content 2', '2023-01-01 12:00:00', 2, 2, 'qna');
 
-INSERT INTO roadmap(id, user_id, node, edge) VALUES
+INSERT INTO roadmap(id, user_id, node, edge, tag, title) VALUES
     (1,1,'[{id: ''1'',
         type: ''input'',
         data: { label: ''An input node'' },
@@ -112,7 +113,7 @@ INSERT INTO roadmap(id, user_id, node, edge) VALUES
         animated: true,
         style: { stroke: ''#fff'' },
       },
-    ]'),
+    ]','tag1','title1'),
     (2,2,'[{id: ''1'',
         type: ''input'',
         data: { label: ''An input node'' },
@@ -164,7 +165,7 @@ INSERT INTO roadmap(id, user_id, node, edge) VALUES
         animated: true,
         style: { stroke: ''#fff'' },
       },
-    ]');
+    ]','tag2','title2');
 INSERT INTO subscription VALUES
                              (1, 1, 1),
                              (2, 2, 2);
