@@ -10,12 +10,15 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
 
+import com.ssafy.trycatch.common.domain.Company;
+import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.gamification.domain.ChallengeGroup;
 import com.ssafy.trycatch.gamification.domain.MyBadge;
 import com.ssafy.trycatch.gamification.domain.MyChallenge;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.roadmap.domain.Roadmap;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,12 +54,12 @@ public class User {
 	@Column(name = "git_address", length = 50)
 	private String gitAddress;
 
-	@Column(name = "activated")
-	private Boolean activated;
-
 	@Size(max = 50)
 	@Column(name = "email", length = 50)
 	private String email;
+
+	@Column(name = "activated")
+	private Boolean activated;
 
 	@Size(max = 50)
 	@Column(name = "calendar_mail", length = 50)
@@ -64,9 +67,10 @@ public class User {
 
 	@Column(name = "confirmation_code")
 	private Integer confirmationCode;
-	
-	@Column(name = "company_id")
-	private Long companyId;
+  
+	@Size(max = 200)
+	@Column(name = "introduction", length = 200)
+	private String introduction;
 
 	@NotNull
 	@Column(name = "created_at", nullable = false)
@@ -75,6 +79,14 @@ public class User {
 	@NotNull
 	@Column(name = "points", nullable = false)
 	private Integer points;
+
+	@Size(max = 100)
+	@Column(name = "image_src", length = 100)
+	private String imageSrc;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "company_id")
+	private Company company;
 
 	@OneToMany(mappedBy = "follower")
 	@ToString.Exclude
@@ -112,31 +124,30 @@ public class User {
 	@ToString.Exclude
 	private Set<MyChallenge> myChallenges = new LinkedHashSet<>();
 
+	@OneToOne(mappedBy = "user")
+	@ToString.Exclude
+	private Roadmap roadmaps;
+
 	@OneToMany(mappedBy = "user")
 	@ToString.Exclude
 	private Set<History> histories = new LinkedHashSet<>();
 
-	@Size(max = 200)
-	@Column(name = "introduction", length = 200)
-	private String introduction;
-
-	@Size(max = 100)
-	@Column(name = "image_src", length = 100)
-	private String imageSrc;
-
 	@Builder
-	public User(String githubNodeId, String username, String gitAddress, Boolean activated, String email,
-		String calendarMail, Integer confirmationCode, Long companyId, LocalDate createdAt, Integer points, String imageSrc) {
+	public User(Long id, String githubNodeId, String username, String gitAddress, String email, Boolean activated,
+		String calendarMail, Integer confirmationCode, String introduction, LocalDate createdAt, Integer points,
+		String imageSrc, Company company) {
+		this.id = id;
 		this.githubNodeId = githubNodeId;
 		this.username = username;
 		this.gitAddress = gitAddress;
-		this.activated = activated;
 		this.email = email;
+		this.activated = activated;
 		this.calendarMail = calendarMail;
 		this.confirmationCode = confirmationCode;
-		this.companyId = companyId;
+		this.introduction = introduction;
 		this.createdAt = createdAt;
 		this.points = points;
 		this.imageSrc = imageSrc;
+		this.company = company;
 	}
 }
