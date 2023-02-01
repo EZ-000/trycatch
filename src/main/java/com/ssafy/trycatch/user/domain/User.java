@@ -67,7 +67,7 @@ public class User {
 
 	@Column(name = "confirmation_code")
 	private Integer confirmationCode;
-
+  
 	@Size(max = 200)
 	@Column(name = "introduction", length = 200)
 	private String introduction;

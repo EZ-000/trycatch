@@ -3,10 +3,6 @@ INSERT INTO company(id, name) VALUES
     (2, 'try fall'),
     (3, 'try catch');
 
-INSERT INTO category(id, name) VALUES
-  (1, 'test category 1'),
-  (2, 'test category 2');
-
 INSERT INTO user(company_id, github_node_id, username, git_address, email, activated, calendar_mail, confirmation_code, introduction, created_at, points, image_src) VALUES
  (1, 'AAA', '1', 'git_add1', 'mail1', true, 'c1_mail',111,'i am first','2023-01-29',0,'null'),
  (2, 'BBB', '2', 'git_add2', 'mail2', false, 'c2_mail',222,'i am second','2023-01-30',0,'null');
@@ -47,13 +43,15 @@ INSERT INTO my_challenge VALUES
                              (1, '2023-01-01 12:00:00', 1, false, 1, 1),
                              (2, '2023-01-01 12:00:00', 1, true, 2, 2);
 
-INSERT INTO question VALUES
- (1, false, 'content 1', '2023-01-01', 'error code 1', false, 0, 'title 1', '2023-01-01 12:00:00', 0, 1, 1),
- (2, true, 'content 2', '2023-01-02', 'error code 2', false, 0, 'title 2', '2023-01-01 12:00:00', 0, 2, 2);
+INSERT INTO question
+ (category_name, user_id, title, content, error_code, created_at, updated_at, chosen, view_count, likes, hidden)
+VALUES
+ ('DEV', 1, 'title 1', '2023-01-01', 'error code 1', current_date, null, 0, 0, 0, 0),
+ ('DEV', 1, 'title 2', '2023-01-02', 'error code 2', current_date, null, 0, 0, 0, 0);
 
 INSERT INTO ranking VALUES
-                        (1, 1, 1),
-                        (2, 2, 2);
+                        (1, 'DEV', 1),
+                        (2, 'DEV', 2);
 
 INSERT INTO "read" VALUES
                        (1, false, 1, 1),

@@ -1,14 +1,8 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.CategoryService;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @NoArgsConstructor
