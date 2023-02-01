@@ -65,7 +65,10 @@ public class CreateQuestionResponseDto implements Serializable {
      */
     public static CreateQuestionResponseDto from(
             Question question,
-            CompanyService companyService ) {
+            CompanyService companyService,
+            Boolean isLiked,
+            Boolean isBookmarked
+    ) {
         final User user = question.getUser();
         final User author = question.getUser();
         final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
@@ -80,13 +83,13 @@ public class CreateQuestionResponseDto implements Serializable {
                 .tags(temptags)
                 .likeCount(0)
                 .answerCount(0)
-                .viewCount(0)
+                .viewCount(question.getViewCount())
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
-                .isLiked(false)
-                .isSolved(false)
-                .isBookmarked(false)
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
                 .answers(new ArrayList<>())
                 .build();
     }
