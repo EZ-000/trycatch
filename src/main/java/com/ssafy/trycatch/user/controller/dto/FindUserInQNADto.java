@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.user.controller.dto;
 
+import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.service.CategoryService;
 import com.ssafy.trycatch.user.domain.Follow;
@@ -33,11 +34,11 @@ public class FindUserInQNADto implements Serializable {
 
         final Set<Follow> followees = user.getFollowees();
         final String companyName;
-        if (author.getCompanyId() == 0) {
+        if (null == author.getCompany()) {
             companyName = "";
         }
         else {
-            companyName = companyService.findCompanyById(author.getCompanyId()).getName();
+            companyName = companyService.findCompanyById(author.getCompany().getId()).getName();
         }
 
         return FindUserInQNADto.builder()

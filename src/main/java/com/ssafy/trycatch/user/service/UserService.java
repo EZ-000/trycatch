@@ -32,4 +32,8 @@ public class UserService {
 		savedUser.setActivated(false);
 		userRepository.save(savedUser);
 	}
+
+	public Long findNameToId(String userName) {
+		return userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
+	}
 }

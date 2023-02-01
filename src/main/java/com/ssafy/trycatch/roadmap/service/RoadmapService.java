@@ -1,8 +1,11 @@
 package com.ssafy.trycatch.roadmap.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.trycatch.roadmap.controller.dto.RoadmapRequestDto;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.domain.RoadmapRepository;
 import com.ssafy.trycatch.roadmap.service.exceptions.RoadmapNotFoundException;
@@ -21,11 +24,16 @@ public class RoadmapService {
 	}
 
 	public Roadmap register(Roadmap roadmap) {
+
 		return roadmapRepository.save(roadmap);
 	}
 
 	public void modify(Long userId, Roadmap roadmap) {
 		roadmapRepository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
 		roadmapRepository.save(roadmap);
+	}
+
+	public List<Roadmap> findAll() {
+		return roadmapRepository.findAll();
 	}
 }
