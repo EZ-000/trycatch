@@ -18,17 +18,17 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
     private final FindUserInQNANotLoginDto author;
     private final String content;
     private final Long timestamp;
-    private final Integer likecount;
+    private final Integer likeCount;
     private final Boolean isLiked;
 
 
     @Builder
-    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Integer likecount, Boolean isLiked) {
+    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Integer likeCount, Boolean isLiked) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
         this.timestamp = timestamp;
-        this.likecount = likecount;
+        this.likeCount = likeCount;
         this.isLiked = isLiked;
     }
 
@@ -49,7 +49,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
-                .likecount(answer.getLikes())
+                .likeCount(answer.getLikes())
                 .isLiked(false)
                 .build();
     }
