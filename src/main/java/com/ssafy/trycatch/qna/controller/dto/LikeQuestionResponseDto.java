@@ -1,7 +1,7 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 @Data
 public class LikeQuestionResponseDto {
     @Size(max = 30)
-    private final String categoryName;
+    private final QuestionCategory categoryName;
     @Size(max = 50)
     private final String authorUsername;
     @Size(max = 50)
@@ -31,7 +30,7 @@ public class LikeQuestionResponseDto {
     private final Set<Long> answerIds;
 
     @Builder
-    public LikeQuestionResponseDto(String categoryName, String authorUsername, String title, String content, Long timestamp, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public LikeQuestionResponseDto(QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
@@ -50,8 +49,6 @@ public class LikeQuestionResponseDto {
      * @return 새로운 DTO 인스턴스
      */
     public static LikeQuestionResponseDto from(Question question) {
-
-        final Category category = question.getCategory();
         final User author = question.getUser();
         final Set<Long> answerIds = question.getAnswers()
                 .stream()
@@ -59,7 +56,7 @@ public class LikeQuestionResponseDto {
                 .collect(Collectors.toSet());
 
         return LikeQuestionResponseDto.builder()
-                .categoryName(category.getName())
+                .categoryName(question.getCategoryName())
                 .authorUsername(author.getUsername())
                 .title(question.getTitle())
                 .content(question.getTitle())

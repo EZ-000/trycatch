@@ -1,12 +1,10 @@
 package com.ssafy.trycatch.user.controller.dto;
 
 import com.ssafy.trycatch.common.service.CompanyService;
-import com.ssafy.trycatch.qna.service.CategoryService;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.kafka.common.protocol.types.Field;
 
 import java.io.Serializable;
 import java.util.Set;

@@ -1,8 +1,8 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
 import com.ssafy.trycatch.user.domain.User;
@@ -15,7 +15,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +26,7 @@ public class FindQuestionResponseDto implements Serializable {
     @Size(max = 50)
     private final FindUserInQNADto author;
     @Size(max = 30)
-    private final String category;
+    private final QuestionCategory categoryName;
     @Size(max = 50)
     private final String title;
     private final String content;
@@ -43,10 +42,10 @@ public class FindQuestionResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory categoryName, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
-        this.category = category;
+        this.categoryName = categoryName;
         this.title = title;
         this.content = content;
         this.errorCode = errorCode;
@@ -70,7 +69,6 @@ public class FindQuestionResponseDto implements Serializable {
             Question question, List<Answer> answers, User user,
             CompanyService companyService,
             Boolean isLiked, Boolean isBookmarked ) {
-        final Category category = question.getCategory();
         final User author = question.getUser();
         final List<FindAnswerResponseDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseDto.from(answer, user, companyService))
@@ -80,7 +78,7 @@ public class FindQuestionResponseDto implements Serializable {
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNADto.from(user, author, companyService))
-                .category(category.getName())
+                .categoryName(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())

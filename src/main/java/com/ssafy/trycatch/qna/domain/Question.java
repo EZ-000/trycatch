@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.qna.domain;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -31,10 +32,9 @@ public class Question {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    @ToString.Exclude
-    private Category category;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "category_name")
+    private QuestionCategory categoryName;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

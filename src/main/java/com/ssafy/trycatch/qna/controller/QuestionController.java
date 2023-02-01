@@ -1,7 +1,7 @@
 package com.ssafy.trycatch.qna.controller;
 
-import com.ssafy.trycatch.common.domain.Bookmark;
-import com.ssafy.trycatch.common.domain.Likes;
+import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.CompanyService;
@@ -10,12 +10,10 @@ import com.ssafy.trycatch.qna.controller.dto.*;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
-import com.ssafy.trycatch.qna.service.CategoryService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +32,6 @@ import java.util.stream.Collectors;
 public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
-    private final CategoryService categoryService;
     private final UserService userService;
     private final TokenService tokenService;
     private final CompanyService companyService;
@@ -45,12 +41,11 @@ public class QuestionController {
     @Autowired
     public QuestionController(
             QuestionService questionService,
-            AnswerService answerService, CategoryService categoryService,
+            AnswerService answerService,
             UserService userService,
             TokenService tokenService, CompanyService companyService, LikesService likesService, BookmarkService bookmarkService) {
         this.questionService = questionService;
         this.answerService = answerService;
-        this.categoryService = categoryService;
         this.userService = userService;
         this.tokenService = tokenService;
         this.companyService = companyService;
@@ -81,9 +76,10 @@ public class QuestionController {
                     .map(question -> {
                         final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
                         final List<Answer> answers = answerService.findByQuestionId(question.getId());
-                        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), "question").getActivated())
+                        final TargetType type = TargetType.QUESTION;
+                        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
                                 .orElse(false);
-                        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), "question").getActivated())
+                        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
                                 .orElse(false);
                         FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
                         return from;
@@ -99,9 +95,12 @@ public class QuestionController {
      */
     @PostMapping
     public ResponseEntity<CreateQuestionResponseDto> createQuestion(
+            @RequestHeader(value = "Authorization", defaultValue = "NONE") String token,
             @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
-        final Question newEntity = createQuestionRequestDto.newQuestion(categoryService, userService);
+        final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+        final QuestionCategory categoryName = QuestionCategory.DEV;
+        final Question newEntity = createQuestionRequestDto.newQuestion(categoryName, user);
         final Question savedEntity = questionService.saveQuestion(newEntity);
         return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity, companyService));
     }
@@ -141,9 +140,10 @@ public class QuestionController {
         }
         else {
             final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
-            final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), before.getId(), "question").getActivated())
+            final TargetType type = TargetType.QUESTION;
+            final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), before.getId(), type).getActivated())
                     .orElse(false);
-            final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), before.getId(), "question").getActivated())
+            final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), before.getId(), type).getActivated())
                     .orElse(false);
             final FindQuestionResponseDto question = FindQuestionResponseDto.from(before, answers, user, companyService, isLiked, isBookmarked);
             return ResponseEntity.ok(question);

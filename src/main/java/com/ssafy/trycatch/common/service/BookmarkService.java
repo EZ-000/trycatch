@@ -2,6 +2,7 @@ package com.ssafy.trycatch.common.service;
 
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
+import com.ssafy.trycatch.common.domain.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class BookmarkService {
         this.bookmarkRepository = bookmarkRepository;
     }
 
-    public Bookmark getBookmark(Long userId, Long targetId, String targetType) {
+    public Bookmark getBookmark(Long userId, Long targetId, TargetType targetType) {
         return bookmarkRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(() -> new Bookmark());
     }
 }

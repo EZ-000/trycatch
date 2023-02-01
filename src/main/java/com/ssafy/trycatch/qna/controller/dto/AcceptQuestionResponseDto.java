@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
@@ -53,7 +52,6 @@ public class AcceptQuestionResponseDto {
      */
     public static AcceptQuestionResponseDto from(Question question) {
 
-        final Category category = question.getCategory();
         final User author = question.getUser();
         final Set<Long> answerIds = question.getAnswers()
                 .stream()
@@ -61,7 +59,7 @@ public class AcceptQuestionResponseDto {
                 .collect(Collectors.toSet());
 
         return AcceptQuestionResponseDto.builder()
-                .categoryName(category.getName())
+//                .categoryName(category.getName())
                 .authorUsername(author.getUsername())
                 .title(question.getTitle())
                 .content(question.getTitle())
