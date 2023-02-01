@@ -4,13 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
-import org.h2.engine.UserBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ssafy.trycatch.user.domain.FollowRepository;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
 
@@ -30,11 +28,10 @@ class UserServiceTest {
 		User addUser = User.builder()
 			.id(userId)
 			.activated(true)
-			.companyId(0L)
+			.company(null)
 			.points(0)
 			.createdAt(LocalDate.now())
 			.build();
-
 		userRepository.save(addUser);
 
 		final Long afterInsertCount = userRepository.count();
