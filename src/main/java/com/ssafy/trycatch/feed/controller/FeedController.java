@@ -4,6 +4,9 @@ import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
 import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto.Feed;
 import com.ssafy.trycatch.feed.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +30,19 @@ public class FeedController {
      * TODO : 토큰이 있을 경우 연관도 순으로 반영합니다.
      */
     @GetMapping("/list")
-    public ResponseEntity<FindFeedResponseDto> findFeeds() {
-        return ResponseEntity.ok(FindFeedResponseDto.newDummy(10));
+    public ResponseEntity<FindFeedResponseDto> findFeeds(
+            @PageableDefault(
+                    sort = "publish_date",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+
+        final List<Feed> feeds = feedService.latestFeeds(pageable)
+                                            .stream()
+                                            .map(Feed::newFeed)
+                                            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new FindFeedResponseDto(feeds));
     }
 
     @GetMapping("/bookmark")
