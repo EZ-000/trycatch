@@ -1,8 +1,8 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNANotLoginDto;
 import com.ssafy.trycatch.user.domain.User;
@@ -23,7 +23,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
     @Size(max = 50)
     private final FindUserInQNANotLoginDto author;
     @Size(max = 30)
-    private final String category;
+    private final QuestionCategory categoryName;
     @Size(max = 50)
     private final String title;
     private final String content;
@@ -39,10 +39,10 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
     private final List<FindAnswerResponseNotLoginDto> answers;
 
     @Builder
-    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
+    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, QuestionCategory categoryName, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
         this.questionId = questionId;
         this.author = author;
-        this.category = category;
+        this.categoryName = categoryName;
         this.title = title;
         this.content = content;
         this.errorCode = errorCode;
@@ -63,7 +63,6 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
      * @return 새로운 DTO 인스턴스
      */
     public static FindQuestionResponseNotLoginDto from(Question question, List<Answer> answers, CompanyService companyService) {
-        final Category category = question.getCategory();
         final User author = question.getUser();
         final List<FindAnswerResponseNotLoginDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseNotLoginDto.from(answer, companyService))
@@ -73,7 +72,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
         return FindQuestionResponseNotLoginDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNANotLoginDto.from(author, companyService))
-                .category(category.getName())
+                .categoryName(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())

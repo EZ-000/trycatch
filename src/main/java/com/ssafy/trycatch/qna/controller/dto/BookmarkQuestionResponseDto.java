@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,7 +49,7 @@ public class BookmarkQuestionResponseDto {
      */
     public static BookmarkQuestionResponseDto from(Question question) {
 
-        final Category category = question.getCategory();
+//        final Category category = question.getCategory();
         final User author = question.getUser();
         final Set<Long> answerIds = question.getAnswers()
                 .stream()
@@ -59,7 +57,7 @@ public class BookmarkQuestionResponseDto {
                 .collect(Collectors.toSet());
 
         return BookmarkQuestionResponseDto.builder()
-                .categoryName(category.getName())
+//                .categoryName(category.getName())
                 .authorUsername(author.getUsername())
                 .title(question.getTitle())
                 .content(question.getTitle())

@@ -1,27 +1,18 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.qna.domain.Category;
-import com.ssafy.trycatch.qna.domain.CategoryRepository;
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.CategoryService;
-import com.ssafy.trycatch.qna.service.exceptions.CategoryNotFoundException;
 import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.service.UserService;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 public class CreateQuestionRequestDto {
 
-    private Long categoryId;
+    private QuestionCategory categoryName;
 
     private Long authorId;
 
@@ -34,13 +25,12 @@ public class CreateQuestionRequestDto {
     private LocalDateTime createdAt;
 
     public Question newQuestion(
-            CategoryService categoryService,
-            UserService userService
+            QuestionCategory categoryName,
+            User user
     ) {
-        final Category category = categoryService.findCategoryById(categoryId);
-        final User author = userService.findUserById(authorId);
+        final User author = user;
         return Question.builder()
-                .category(category)
+                .categoryName(categoryName)
                 .user(author)
                 .title(title)
                 .content(content)
