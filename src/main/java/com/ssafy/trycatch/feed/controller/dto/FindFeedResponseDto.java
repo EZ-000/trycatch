@@ -45,6 +45,8 @@ public class FindFeedResponseDto {
 
         private List<String> keywords;
 
+        private Boolean isBookmarked;
+
         public static Feed newDummy(Long id) {
             List<String> tags = List.of("" +id);
             LocalDateTime now = LocalDateTime.now();
@@ -72,6 +74,7 @@ public class FindFeedResponseDto {
                     .thumbnailImage(esFeed.getThumbnailUrl())
                     .tags(esFeed.getTags())
                     .keywords(esFeed.getKeywords())
+                    .isBookmarked(false) // FIXME
                     .build();
         }
     }
