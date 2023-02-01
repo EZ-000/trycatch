@@ -2,7 +2,8 @@ package com.ssafy.trycatch.common.domain;
 
 public enum QuestionCategory {
     DEV("dev"),
-    CAREER("career");
+    CAREER("career"),
+    DEFAULT("default");
 
     private String category;
 

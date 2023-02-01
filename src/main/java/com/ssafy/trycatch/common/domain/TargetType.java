@@ -5,7 +5,8 @@ public enum TargetType {
     ANSWER("answer"),
     FEED("feed"),
     ROADMAP("roadmap"),
-    USER("user");
+    USER("user"),
+    DEFAULT("default");
 
     private String type;
 
