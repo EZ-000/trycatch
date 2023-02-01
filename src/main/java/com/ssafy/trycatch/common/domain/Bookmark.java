@@ -30,8 +30,9 @@ public class Bookmark {
     private Long targetId;
 
     @Size(max = 10)
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "target_type", length = 10)
-    private String targetType;
+    private TargetType targetType;
 
     @Column(name = "activated")
     private Boolean activated;

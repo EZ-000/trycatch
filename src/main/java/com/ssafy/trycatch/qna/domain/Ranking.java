@@ -1,6 +1,6 @@
 package com.ssafy.trycatch.qna.domain;
 
-import com.ssafy.trycatch.qna.domain.Category;
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,11 +20,11 @@ public class Ranking {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    // 나중에 사용 방법에 따라 ENUM TargetType 등으로 수정해야합니다.
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    @ToString.Exclude
-    private Category category;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "category_name")
+    private QuestionCategory category;
 
     @Column(name = "score")
     private Integer score;

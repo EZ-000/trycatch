@@ -1,7 +1,7 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.service.CompanyService;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
 import com.ssafy.trycatch.user.domain.User;
@@ -24,7 +24,7 @@ public class CreateQuestionResponseDto implements Serializable {
     @Size(max = 50)
     private final FindUserInQNADto author;
     @Size(max = 30)
-    private final String category;
+    private final QuestionCategory categoryName;
     @Size(max = 50)
     private final String title;
     private final String content;
@@ -40,10 +40,10 @@ public class CreateQuestionResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public CreateQuestionResponseDto(Long questionId, FindUserInQNADto author, String category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public CreateQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory categoryName, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
-        this.category = category;
+        this.categoryName = categoryName;
         this.title = title;
         this.content = content;
         this.errorCode = errorCode;
@@ -66,7 +66,6 @@ public class CreateQuestionResponseDto implements Serializable {
     public static CreateQuestionResponseDto from(
             Question question,
             CompanyService companyService ) {
-        final Category category = question.getCategory();
         final User user = question.getUser();
         final User author = question.getUser();
         final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
@@ -74,7 +73,7 @@ public class CreateQuestionResponseDto implements Serializable {
         return CreateQuestionResponseDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNADto.from(user, author, companyService))
-                .category(category.getName())
+                .categoryName(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())

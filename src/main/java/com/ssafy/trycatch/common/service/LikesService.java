@@ -2,6 +2,7 @@ package com.ssafy.trycatch.common.service;
 
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
+import com.ssafy.trycatch.common.domain.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public class LikesService {
     @Autowired
     public LikesService(LikesRepository likesRepository) { this.likesRepository = likesRepository; }
 
-    public Likes getLikes(Long userId, Long targetId, String targetType) {
+    public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
         return likesRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(() -> new Likes());
     }
 }

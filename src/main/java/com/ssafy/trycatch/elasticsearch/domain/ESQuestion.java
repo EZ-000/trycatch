@@ -38,7 +38,7 @@ public class ESQuestion {
         return ESQuestion.builder()
                 .title(entity.getTitle())
                 .content(entity.getContent())
-                .category(entity.getCategory().getName())
+                .category(entity.getCategoryName().toString())
                 .build();
     }
 }

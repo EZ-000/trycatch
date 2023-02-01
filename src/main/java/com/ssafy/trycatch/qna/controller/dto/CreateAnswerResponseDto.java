@@ -38,7 +38,6 @@ public class CreateAnswerResponseDto implements Serializable {
      * @return 새로운 DTO 인스턴스
      */
     public static CreateAnswerResponseDto from(Answer answer) {
-
         final Question question = answer.getQuestion();
         final User user = answer.getUser();
 
