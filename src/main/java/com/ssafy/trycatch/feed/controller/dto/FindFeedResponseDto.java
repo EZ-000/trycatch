@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -13,6 +15,7 @@ import java.util.stream.LongStream;
 @Data
 public class FindFeedResponseDto {
 
+    private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     List<Feed> feedList;
 
     @Builder
@@ -28,19 +31,21 @@ public class FindFeedResponseDto {
 
         private String title;
 
-        private String content;
+        private String summary;
 
         private String companyName;
 
         private String createdAt;
 
-        private Boolean isBookmarked;
-
-        private String blogURL;
+        private String url;
 
         private String thumbnailImage;
 
         private List<String> tags;
+
+        private List<String> keywords;
+
+        private Boolean isBookmarked;
 
         public static Feed newDummy(Long id) {
             List<String> tags = List.of("" +id);
@@ -48,11 +53,10 @@ public class FindFeedResponseDto {
             return Feed.builder()
                     .feedId("" + id)
                     .title("title-" + id)
-                    .content("content-" + id)
+                    .summary("summary-" + id)
                     .companyName("company-" + id)
                     .createdAt("2023-01-01")
-                    .isBookmarked(false)
-                    .blogURL("https://i8e108.p.ssafy.io/")
+                    .url("https://i8e108.p.ssafy.io/")
                     .thumbnailImage("https://i8e108.p.ssafy.io/assets/favicon-1170e8b7.ico")
                     .tags(tags)
                     .build();
@@ -60,22 +64,17 @@ public class FindFeedResponseDto {
 
         public static Feed newFeed(ESFeed esFeed) {
 
-            List<String> images = esFeed.getImages();
-            String imageUrl = "https://i8e108.p.ssafy.io/assets/favicon-1170e8b7.ico";
-            if (!images.isEmpty()) {
-                imageUrl = images.get(0);
-            }
-
             return Feed.builder()
                     .feedId(esFeed.getId())
                     .title(esFeed.getTitle())
-                    .content(esFeed.getContent())
-                    .companyName(esFeed.getCompanyKo())
-                    .createdAt(esFeed.getCreatedAt())
-                    .isBookmarked(false)
-                    .blogURL(esFeed.getUrl())
-                    .thumbnailImage(imageUrl)
+                    .summary(esFeed.getSummary())
+                    .companyName(esFeed.getName())
+                    .createdAt(esFeed.getPublishDate().format(dateFormat))
+                    .url(esFeed.getUrl())
+                    .thumbnailImage(esFeed.getThumbnailUrl())
                     .tags(esFeed.getTags())
+                    .keywords(esFeed.getKeywords())
+                    .isBookmarked(false) // FIXME
                     .build();
         }
     }

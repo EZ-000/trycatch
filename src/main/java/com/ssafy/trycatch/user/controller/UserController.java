@@ -1,7 +1,17 @@
 package com.ssafy.trycatch.user.controller;
 
+import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
+import com.ssafy.trycatch.user.domain.Follow;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.FollowService;
 import com.ssafy.trycatch.user.service.UserService;
+import com.ssafy.trycatch.user.service.WithdrawalService;
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +24,25 @@ import javax.websocket.server.PathParam;
 public class UserController {
 
 	private final UserService userService;
+	private final TokenService tokenService;
+	private final FollowService followService;
+	private final WithdrawalService withdrawalService;
 
-	public UserController(UserService userService) {
+	@Autowired
+	public UserController(UserService userService,
+		TokenService tokenService,
+		FollowService followService,
+		WithdrawalService withdrawalService) {
 		this.userService = userService;
+		this.tokenService = tokenService;
+		this.followService = followService;
+		this.withdrawalService = withdrawalService;
 	}
 
 	@GetMapping("/{userId}")
 	public ResponseEntity<String> findUser(@PathVariable Long userId) {
+		User user = userService.findUserById(userId);
+
 		return ResponseEntity.ok("사용자를 조회합니다.");
 	}
 
@@ -30,7 +52,14 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<String> removeUser(@PathVariable Long userId) {
+	public ResponseEntity<String> removeUser(@PathVariable Long userId,
+		@RequestHeader(value = "Authorization", defaultValue = "NONE") String token,
+		@RequestBody WithdrawalRequestDto reason) {
+		if (!tokenService.verifyToken(token)) {
+			throw new ValidateException("Invalid Token");
+		}
+		userService.inActivateUser(Long.parseLong(tokenService.getAccessToken(token)));
+		withdrawalService.registerReason(reason);
 		return ResponseEntity.ok("사용자가 탈퇴합니다. 단, 테이블에서는 활성 상태가 수정됩니다.");
 	}
 
@@ -75,7 +104,17 @@ public class UserController {
 	}
 
 	@PostMapping("/follow/{userId}")
-	public ResponseEntity<String> followUser(@PathVariable Long userId) {
+	public ResponseEntity<String> followUser(@PathVariable Long userId,
+		@RequestHeader(value = "Authorization", defaultValue = "NONE") String token) {
+		if (!tokenService.verifyToken(token)) {
+			throw new ValidateException("Invalid Token");
+		}
+
+		//	follow(src,des), src가 des를 팔로우.
+		final User src = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+		final User des = userService.findUserById(userId);
+		final Follow follow = followService.follow(src, des);
+
 		return ResponseEntity.ok("다른 사용자를 팔로우합니다.");
 	}
 
