@@ -64,8 +64,7 @@ public class User {
 
 	@Column(name = "confirmation_code")
 	private Integer confirmationCode;
-
-	@NotNull
+	
 	@Column(name = "company_id")
 	private Long companyId;
 
