@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.trycatch.common.domain.ReportRepository;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.roadmap.controller.dto.RoadmapListResponseDto;
 import com.ssafy.trycatch.roadmap.controller.dto.RoadmapRequestDto;
 import com.ssafy.trycatch.roadmap.controller.dto.RoadmapResponseDto;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
-import com.ssafy.trycatch.roadmap.domain.RoadmapRepository;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
@@ -66,11 +65,11 @@ public class RoadmapController {
 		if (!tokenService.verifyToken(token)) {
 			throw new ValidateException("Invalid Token");
 		}
+
+		Roadmap roadmap = roadmapRequestDto.toEntity();
+		// 작성자를 찾고 Setting
 		final Long userId = Long.parseLong(tokenService.getUid(token));
 		User writer = userService.findUserById(userId);
-
-		// 작성자를 찾고 Setting
-		Roadmap roadmap = roadmapRequestDto.toEntity();
 		roadmap.setUser(writer);
 
 		Roadmap registeredRoadmap = roadmapService.register(roadmap);
@@ -88,7 +87,25 @@ public class RoadmapController {
 			throw new ValidateException("Invalid Token");
 		}
 
-		Roadmap roadmap = roadmapRequestDto.toEntity();
+		final Roadmap roadmap = roadmapRequestDto.toEntity();
+		// 작성자를 찾고 Setting
+		final Long userId = Long.parseLong(tokenService.getUid(token));
+
+		roadmapService.modify(userId, roadmap);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{userName}")
+	public ResponseEntity<String> removeRoadmap(
+		@PathVariable String userName,
+		@RequestHeader(value = "Authorization", defaultValue = "NONE") String token) {
+		if (!tokenService.verifyToken(token)) {
+			throw new ValidateException("Invalid Token");
+		}
+
+		final Long userId = Long.parseLong(tokenService.getUid(token));
+		roadmapService.remove(userId);
 
 		return ResponseEntity.ok().build();
 	}

@@ -32,7 +32,6 @@ class UserServiceTest {
 			.points(0)
 			.createdAt(LocalDate.now())
 			.build();
-
 		userRepository.save(addUser);
 
 		final Long afterInsertCount = userRepository.count();
