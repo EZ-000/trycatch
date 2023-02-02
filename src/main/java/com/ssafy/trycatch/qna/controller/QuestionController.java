@@ -1,8 +1,6 @@
 package com.ssafy.trycatch.qna.controller;
 
-import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.domain.TargetType;
-import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.common.service.LikesService;
@@ -18,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,21 +32,16 @@ public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final UserService userService;
-    private final TokenService tokenService;
     private final CompanyService companyService;
     private final LikesService likesService;
     private final BookmarkService bookmarkService;
 
     @Autowired
     public QuestionController(
-            QuestionService questionService,
-            AnswerService answerService,
-            UserService userService,
-            TokenService tokenService, CompanyService companyService, LikesService likesService, BookmarkService bookmarkService) {
+            QuestionService questionService, AnswerService answerService, UserService userService, CompanyService companyService, LikesService likesService, BookmarkService bookmarkService) {
         this.questionService = questionService;
         this.answerService = answerService;
         this.userService = userService;
-        this.tokenService = tokenService;
         this.companyService = companyService;
         this.likesService = likesService;
         this.bookmarkService = bookmarkService;
@@ -59,9 +53,9 @@ public class QuestionController {
     @GetMapping
     public ResponseEntity<List<?>> findAllQuestions(
             @PageableDefault Pageable pageable,
-            @RequestHeader(value = "Authorization", defaultValue = "NONE") String token ) {
+            @Nullable @AuthenticationPrincipal Long userId ) {
         List<Question> entities = questionService.findAllQuestions(pageable);
-        if (Objects.equals(token, "NONE")) {
+        if (userId == null) {
             List<FindQuestionResponseNotLoginDto> questions = entities.stream()
                     .map(question -> {
                         List<Answer> answers = answerService.findByQuestionId(question.getId());
@@ -74,7 +68,7 @@ public class QuestionController {
         else {
             List<FindQuestionResponseDto> questions = entities.stream()
                     .map(question -> {
-                        final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+                        final User user = userService.findUserById(userId);
                         final List<Answer> answers = answerService.findByQuestionId(question.getId());
                         final TargetType type = TargetType.QUESTION;
                         final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
@@ -95,10 +89,10 @@ public class QuestionController {
      */
     @PostMapping
     public ResponseEntity<CreateQuestionResponseDto> createQuestion(
-            @RequestHeader(value = "Authorization", defaultValue = "NONE") String token,
+            @Nullable @AuthenticationPrincipal Long userId,
             @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
-        final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+        final User user = userService.findUserById(userId);
         final Question newEntity = createQuestionRequestDto.newQuestion(user);
         final Question savedEntity = questionService.saveQuestion(newEntity);
         final TargetType type = TargetType.QUESTION;
@@ -114,11 +108,11 @@ public class QuestionController {
      CreateQuestionResponseDto로 반환
      */
     @PutMapping("/{questionId}")
-    public ResponseEntity<CreateQuestionResponseDto> putQuestion (
+    public ResponseEntity putQuestion (
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
         final Question entity = questionService.putQuestion(putQuestionRequestDto);
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(entity, companyService, false, false));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/questionId")
@@ -134,16 +128,19 @@ public class QuestionController {
     @GetMapping("/{questionId}")
     public ResponseEntity<?> findQuestionById(
             @PathVariable("questionId") Long questionId,
-            @RequestHeader(value = "Authorization", defaultValue = "NONE") String token
+            @Nullable @AuthenticationPrincipal Long userId
     ) {
         final Question before = questionService.findQuestionById(questionId);
         final List<Answer> answers = answerService.findByQuestionId(before.getId());
-        if (Objects.equals(token, "NONE")) {
+        // 조회수
+        before.setViewCount(before.getViewCount() + 1);
+        questionService.saveQuestion(before);
+        if (userId == null) {
             final FindQuestionResponseNotLoginDto question = FindQuestionResponseNotLoginDto.from(before, answers, companyService);
             return ResponseEntity.ok(question);
         }
         else {
-            final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
+            final User user = userService.findUserById(userId);
             final TargetType type = TargetType.QUESTION;
             final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), before.getId(), type).getActivated())
                     .orElse(false);
@@ -152,6 +149,19 @@ public class QuestionController {
             final FindQuestionResponseDto question = FindQuestionResponseDto.from(before, answers, user, companyService, isLiked, isBookmarked);
             return ResponseEntity.ok(question);
         }
+    }
+
+    @PostMapping("/{questionId}/answer")
+    public ResponseEntity createAnswers(
+            @PathVariable Long questionId,
+            @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
+            @Nullable @AuthenticationPrincipal Long userId
+    ) {
+        final Question question = questionService.findQuestionById(questionId);
+        final User user = userService.findUserById(userId);
+        final Answer newAnswer = createAnswerRequestDto.newAnswer(question, user);
+        final Answer savedAnswer = answerService.saveAnswer(newAnswer);
+        return ResponseEntity.ok().build();
     }
 
     // MOCK API: 질문 검색
@@ -164,38 +174,6 @@ public class QuestionController {
                 .map(SearchQuestionResponseDto::from)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questions);
-    }
-
-    // MOCK API: 북마크한 질문 조회
-    @GetMapping("/bookmark")
-    public ResponseEntity<List<BookmarkQuestionResponseDto>> findBookmarks(
-            @PageableDefault Pageable pageable
-    ) {
-        List<Question> entities = questionService.findAllQuestions(pageable);
-        List<BookmarkQuestionResponseDto> questions = entities.stream()
-                .map(BookmarkQuestionResponseDto::from)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(questions);
-    }
-
-    // MOCK API: 질문 북마크
-    @PostMapping("bookmark/{questionId}")
-    public ResponseEntity<BookmarkQuestionResponseDto> bookmark(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
-    }
-
-    // MOCK API: 질문 북마크 취소
-    @PutMapping("/bookmark/{questionId}")
-    public ResponseEntity<BookmarkQuestionResponseDto> removeBookmark(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
     }
 
     // MOCK API: 답변 채택
@@ -216,27 +194,4 @@ public class QuestionController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questions);
     }
-
-    // MOCK API: 질문 좋아요
-    @PostMapping("{questionId}/like")
-    public ResponseEntity<LikeQuestionResponseDto> like(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
-    }
-
-    // MOCK API: 질문 좋아요 취소
-    @PutMapping("/{questionId}/like")
-    public ResponseEntity<LikeQuestionResponseDto> Unlike(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
-    }
-
-
-
 }

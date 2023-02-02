@@ -178,9 +178,11 @@ INSERT INTO withdrawal VALUES
                            (1, 'guess'),
                            (2, 'sleep');
 
-INSERT INTO answer VALUES
- (1, false, 'answer content', '2023-01-01', false, 1, 1, 1),
- (2, false, 'answer content', '2023-01-01', false, 2, 2, 2);
+INSERT INTO answer
+ (id, question_id, user_id, content, created_at, updated_at, chosen, likes, hidden)
+VALUES
+ (1, 1, 1, '1번 답변입니다.', current_timestamp,current_timestamp, false, 0, false),
+ (2, 1, 2, '2번 답변입니다.', current_timestamp,current_timestamp, false, 0, false);
 
 INSERT INTO likes VALUES (1, 1, 1, 'question', 1);
 
