@@ -152,16 +152,24 @@ public class QuestionController {
     }
 
     @PostMapping("/{questionId}/answer")
-    public ResponseEntity createAnswers(
+    public ResponseEntity<CreateAnswerResponseDto> createAnswers(
             @PathVariable Long questionId,
             @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
             @Nullable @AuthenticationPrincipal Long userId
     ) {
+        // 생성
         final Question question = questionService.findQuestionById(questionId);
         final User user = userService.findUserById(userId);
         final Answer newAnswer = createAnswerRequestDto.newAnswer(question, user);
         final Answer savedAnswer = answerService.saveAnswer(newAnswer);
-        return ResponseEntity.ok().build();
+        // 응답
+        final List<Answer> answers = answerService.findByQuestionId(question.getId());
+        final TargetType type = TargetType.QUESTION;
+        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
+                .orElse(false);
+        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
+                .orElse(false);
+        return ResponseEntity.ok(CreateAnswerResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked));
     }
 
     // MOCK API: 질문 검색
@@ -176,11 +184,26 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
-    // MOCK API: 답변 채택
     @PostMapping("/{questionId}/{answerId}")
-    public ResponseEntity<AcceptQuestionResponseDto> acceptAnswer(@PathVariable Long questionId, @PathVariable Long answerId) {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(AcceptQuestionResponseDto.from(entity));
+    public ResponseEntity<AcceptAnswerResponseDto> acceptAnswer(
+            @PathVariable Long questionId, @PathVariable Long answerId, @Nullable @AuthenticationPrincipal Long userId
+    ) {
+        // 채택
+        final Question question = questionService.findQuestionById(questionId);
+        final Answer answer = answerService.findById(answerId);
+        question.setChosen(true);
+        questionService.saveQuestion(question);
+        answer.setChosen(true);
+        answerService.saveAnswer(answer);
+        // 응답
+        final List<Answer> answers = answerService.findByQuestionId(question.getId());
+        final User user = userService.findUserById(userId);
+        final TargetType type = TargetType.QUESTION;
+        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
+                .orElse(false);
+        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
+                .orElse(false);
+        return ResponseEntity.ok(AcceptAnswerResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked));
     }
 
     // MOCK API: 에러코드 기반 질문 추천
