@@ -5,11 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 
 import java.security.Principal;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -35,5 +38,16 @@ public class UserService {
 
 	public Long findNameToId(String userName) {
 		return userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
+	}
+
+	public User findUserByName(String userName) {
+		return userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+	}
+
+	public User getDetailUserInfo(Long userId, String userName) {
+		User saved = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+		Set<Follow> followees = saved.getFollowees();
+
+		return null;
 	}
 }

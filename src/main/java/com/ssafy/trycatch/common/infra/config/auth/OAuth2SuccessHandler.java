@@ -4,6 +4,7 @@ import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
 
 import java.io.IOException;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -66,7 +67,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		response.addHeader(HeaderDefaultTokenAttributeKey, token.getToken());
 		response.addHeader(HeaderRefreshTokenAttributeKey, token.getRefreshToken());
 		response.setContentType("application/json;charset=UTF-8");
-
+		Cookie cookie = new Cookie("ref", token.getRefreshToken());
+		cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 		String tokenInfo =
 			"?" + HeaderDefaultTokenAttributeKey + "=" + token.getToken() +
 				"&" + HeaderRefreshTokenAttributeKey + "=" + token.getRefreshToken();
