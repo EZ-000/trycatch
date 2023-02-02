@@ -9,8 +9,8 @@ import lombok.ToString;
 @Getter
 public class Token {
 
-	public static String HeaderDefaultTokenAttributeKey = "Authorization";
-	public static String HeaderRefreshTokenAttributeKey = "Refresh";
+	public static String HeaderDefaultTokenAttributeKey = "acc";
+	public static String HeaderRefreshTokenAttributeKey = "ref";
 	private String token;
 	private String refreshToken;
 
