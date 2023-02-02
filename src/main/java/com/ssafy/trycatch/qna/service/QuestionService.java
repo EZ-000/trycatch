@@ -49,12 +49,11 @@ public class QuestionService {
         final Question before = questionRepository.findById(putDto.getId())
                 .orElseThrow(QuestionNotFoundException::new);
         final Question after = putDto.updateTo(before);
-        // key 값이 같다는 전제 하에 49 ~ 51이 필요없고 JPA가 잇으면 업데이트를 해줌 없으면 insert
+        // key 값이 같다는 전제 하에 49 ~ 51이 필요없고 JPA가 있으면 업데이트를 해줌 없으면 insert
         return questionRepository.save(after);
     }
 
     /**
-     * @param questionId
      * @throws IllegalArgumentException questionId가 없는 경우
      */
     public void deleteQuestion(Long questionId) {

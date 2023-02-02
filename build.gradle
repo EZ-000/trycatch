@@ -44,7 +44,7 @@ dependencies {
     // Git
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation group: 'org.kohsuke', name: 'github-api', version:'1.125'
+    implementation 'jakarta.json:jakarta.json-api:2.1.1'
 
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 

@@ -26,7 +26,7 @@ class ESFeedRepositoryTest {
 
     @Test
     public void testSearch() {
-        Page<ESFeed> feeds =  esFeedRepository.latest(new Pageable() {
+        Page<ESFeed> feeds =  esFeedRepository.findAll(new Pageable() {
             @Override
             public int getPageNumber() {
                 return 0;

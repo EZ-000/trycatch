@@ -32,9 +32,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
 		memberAttribute.put("AC_TOKEN",userRequest.getAccessToken().getTokenValue());
- 		DefaultOAuth2User defaultOAuth2User = new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-			memberAttribute, "nodeId");
-		return defaultOAuth2User;
+		return new DefaultOAuth2User(
+		   Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+		   memberAttribute, "nodeId");
 	}
 }

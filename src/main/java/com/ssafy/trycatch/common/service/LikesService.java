@@ -1,23 +1,46 @@
 package com.ssafy.trycatch.common.service;
 
+import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
+import com.ssafy.trycatch.common.service.exceptions.LikesNotFoundException;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.List;
+
 
 @Service
-public class LikesService {
+public class LikesService extends CrudService<Likes, Long, LikesRepository> {
 
-    private final LikesRepository likesRepository;
+    private final ReadRepository readRepository;
 
     @Autowired
-    public LikesService(LikesRepository likesRepository) { this.likesRepository = likesRepository; }
+    public LikesService(LikesRepository likesRepository,
+                        ReadRepository readRepository) {
+        super(likesRepository);
+        this.readRepository = readRepository;
+    }
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
-        return likesRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(() -> new Likes());
+        return repository
+                .findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
+                .orElseGet(Likes::new);
+    }
+
+    public Likes getLastLikes(Long userId, Long targetId, TargetType targetType) {
+        List<Likes> likesList = repository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
+        final Likes lastLikes;
+        if (likesList.size() != 0) {
+            lastLikes = likesList.get(likesList.size() - 1);
+        }
+        else {
+            lastLikes = new Likes(0L, 0L, 0L, TargetType.DEFAULT, false);
+        }
+        return lastLikes;
     }
 }

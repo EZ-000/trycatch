@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import com.ssafy.trycatch.common.domain.Report;
 import com.ssafy.trycatch.user.domain.Withdrawal;
 
 public class WithdrawalRequestDto {

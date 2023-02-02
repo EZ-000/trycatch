@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.common.domain;
 
-import com.ssafy.trycatch.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,9 +28,8 @@ public class Bookmark {
     @Column(name = "target_id")
     private Long targetId;
 
-    @Size(max = 10)
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "target_type", length = 10)
+    @Column(name = "target_type")
     private TargetType targetType;
 
     @Column(name = "activated")

@@ -1,7 +1,7 @@
 package com.ssafy.trycatch.user.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ssafy.trycatch.common.service.CrudService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,30 +14,27 @@ import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Service
-public class UserService {
-
-	private static final Logger log = LoggerFactory.getLogger(UserService.class);
-
-	private final UserRepository userRepository;
+public class UserService extends CrudService<User, Long, UserRepository> {
 
 	@Autowired
 	public UserService(UserRepository userRepository) {
-		this.userRepository = userRepository;
+		super(userRepository);
 	}
 
 	public User findUserById(Long userId) {
-		return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		return repository.findById(userId).orElseThrow(UserNotFoundException::new);
 	}
 
 	public void inActivateUser(long parseLong) {
-		User savedUser = userRepository.findById(parseLong).orElseThrow();
+		User savedUser = repository.findById(parseLong).orElseThrow();
 		savedUser.setActivated(false);
-		userRepository.save(savedUser);
+		repository.save(savedUser);
 	}
 
 	public Long findNameToId(String userName) {
-		return userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
+		return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
 	}
 
 	public User findUserByName(String userName) {

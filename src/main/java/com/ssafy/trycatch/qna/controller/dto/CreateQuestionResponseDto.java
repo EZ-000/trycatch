@@ -24,7 +24,7 @@ public class CreateQuestionResponseDto implements Serializable {
     @Size(max = 50)
     private final FindUserInQNADto author;
     @Size(max = 30)
-    private final QuestionCategory categoryName;
+    private final QuestionCategory category;
     @Size(max = 50)
     private final String title;
     private final String content;
@@ -34,16 +34,17 @@ public class CreateQuestionResponseDto implements Serializable {
     private final Integer answerCount;
     private final Integer viewCount;
     private final Long timestamp;
+    private final Long updatedAt;
     private final Boolean isLiked;
     private final Boolean isSolved;
     private final Boolean isBookmarked;
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public CreateQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory categoryName, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public CreateQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
-        this.categoryName = categoryName;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.errorCode = errorCode;
@@ -52,6 +53,8 @@ public class CreateQuestionResponseDto implements Serializable {
         this.answerCount = answerCount;
         this.viewCount = viewCount;
         this.timestamp = timestamp;
+        this.updatedAt = updatedAt;
+
         this.isLiked = isLiked;
         this.isSolved = isSolved;
         this.isBookmarked = isBookmarked;
@@ -76,7 +79,7 @@ public class CreateQuestionResponseDto implements Serializable {
         return CreateQuestionResponseDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNADto.from(user, author, companyService))
-                .categoryName(question.getCategoryName())
+                .category(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())
@@ -87,6 +90,7 @@ public class CreateQuestionResponseDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
+                .updatedAt(question.getUpdatedAt().toEpochMilli())
                 .isLiked(isLiked)
                 .isSolved(question.getChosen())
                 .isBookmarked(isBookmarked)

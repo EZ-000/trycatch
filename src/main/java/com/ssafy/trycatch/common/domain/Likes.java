@@ -28,11 +28,11 @@ public class Likes {
     @Column(name = "target_id")
     private Long targetId;
 
-    @Size(max = 10)
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "target_type", length = 10)
+    @Column(name = "target_type")
     private TargetType targetType;
 
     @Column(name = "activated")
     private Boolean activated;
+
 }
