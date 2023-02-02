@@ -7,23 +7,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class FeedService {
 
-    private final ESFeedRepository feedRepository;
+    private final ESFeedRepository esFeedRepository;
 
-    public Page<ESFeed> latestFeeds(Pageable pageable) {
-        return feedRepository.latest(pageable);
+    public Page<ESFeed> commonSearch(String query, Pageable pageable) {
+        return esFeedRepository.searchByTitleOrContent(query, query, pageable);
     }
 
-    public List<ESFeed> searchByContent(String content) {
-        return feedRepository.searchByContent(content);
+    public Page<ESFeed> advanceSearch(String queryString, Pageable pageable) {
+        return esFeedRepository.searchByQueryString(queryString, pageable);
     }
+
 
     @Autowired
-    public FeedService(ESFeedRepository feedRepository) {
-        this.feedRepository = feedRepository;
+    public FeedService(
+            ESFeedRepository esFeedRepository
+    ) {
+        this.esFeedRepository = esFeedRepository;
     }
 }

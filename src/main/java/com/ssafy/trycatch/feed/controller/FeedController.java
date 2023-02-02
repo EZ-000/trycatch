@@ -1,83 +1,98 @@
 package com.ssafy.trycatch.feed.controller;
 
-import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
-import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto.Feed;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
 import com.ssafy.trycatch.feed.service.FeedService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/${apiPrefix}/feed")
 public class FeedController {
 
     private final FeedService feedService;
 
+
+    // localhost:8080/v1/feed/search?query=qr
+    @GetMapping("/search")
+    public ResponseEntity<SearchFeedResponseDto> search(
+            @AuthenticationPrincipal Long userId,
+            SearchFeedRequestDto requestDto
+    ) {
+
+        final Pageable pageable = newPageable(
+                requestDto.getPage(), requestDto.getSize(), requestDto.getSort()
+        );
+
+        // TODO : 구독 필터 구현
+        final String query = requestDto.getQuery();
+        Page<ESFeed> feedPage = Page.empty();
+        if (StringUtils.hasText(query)) {
+            if (requestDto.isAdvanced()) {
+                // 고급 검색
+                feedPage = feedService.advanceSearch(query, pageable);
+            } else {
+                // 일반 검색
+                feedPage = feedService.commonSearch(query, pageable);
+            }
+        }
+
+        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage));
+    }
+
     @Autowired
     public FeedController(FeedService feedService) {
         this.feedService = feedService;
     }
 
-    /**
-     * 포스트 리스트를 최신순으로 반환합니다.
-     * TODO : 토큰이 있을 경우 연관도 순으로 반영합니다.
-     */
-    @GetMapping("/list")
-    public ResponseEntity<FindFeedResponseDto> findFeeds(
-            @PageableDefault(
-                    sort = "publish_date",
-                    direction = Sort.Direction.DESC
-            ) Pageable pageable
-    ) {
+    private static Pageable newPageable(Integer page, Integer size, SearchFeedRequestDto.FeedSortOption sort) {
+        return new AbstractPageRequest(page, size) {
 
-        final List<Feed> feeds = feedService.latestFeeds(pageable)
-                                            .stream()
-                                            .map(Feed::newFeed)
-                                            .collect(Collectors.toList());
+            @NonNull
+            @Override
+            public Pageable next() {
+                return newPageable(page + 1, size, sort);
+            }
 
-        return ResponseEntity.ok(new FindFeedResponseDto(feeds));
-    }
+            @NonNull
+            @Override
+            public Pageable previous() {
+                return newPageable(page - 1, size, sort);
+            }
 
-    @GetMapping("/bookmark")
-    public ResponseEntity<String> findBookmarks() {
-        return ResponseEntity.ok("사용자의 즐겨찾기 리스트를 조회합니다.");
-    }
+            @NonNull
+            @Override
+            public Pageable first() {
+                return newPageable(0 , size, sort);
+            }
 
-    @PostMapping("/bookmark")
-    public ResponseEntity<String> createBookmark() {
-        return ResponseEntity.ok("원하는 기술 블로그 글을 즐겨찾기할 수 있습니다.");
-    }
+            @NonNull
+            @Override
+            public Sort getSort() {
+                return Sort.by(DESC, sort.name);
+            }
 
-    @PutMapping("/bookmark")
-    public ResponseEntity<String> removeBookmark() {
-        return ResponseEntity.ok("즐겨찾기를 취소할 수 있습니다.");
-    }
-
-    @PostMapping("/like")
-    public ResponseEntity<String> like() {
-        return ResponseEntity.ok("좋아요합니다.");
-    }
-
-    @PutMapping("/like")
-    public ResponseEntity<String> unlike() {
-        return ResponseEntity.ok("좋아요를 취소합니다.");
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<FindFeedResponseDto> search(@RequestParam String content) {
-
-        final List<Feed> feeds = feedService.searchByContent(content)
-                .stream()
-                .map(Feed::newFeed)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new FindFeedResponseDto(feeds));
+            @NonNull
+            @Override
+            public Pageable withPage(int pageNumber) {
+                return newPageable(pageNumber, size, sort);
+            }
+        };
     }
 }

@@ -7,21 +7,18 @@ import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
-
 @Repository
 public interface ESFeedRepository extends ElasticsearchRepository<ESFeed, String> {
 
-    @Query("{\"match_all\": {}}")
-    Page<ESFeed> latest(Pageable pageable);
+    @Query("{" +
+    "\"query\": {" +
+        "\"query_string\": {" +
+            "\"query\": \"?0\"," +
+            "\"default_field\": \"*\"" +
+    "}}}")
+    Page<ESFeed> searchByQueryString(String queryString, Pageable pageable);
 
-    List<ESFeed> searchByContent(String content);
-
-    List<ESFeed> findByTags(Collection<String> tags);
-
-    @Query("{\"match\": {\"company_ko\": {\"query\": \"?0\"}}}")
-    List<ESFeed> findByCompanyKo(String companyKo);
+    Page<ESFeed> searchByTitleOrContent(String title, String content, Pageable pageable);
 }
 
 
