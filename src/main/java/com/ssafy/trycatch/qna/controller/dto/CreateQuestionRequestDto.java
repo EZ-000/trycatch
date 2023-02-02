@@ -13,7 +13,7 @@ import java.util.Optional;
 @Data
 @NoArgsConstructor
 public class CreateQuestionRequestDto {
-    private String categoryName;
+    private String category;
     private Long authorId;
     private String title;
     private String content;
@@ -23,10 +23,10 @@ public class CreateQuestionRequestDto {
             User user
     ) {
         final User author = user;
-        final QuestionCategory category = QuestionCategory.valueOf(categoryName);
+        final QuestionCategory categoryName = QuestionCategory.valueOf(category);
 
         return Question.builder()
-                .categoryName(category)
+                .categoryName(categoryName)
                 .user(author)
                 .title(title)
                 .content(content)
