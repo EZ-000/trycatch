@@ -213,25 +213,10 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
-    // MOCK API: 질문 좋아요
-    @PostMapping("{questionId}/like")
-    public ResponseEntity<LikeQuestionResponseDto> like(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
-    }
+
 
     // MOCK API: 질문 좋아요 취소
-    @PutMapping("/{questionId}/like")
-    public ResponseEntity<LikeQuestionResponseDto> Unlike(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(LikeQuestionResponseDto.from(entity));
-    }
+
 
 
 
