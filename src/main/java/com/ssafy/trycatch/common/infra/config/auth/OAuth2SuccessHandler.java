@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.common.infra.config.jwt.Token;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
@@ -51,10 +50,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			.orElse(userRequestMapper.newEntity(oAuth2User));
 
 		tempUser.setActivated(true);
-		Company c = companyRepository.findById(1L).orElseThrow();
 		tempUser.setCompany(companyRepository.findById(1L).orElseThrow());
 		final User savedUser = userRepository.save(tempUser);
-
 
 		final Token token = tokenService.generateToken(
 			savedUser.getId().toString(),
@@ -65,12 +62,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		// 완료 후 동작
 		response.setContentType("text/html;charset=UTF-8");
-
+		request.setAttribute(HeaderDefaultTokenAttributeKey, token.getToken());
 		response.addHeader(HeaderDefaultTokenAttributeKey, token.getToken());
 		response.addHeader(HeaderRefreshTokenAttributeKey, token.getRefreshToken());
 		response.setContentType("application/json;charset=UTF-8");
 
+		String tokenInfo =
+			"?" + HeaderDefaultTokenAttributeKey + "=" + token.getToken() +
+				"&" + HeaderRefreshTokenAttributeKey + "=" + token.getRefreshToken();
 		// 요청하기 전 페이지로 이동
-		response.sendRedirect(redirectUri);
+		response.sendRedirect(redirectUri + tokenInfo);
 	}
 }
