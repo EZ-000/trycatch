@@ -23,7 +23,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
     @Size(max = 50)
     private final FindUserInQNANotLoginDto author;
     @Size(max = 30)
-    private final QuestionCategory categoryName;
+    private final QuestionCategory category;
     @Size(max = 50)
     private final String title;
     private final String content;
@@ -39,10 +39,10 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
     private final List<FindAnswerResponseNotLoginDto> answers;
 
     @Builder
-    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, QuestionCategory categoryName, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
+    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
         this.questionId = questionId;
         this.author = author;
-        this.categoryName = categoryName;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.errorCode = errorCode;
@@ -72,7 +72,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
         return FindQuestionResponseNotLoginDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNANotLoginDto.from(author, companyService))
-                .categoryName(question.getCategoryName())
+                .category(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())

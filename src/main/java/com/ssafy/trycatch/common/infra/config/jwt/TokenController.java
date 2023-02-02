@@ -1,5 +1,7 @@
 package com.ssafy.trycatch.common.infra.config.jwt;
 
+import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -7,9 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-
-import static com.ssafy.trycatch.common.infra.config.jwt.Token.HeaderDefaultTokenAttributeKey;
-import static com.ssafy.trycatch.common.infra.config.jwt.Token.HeaderRefreshTokenAttributeKey;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,7 +22,7 @@ public class TokenController {
 
 	@GetMapping("/token/refresh")
 	public String refreshAuth(HttpServletRequest request, HttpServletResponse response) {
-		String token = request.getHeader(HeaderRefreshTokenAttributeKey);
+		String token = request.getHeader(CheckRefreshTokenAttributeKey);
 
 		if (token != null && tokenService.verifyToken(token)) {
 			String uid = tokenService.getUid(token);

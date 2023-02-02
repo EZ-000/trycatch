@@ -17,8 +17,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.ssafy.trycatch.user.domain.User;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -31,8 +29,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	@SuppressWarnings("NullableProblems")
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-									FilterChain filterChain) throws ServletException, IOException {
-		String token = request.getHeader(HeaderDefaultTokenAttributeKey);
+
+		FilterChain filterChain) throws ServletException, IOException {
+		String token = request.getHeader(CheckAccessTokenAttributeKey);
 
 		if (null != token && tokenService.verifyToken(token)) {
 			// Token 확인 시, 문제가 없다면 Token만 갱신하고 다시 인증할 필요가 없다.
@@ -53,9 +52,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 	public Authentication getAuthentication(Long serviceUserPkId, String credentials) {
 		return new UsernamePasswordAuthenticationToken(
-				serviceUserPkId,
-				credentials,
-				List.of(ROLE_USER)
+			serviceUserPkId,
+			credentials,
+			List.of(ROLE_USER)
 		);
 	}
 }
