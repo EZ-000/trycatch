@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		if (null != token && tokenService.verifyToken(token)) {
 			// Token 확인 시, 문제가 없다면 Token만 갱신하고 다시 인증할 필요가 없다.
-			/**
+			/*
 			 * Need Check
 			 * Refresh가 살아있다면 , Access만 재 갱신.
 			 * Refresh도 죽었다면, OAuth로 가야한다.

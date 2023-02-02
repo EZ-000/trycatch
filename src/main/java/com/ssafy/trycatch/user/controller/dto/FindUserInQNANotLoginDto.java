@@ -1,13 +1,11 @@
 package com.ssafy.trycatch.user.controller.dto;
 
 import com.ssafy.trycatch.common.service.CompanyService;
-import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Set;
 
 @Data
 public class FindUserInQNANotLoginDto implements Serializable {
@@ -34,7 +32,10 @@ public class FindUserInQNANotLoginDto implements Serializable {
             companyName = "";
         }
         else {
-            companyName = companyService.findCompanyById(author.getCompany().getId()).getName();
+            companyName = companyService
+                    .findById(author.getCompany().getId())
+                    .orElseThrow()
+                    .getName();
         }
 
         return FindUserInQNANotLoginDto.builder()

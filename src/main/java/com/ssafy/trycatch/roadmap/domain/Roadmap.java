@@ -24,7 +24,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "roadmap")
 public class Roadmap {

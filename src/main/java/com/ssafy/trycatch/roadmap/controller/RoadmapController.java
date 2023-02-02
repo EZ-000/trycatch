@@ -46,7 +46,7 @@ public class RoadmapController {
 	public ResponseEntity<List<RoadmapListResponseDto>> findAllRoadmap() {
 		List<Roadmap> allRoadmaps = roadmapService.findAll();
 		List<RoadmapListResponseDto> allDtoList = allRoadmaps.stream()
-			.map(element -> RoadmapListResponseDto.from(element))
+			.map(RoadmapListResponseDto::from)
 			.collect(Collectors.toList());
 		return ResponseEntity.ok(allDtoList);
 	}
@@ -105,7 +105,7 @@ public class RoadmapController {
 		}
 
 		final Long userId = Long.parseLong(tokenService.getUid(token));
-		roadmapService.remove(userId);
+		roadmapService.removeById(userId);
 
 		return ResponseEntity.ok().build();
 	}

@@ -1,7 +1,5 @@
 package com.ssafy.trycatch.qna.controller;
 
-import com.ssafy.trycatch.qna.controller.dto.FindAnswerResponseDto;
-import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

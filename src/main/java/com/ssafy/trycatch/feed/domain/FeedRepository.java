@@ -1,6 +1,6 @@
 package com.ssafy.trycatch.feed.domain;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FeedRepository extends PagingAndSortingRepository<Feed, Long> {
+public interface FeedRepository extends JpaRepository<Feed, Long> {
 }

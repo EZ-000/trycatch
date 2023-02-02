@@ -1,10 +1,5 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import javax.management.Query;
-
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.domain.Subscription;
-
 public class UserRequestDto {
 	// private String userId;
 	// private String name;

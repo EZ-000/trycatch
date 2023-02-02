@@ -7,12 +7,15 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.lang.NonNull;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "com.ssafy.trycatch.elasticsearch.domain.repository")
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
     @Value("${elasticsearch.host}")
     private String host;
+
+    @NonNull
     @Override
     public RestHighLevelClient elasticsearchClient() {
         final ClientConfiguration clientConfiguration =

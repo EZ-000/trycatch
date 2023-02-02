@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.qna.controller;
 
-import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.common.service.BookmarkService;
@@ -65,8 +64,7 @@ public class QuestionController {
             List<FindQuestionResponseNotLoginDto> questions = entities.stream()
                     .map(question -> {
                         List<Answer> answers = answerService.findByQuestionId(question.getId());
-                        FindQuestionResponseNotLoginDto from = FindQuestionResponseNotLoginDto.from(question, answers, companyService);
-                        return from;
+                        return FindQuestionResponseNotLoginDto.from(question, answers, companyService);
                     })
                     .collect(Collectors.toList());
             return ResponseEntity.ok(questions);
@@ -81,8 +79,7 @@ public class QuestionController {
                                 .orElse(false);
                         final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
                                 .orElse(false);
-                        FindQuestionResponseDto from = FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
-                        return from;
+                        return FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
                     })
                     .collect(Collectors.toList());
             return ResponseEntity.ok(questions);

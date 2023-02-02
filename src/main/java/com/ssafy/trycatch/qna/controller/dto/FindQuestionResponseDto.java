@@ -73,7 +73,7 @@ public class FindQuestionResponseDto implements Serializable {
         final List<FindAnswerResponseDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseDto.from(answer, user, companyService))
                 .collect(Collectors.toList());
-        final List<String> temptags = new ArrayList<String>(Arrays.asList("42good", "1stprizeisours"));
+        final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())

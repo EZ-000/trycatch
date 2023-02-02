@@ -4,8 +4,6 @@ import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import lombok.Builder;
 import lombok.Data;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
