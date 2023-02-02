@@ -6,6 +6,7 @@ import com.ssafy.trycatch.user.domain.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -28,8 +29,11 @@ public class CreateQuestionRequestDto {
                 .content(content)
                 .errorCode(errorCode)
                 .createdAt(LocalDateTime.now())
-                .viewCount(0)
+                .updatedAt(Instant.EPOCH.now())
                 .chosen(false)
+                .viewCount(0)
+                .likes(0)
+                .hidden(false)
                 .build();
     }
 }

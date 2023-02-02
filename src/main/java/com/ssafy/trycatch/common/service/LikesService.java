@@ -27,7 +27,14 @@ public class LikesService {
 
     public Likes getLastLikes(Long userId, Long targetId, TargetType targetType) {
         List<Likes> likesList = likesRepository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
-        return likesList.get(likesList.size() - 1);
+        final Likes lastLikes;
+        if (likesList.size() != 0) {
+            lastLikes = likesList.get(likesList.size() - 1);
+        }
+        else {
+            lastLikes = new Likes(0L, 0L, 0L, TargetType.DEFAULT, false);
+        }
+        return lastLikes;
     }
 
     public Likes saveLikes(Likes likes) {

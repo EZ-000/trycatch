@@ -108,11 +108,11 @@ public class QuestionController {
      CreateQuestionResponseDto로 반환
      */
     @PutMapping("/{questionId}")
-    public ResponseEntity<CreateQuestionResponseDto> putQuestion (
+    public ResponseEntity putQuestion (
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
         final Question entity = questionService.putQuestion(putQuestionRequestDto);
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(entity, companyService, false, false));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/questionId")
@@ -132,6 +132,9 @@ public class QuestionController {
     ) {
         final Question before = questionService.findQuestionById(questionId);
         final List<Answer> answers = answerService.findByQuestionId(before.getId());
+        // 조회수
+        before.setViewCount(before.getViewCount() + 1);
+        questionService.saveQuestion(before);
         if (userId == null) {
             final FindQuestionResponseNotLoginDto question = FindQuestionResponseNotLoginDto.from(before, answers, companyService);
             return ResponseEntity.ok(question);
@@ -148,6 +151,19 @@ public class QuestionController {
         }
     }
 
+    @PostMapping("/{questionId}/answer")
+    public ResponseEntity createAnswers(
+            @PathVariable Long questionId,
+            @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
+            @Nullable @AuthenticationPrincipal Long userId
+    ) {
+        final Question question = questionService.findQuestionById(questionId);
+        final User user = userService.findUserById(userId);
+        final Answer newAnswer = createAnswerRequestDto.newAnswer(question, user);
+        final Answer savedAnswer = answerService.saveAnswer(newAnswer);
+        return ResponseEntity.ok().build();
+    }
+
     // MOCK API: 질문 검색
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
@@ -158,38 +174,6 @@ public class QuestionController {
                 .map(SearchQuestionResponseDto::from)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questions);
-    }
-
-    // MOCK API: 북마크한 질문 조회
-    @GetMapping("/bookmark")
-    public ResponseEntity<List<BookmarkQuestionResponseDto>> findBookmarks(
-            @PageableDefault Pageable pageable
-    ) {
-        List<Question> entities = questionService.findAllQuestions(pageable);
-        List<BookmarkQuestionResponseDto> questions = entities.stream()
-                .map(BookmarkQuestionResponseDto::from)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(questions);
-    }
-
-    // MOCK API: 질문 북마크
-    @PostMapping("bookmark/{questionId}")
-    public ResponseEntity<BookmarkQuestionResponseDto> bookmark(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
-    }
-
-    // MOCK API: 질문 북마크 취소
-    @PutMapping("/bookmark/{questionId}")
-    public ResponseEntity<BookmarkQuestionResponseDto> removeBookmark(
-            @PathVariable("questionId") Long questionId
-    )
-    {
-        final Question entity = questionService.findQuestionById(questionId);
-        return ResponseEntity.ok(BookmarkQuestionResponseDto.from(entity));
     }
 
     // MOCK API: 답변 채택
