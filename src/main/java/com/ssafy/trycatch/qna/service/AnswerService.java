@@ -2,6 +2,7 @@ package com.ssafy.trycatch.qna.service;
 
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.AnswerRepository;
+import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,8 @@ public class AnswerService {
         return answerRepository.findByQuestionId(questionId);
     }
 
-//    테스트용
-//    public Answer findById(Long answerId) {
-//        return answerRepository.findById(answerId).orElseThrow(AnswerNotFoundException::new);
-//    }
+    public Answer findById(Long answerId) {
+        return answerRepository.findById(answerId).orElseThrow(AnswerNotFoundException::new);
+    }
 
 }

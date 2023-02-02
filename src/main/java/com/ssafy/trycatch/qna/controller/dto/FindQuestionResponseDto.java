@@ -26,7 +26,7 @@ public class FindQuestionResponseDto implements Serializable {
     @Size(max = 50)
     private final FindUserInQNADto author;
     @Size(max = 30)
-    private final QuestionCategory categoryName;
+    private final QuestionCategory category;
     @Size(max = 50)
     private final String title;
     private final String content;
@@ -42,10 +42,10 @@ public class FindQuestionResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory categoryName, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
-        this.categoryName = categoryName;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.errorCode = errorCode;
@@ -78,7 +78,7 @@ public class FindQuestionResponseDto implements Serializable {
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNADto.from(user, author, companyService))
-                .categoryName(question.getCategoryName())
+                .category(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())

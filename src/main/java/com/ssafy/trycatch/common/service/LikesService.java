@@ -1,10 +1,17 @@
 package com.ssafy.trycatch.common.service;
 
+import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
+import com.ssafy.trycatch.common.service.exceptions.LikesNotFoundException;
+import com.ssafy.trycatch.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
 
 @Service
 public class LikesService extends CrudService<Likes, Long, LikesRepository> {
@@ -18,5 +25,17 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
         return repository
                 .findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
                 .orElseGet(Likes::new);
+    }
+
+    public Likes getLastLikes(Long userId, Long targetId, TargetType targetType) {
+        List<Likes> likesList = likesRepository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
+        final Likes lastLikes;
+        if (likesList.size() != 0) {
+            lastLikes = likesList.get(likesList.size() - 1);
+        }
+        else {
+            lastLikes = new Likes(0L, 0L, 0L, TargetType.DEFAULT, false);
+        }
+        return lastLikes;
     }
 }
