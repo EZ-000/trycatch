@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,12 +23,15 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
+
 	private final TokenService tokenService;
+
+	private static final GrantedAuthority ROLE_USER = new SimpleGrantedAuthority("ROLE_USER");
 
 	@SuppressWarnings("NullableProblems")
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
+									FilterChain filterChain) throws ServletException, IOException {
 		String token = request.getHeader(HeaderDefaultTokenAttributeKey);
 
 		if (null != token && tokenService.verifyToken(token)) {
@@ -37,21 +41,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			 * Refresh가 살아있다면 , Access만 재 갱신.
 			 * Refresh도 죽었다면, OAuth로 가야한다.
 			 */
-			String nodeId = tokenService.getUid(token);
-			String accessToken = tokenService.getAccessToken(token);
-			User user = User.builder()
-				.githubNodeId(nodeId)
-				.build();
+			Long serviceUserPkId = Long.parseLong(tokenService.getUid(token));
+			String githubToken = tokenService.getAccessToken(token);
 
-			Authentication auth = getAuthentication(user);
+			Authentication auth = getAuthentication(serviceUserPkId, githubToken);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
-	public Authentication getAuthentication(User member) {
-		return new UsernamePasswordAuthenticationToken(member, "",
-			List.of(new SimpleGrantedAuthority("ROLE_USER")));
+	public Authentication getAuthentication(Long serviceUserPkId, String credentials) {
+		return new UsernamePasswordAuthenticationToken(
+				serviceUserPkId,
+				credentials,
+				List.of(ROLE_USER)
+		);
 	}
 }
