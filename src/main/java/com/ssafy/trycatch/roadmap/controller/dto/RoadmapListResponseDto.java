@@ -8,20 +8,20 @@ import lombok.Data;
 
 @Data
 public class RoadmapListResponseDto {
-	private SimpleUserInfo simpleUser;
+	private SimpleUserInfo author;
 	private String title;
 	private String tag;
 
 	@Builder
-	public RoadmapListResponseDto(SimpleUserInfo simpleUser, String title, String tag) {
-		this.simpleUser = simpleUser;
+	public RoadmapListResponseDto(SimpleUserInfo author, String title, String tag) {
+		this.author = author;
 		this.title = title;
 		this.tag = tag;
 	}
 
 	public static RoadmapListResponseDto from(Roadmap roadmap) {
 		return RoadmapListResponseDto.builder()
-			.simpleUser(SimpleUserInfo.from(roadmap.getUser()))
+			.author(SimpleUserInfo.from(roadmap.getUser()))
 			.title(roadmap.getTitle())
 			.tag(roadmap.getTag())
 			.build();
