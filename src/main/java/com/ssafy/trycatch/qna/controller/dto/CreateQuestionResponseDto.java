@@ -74,7 +74,6 @@ public class CreateQuestionResponseDto implements Serializable {
     ) {
         final User user = question.getUser();
         final User author = question.getUser();
-        final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
         return CreateQuestionResponseDto.builder()
                 .questionId(question.getId())
@@ -83,7 +82,7 @@ public class CreateQuestionResponseDto implements Serializable {
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())
-                .tags(temptags)
+                .tags(List.of(question.getTags().split(",")))
                 .likeCount(0)
                 .answerCount(0)
                 .viewCount(question.getViewCount())

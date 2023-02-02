@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.ZoneId;
 
 @Data
@@ -21,10 +20,11 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
     private final Long updatedAt;
     private final Integer likeCount;
     private final Boolean isLiked;
+    private final Boolean accepted;
 
 
     @Builder
-    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked) {
+    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked, Boolean accepted) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
@@ -32,6 +32,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
         this.updatedAt = updatedAt;
         this.likeCount = likeCount;
         this.isLiked = isLiked;
+        this.accepted = accepted;
     }
 
     /**
@@ -54,6 +55,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
                 .updatedAt(answer.getUpdatedAt().toEpochMilli())
                 .likeCount(answer.getLikes())
                 .isLiked(false)
+                .accepted(answer.getChosen())
                 .build();
     }
 }

@@ -13,6 +13,8 @@ import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.boot.json.JsonParser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -93,6 +95,7 @@ public class QuestionController {
         final User user = userService.findUserById(userId);
         final Question newEntity = createQuestionRequestDto.newQuestion(user);
         final Question savedEntity = questionService.saveQuestion(newEntity);
+
         final TargetType type = TargetType.QUESTION;
         final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), savedEntity.getId(), type).getActivated())
                 .orElse(false);
