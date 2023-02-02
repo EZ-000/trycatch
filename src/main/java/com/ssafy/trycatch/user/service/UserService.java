@@ -1,19 +1,18 @@
 package com.ssafy.trycatch.user.service;
 
-import com.ssafy.trycatch.common.service.CrudService;
-import com.ssafy.trycatch.feed.domain.ReadRepository;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 
-import java.security.Principal;
-import java.util.Optional;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -45,10 +44,10 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
 	}
 
-	public User getDetailUserInfo(Long userId, String userName) {
-		User saved = repository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+	public User getDetailUserInfo(Long userId) {
+		User saved = repository.findById(userId).orElseThrow(UserNotFoundException::new);
 		Set<Follow> followees = saved.getFollowees();
 
-		return null;
+		return saved;
 	}
 }

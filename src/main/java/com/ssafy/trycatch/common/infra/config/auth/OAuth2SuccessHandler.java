@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.common.infra.config.jwt.Token;
@@ -36,6 +37,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private String redirectUri;
 
 	@Override
+	@Transactional
 	public void onAuthenticationSuccess(
 		HttpServletRequest request,
 		HttpServletResponse response,
