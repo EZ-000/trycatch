@@ -3,13 +3,13 @@ package com.ssafy.trycatch.qna.controller.dto;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNANotLoginDto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.ZoneId;
 
 @Data
@@ -18,16 +18,18 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
     private final FindUserInQNANotLoginDto author;
     private final String content;
     private final Long timestamp;
+    private final Long updatedAt;
     private final Integer likeCount;
     private final Boolean isLiked;
 
 
     @Builder
-    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Integer likeCount, Boolean isLiked) {
+    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
         this.timestamp = timestamp;
+        this.updatedAt = updatedAt;
         this.likeCount = likeCount;
         this.isLiked = isLiked;
     }
@@ -49,6 +51,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
+                .updatedAt(answer.getUpdatedAt().toEpochMilli())
                 .likeCount(answer.getLikes())
                 .isLiked(false)
                 .build();

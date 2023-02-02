@@ -6,6 +6,7 @@ import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -13,13 +14,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Data
-public class CreateAnswerRequestDto implements Serializable {
-    private final String content;
-
-    @Builder
-    public CreateAnswerRequestDto(String content) {
-        this.content = content;
-    }
+@NoArgsConstructor
+public class CreateAnswerRequestDto {
+    private String content;
 
     public Answer newAnswer(Question question, User user) {
         return Answer.builder()
