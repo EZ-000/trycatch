@@ -5,7 +5,9 @@ import java.util.List;
 import com.ssafy.trycatch.user.domain.User;
 
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 public class UserDto {
 	private Long userId;
 	private String userName;
