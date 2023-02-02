@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
 import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
 import com.ssafy.trycatch.user.domain.User;
@@ -37,6 +38,17 @@ public class UserController {
 	@Autowired
 	public UserController(UserService userService) {
 		this.userService = userService;
+	}
+
+	@GetMapping("/my")
+	public ResponseEntity<SimpleUserInfo> findMyInfo(
+		@Nullable @AuthenticationPrincipal Long userId) {
+		if (null == userId) {
+			return ResponseEntity.badRequest().build();
+		}
+		final User user = userService.findUserById(userId);
+
+		return ResponseEntity.ok(SimpleUserInfo.from(user));
 	}
 
 	@GetMapping("/{userName}")
@@ -92,10 +104,10 @@ public class UserController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		try{
-			userService.inActivateUser(userId,reason.toEntity());
+		try {
+			userService.inActivateUser(userId, reason.toEntity());
 			return ResponseEntity.ok("사용자가 탈퇴합니다. 단, 테이블에서는 활성 상태가 수정됩니다.");
-		}catch (UserNotFoundException u){
+		} catch (UserNotFoundException u) {
 			return ResponseEntity.badRequest().build();
 		}
 	}
