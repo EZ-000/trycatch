@@ -5,6 +5,7 @@ import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.exceptions.LikesNotFoundException;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
 import com.ssafy.trycatch.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,13 @@ import java.util.List;
 @Service
 public class LikesService extends CrudService<Likes, Long, LikesRepository> {
 
+    private final ReadRepository readRepository;
+
     @Autowired
-    public LikesService(LikesRepository likesRepository) {
+    public LikesService(LikesRepository likesRepository,
+                        ReadRepository readRepository) {
         super(likesRepository);
+        this.readRepository = readRepository;
     }
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
@@ -28,7 +33,7 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
     }
 
     public Likes getLastLikes(Long userId, Long targetId, TargetType targetType) {
-        List<Likes> likesList = likesRepository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
+        List<Likes> likesList = repository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
         final Likes lastLikes;
         if (likesList.size() != 0) {
             lastLikes = likesList.get(likesList.size() - 1);

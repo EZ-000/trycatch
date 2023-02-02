@@ -29,11 +29,11 @@ public abstract class CrudService<T, ID, R extends JpaRepository<T, ID>> {
         repository.flush();
     }
 
-    public <S extends T> S saveAndFlush(S entity) {
+    public <S extends T> S registerAndFlush(S entity) {
         return repository.saveAndFlush(entity);
     }
 
-    public <S extends T> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends T> List<S> registerAllAndFlush(Iterable<S> entities) {
         return repository.saveAllAndFlush(entities);
     }
 
