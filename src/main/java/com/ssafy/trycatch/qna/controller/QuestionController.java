@@ -99,10 +99,14 @@ public class QuestionController {
             @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
         final User user = userService.findUserById(Long.parseLong(tokenService.getUid(token)));
-        final QuestionCategory categoryName = QuestionCategory.DEV;
-        final Question newEntity = createQuestionRequestDto.newQuestion(categoryName, user);
+        final Question newEntity = createQuestionRequestDto.newQuestion(user);
         final Question savedEntity = questionService.saveQuestion(newEntity);
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity, companyService));
+        final TargetType type = TargetType.QUESTION;
+        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), savedEntity.getId(), type).getActivated())
+                .orElse(false);
+        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), savedEntity.getId(), type).getActivated())
+                .orElse(false);
+        return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity, companyService, isLiked, isBookmarked));
     }
 
     /**
@@ -114,7 +118,7 @@ public class QuestionController {
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
         final Question entity = questionService.putQuestion(putQuestionRequestDto);
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(entity, companyService));
+        return ResponseEntity.ok(CreateQuestionResponseDto.from(entity, companyService, false, false));
     }
 
     @DeleteMapping("/questionId")

@@ -7,22 +7,26 @@ import lombok.Data;
 
 @Data
 public class RoadmapRequestDto {
-	private Long userId;
-	private String node;
-	private String edge;
+	private String title;
+	private String tag;
+	private String nodes;
+	private String edges;
 
 	@Builder
-	public RoadmapRequestDto(Long userId, String node, String edge) {
-		this.userId = userId;
-		this.node = node;
-		this.edge = edge;
+	public RoadmapRequestDto(String title, String tag, String nodes, String edges) {
+		this.title = title;
+		this.tag = tag;
+		this.nodes = nodes;
+		this.edges = edges;
 	}
 
-	public Roadmap newRoadmap() {
+	public Roadmap toEntity() {
 		return Roadmap.builder()
-			.userId(userId)
-			.node(node)
-			.edge(edge)
+			.user(null)
+			.title(title)
+			.tag(tag)
+			.node(nodes)
+			.edge(edges)
 			.build();
 	}
 }

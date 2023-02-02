@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.ssafy.trycatch.common.domain.Company;
+import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.common.infra.config.jwt.Token;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.user.domain.User;
@@ -28,6 +30,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final TokenService tokenService;
 	private final UserRequestMapper userRequestMapper;
 	private final UserRepository userRepository;
+	private final CompanyRepository companyRepository;
 
 	@Value("${settings.login.on_success.redirect_uri}")
 	private String redirectUri;
@@ -48,6 +51,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			.orElse(userRequestMapper.newEntity(oAuth2User));
 
 		tempUser.setActivated(true);
+		Company c = companyRepository.findById(1L).orElseThrow();
+		tempUser.setCompany(companyRepository.findById(1L).orElseThrow());
 		final User savedUser = userRepository.save(tempUser);
 
 

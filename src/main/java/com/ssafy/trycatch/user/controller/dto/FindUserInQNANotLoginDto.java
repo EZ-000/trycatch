@@ -30,11 +30,11 @@ public class FindUserInQNANotLoginDto implements Serializable {
     public static FindUserInQNANotLoginDto from(User author, CompanyService companyService) {
 
         final String companyName;
-        if (author.getCompanyId() == 0) {
+        if (null == author.getCompany()) {
             companyName = "";
         }
         else {
-            companyName = companyService.findCompanyById(author.getCompanyId()).getName();
+            companyName = companyService.findCompanyById(author.getCompany().getId()).getName();
         }
 
         return FindUserInQNANotLoginDto.builder()
