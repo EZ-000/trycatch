@@ -1,24 +1,22 @@
 package com.ssafy.trycatch.user.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.user.domain.Withdrawal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
 import com.ssafy.trycatch.user.domain.WithdrawalRepository;
 
+@Slf4j
 @Service
-public class WithdrawalService {
-	private static final Logger log = LoggerFactory.getLogger(WithdrawalService.class);
-
-	private final WithdrawalRepository withdrawalRepository;
-
+public class WithdrawalService extends CrudService<Withdrawal, Long, WithdrawalRepository> {
 	public WithdrawalService(WithdrawalRepository withdrawalRepository) {
-		this.withdrawalRepository = withdrawalRepository;
+		super(withdrawalRepository);
 	}
 
 	public void registerReason(WithdrawalRequestDto reason) {
-		withdrawalRepository.save(reason.newWithdrawal());
+		repository.save(reason.newWithdrawal());
 	}
 }
 

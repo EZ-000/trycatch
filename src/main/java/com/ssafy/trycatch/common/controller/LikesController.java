@@ -44,7 +44,7 @@ public class LikesController {
         final Likes lastLikes = likesService.getLastLikes(user.getId(), likesRequestDto.getId(),type);
         if (lastLikes.getActivated()) throw new LikesDuplicatedException();
         final Likes newLikes = likesRequestDto.newLikes(user);
-        likesService.saveLikes(newLikes);
+        likesService.register(newLikes);
         if (type == TargetType.QUESTION) {
             final Question question = questionService.findQuestionById(likesRequestDto.getId());
             question.setLikes(question.getLikes() + 1);
@@ -66,7 +66,7 @@ public class LikesController {
         final TargetType type = TargetType.valueOf(likesRequestDto.getType());
         final Likes lastLikes = likesService.getLastLikes(user.getId(), likesRequestDto.getId(), type);
         lastLikes.setActivated(!lastLikes.getActivated());
-        likesService.saveLikes(lastLikes);
+        likesService.register(lastLikes);
         if (type == TargetType.QUESTION) {
             final Question question = questionService.findQuestionById(likesRequestDto.getId());
             question.setLikes(question.getLikes() - 1);

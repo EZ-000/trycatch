@@ -1,6 +1,6 @@
 package com.ssafy.trycatch.gamification.domain;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChallengeRepository extends CrudRepository<Challenge, Long> {
+public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 }

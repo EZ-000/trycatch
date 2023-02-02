@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.ssafy.trycatch.common.domain.Company;
-import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.gamification.domain.ChallengeGroup;
 import com.ssafy.trycatch.gamification.domain.MyBadge;
@@ -32,7 +31,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @DynamicInsert
 @Table(name = "user")

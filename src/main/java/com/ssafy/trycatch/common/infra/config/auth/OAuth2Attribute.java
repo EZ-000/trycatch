@@ -34,6 +34,7 @@ final class OAuth2Attribute {
 		throw new NotSupportedOAuth();
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private static OAuth2Attribute ofGitHub(
 		String attributeKey,
 		Map<String, Object> attributes
