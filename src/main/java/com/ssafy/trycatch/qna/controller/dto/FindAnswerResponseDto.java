@@ -20,10 +20,11 @@ public class FindAnswerResponseDto implements Serializable {
     private final Long updatedAt;
     private final Integer likeCount;
     private final Boolean isLiked;
+    private final Boolean accepted;
 
 
     @Builder
-    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked) {
+    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked, Boolean accepted) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
@@ -31,6 +32,7 @@ public class FindAnswerResponseDto implements Serializable {
         this.updatedAt = updatedAt;
         this.likeCount = likeCount;
         this.isLiked = isLiked;
+        this.accepted = accepted;
     }
 
     /**
@@ -53,6 +55,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .updatedAt(answer.getUpdatedAt().toEpochMilli())
                 .likeCount(answer.getLikes())
                 .isLiked(false)
+                .accepted(answer.getChosen())
                 .build();
     }
 }
