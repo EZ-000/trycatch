@@ -1,5 +1,5 @@
 INSERT INTO company(id, name) VALUES
-    (1, 'defualt'),
+    (1, 'default'),
     (2, 'try fall'),
     (3, 'try catch');
 
