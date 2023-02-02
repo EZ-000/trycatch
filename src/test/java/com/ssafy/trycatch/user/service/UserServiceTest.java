@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
 
@@ -40,7 +41,9 @@ class UserServiceTest {
 		User beforeInactiveUser = userRepository.findById(userId).orElseThrow();
 		assertEquals(beforeInactiveUser.getActivated(), true);
 
-		userService.inActivateUser(userId);
+		userService.inActivateUser(userId, WithdrawalRequestDto.builder()
+			.userId(userId)
+			.content("TEST").build().toEntity());
 
 		User afterInactiveUser = userRepository.findById(userId).orElseThrow();
 		assertEquals(afterInactiveUser.getActivated(), false);
