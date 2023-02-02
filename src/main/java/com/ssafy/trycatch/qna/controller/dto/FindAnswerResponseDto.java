@@ -17,16 +17,18 @@ public class FindAnswerResponseDto implements Serializable {
     private final FindUserInQNADto author;
     private final String content;
     private final Long timestamp;
+    private final Long updatedAt;
     private final Integer likeCount;
     private final Boolean isLiked;
 
 
     @Builder
-    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, Long timestamp, Integer likeCount, Boolean isLiked) {
+    public FindAnswerResponseDto(Long answerId, FindUserInQNADto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
         this.timestamp = timestamp;
+        this.updatedAt = updatedAt;
         this.likeCount = likeCount;
         this.isLiked = isLiked;
     }
@@ -48,6 +50,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
+                .updatedAt(answer.getUpdatedAt().toEpochMilli())
                 .likeCount(answer.getLikes())
                 .isLiked(false)
                 .build();

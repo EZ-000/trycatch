@@ -33,13 +33,14 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
     private final Integer answerCount;
     private final Integer viewCount;
     private final Long timestamp;
+    private final Long updatedAt;
     private final Boolean isLiked;
     private final Boolean isSolved;
     private final Boolean isBookmarked;
     private final List<FindAnswerResponseNotLoginDto> answers;
 
     @Builder
-    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
+    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -51,6 +52,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
         this.answerCount = answerCount;
         this.viewCount = viewCount;
         this.timestamp = timestamp;
+        this.updatedAt = updatedAt;
         this.isLiked = isLiked;
         this.isSolved = isSolved;
         this.isBookmarked = isBookmarked;
@@ -83,6 +85,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
                 .timestamp(question.getCreatedAt()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toInstant().toEpochMilli())
+                .updatedAt(question.getUpdatedAt().toEpochMilli())
                 .isLiked(false)
                 .isSolved(question.getChosen())
                 .isBookmarked(false)

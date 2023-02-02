@@ -16,13 +16,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * A DTO for the {@link com.ssafy.trycatch.qna.domain.Question} entity
- */
 @Data
-public class FindQuestionResponseDto implements Serializable {
+public class AcceptAnswerResponseDto implements Serializable {
     private final Long questionId;
     @Size(max = 50)
     private final FindUserInQNADto author;
@@ -44,7 +42,7 @@ public class FindQuestionResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public AcceptAnswerResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -63,12 +61,7 @@ public class FindQuestionResponseDto implements Serializable {
         this.answers = answers;
     }
 
-    /**
-     * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
-     * @param question 엔티티
-     * @return 새로운 DTO 인스턴스
-     */
-    public static FindQuestionResponseDto from(
+    public static AcceptAnswerResponseDto from(
             Question question, List<Answer> answers, User user,
             CompanyService companyService,
             Boolean isLiked, Boolean isBookmarked ) {
@@ -76,9 +69,9 @@ public class FindQuestionResponseDto implements Serializable {
         final List<FindAnswerResponseDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseDto.from(answer, user, companyService))
                 .collect(Collectors.toList());
-        final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
+        final List<String> temptags = new ArrayList<String>(Arrays.asList("42good", "1stprizeisours"));
 
-        return FindQuestionResponseDto.builder()
+        return AcceptAnswerResponseDto.builder()
                 .questionId(question.getId())
                 .author(FindUserInQNADto.from(user, author, companyService))
                 .category(question.getCategoryName())
