@@ -54,7 +54,6 @@ public class QuestionService {
     }
 
     /**
-     * @param questionId
      * @throws IllegalArgumentException questionId가 없는 경우
      */
     public void deleteQuestion(Long questionId) {

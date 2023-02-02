@@ -1,6 +1,6 @@
 package com.ssafy.trycatch.user.domain;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FollowRepository extends PagingAndSortingRepository<Follow, Long> {
+public interface FollowRepository extends JpaRepository<Follow, Long> {
 }

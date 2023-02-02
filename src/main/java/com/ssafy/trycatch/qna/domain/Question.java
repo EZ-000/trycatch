@@ -3,14 +3,11 @@ package com.ssafy.trycatch.qna.domain;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -77,5 +74,5 @@ public class Question {
     private Set<Answer> answers = new LinkedHashSet<>();
 
     @Transient
-    private List<String> tags = new ArrayList<String>();
+    private List<String> tags = new ArrayList<>();
 }

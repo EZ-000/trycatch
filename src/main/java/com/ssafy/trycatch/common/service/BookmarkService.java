@@ -6,19 +6,16 @@ import com.ssafy.trycatch.common.domain.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class BookmarkService {
-
-    private final BookmarkRepository bookmarkRepository;
+public class BookmarkService extends CrudService<Bookmark, Long, BookmarkRepository> {
 
     @Autowired
     public BookmarkService(BookmarkRepository bookmarkRepository) {
-        this.bookmarkRepository = bookmarkRepository;
+        super(bookmarkRepository);
     }
 
     public Bookmark getBookmark(Long userId, Long targetId, TargetType targetType) {
-        return bookmarkRepository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(() -> new Bookmark());
+        return repository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
+                        .orElseGet(Bookmark::new);
     }
 }

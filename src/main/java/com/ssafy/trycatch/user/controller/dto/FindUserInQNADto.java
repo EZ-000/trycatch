@@ -6,8 +6,10 @@ import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -31,20 +33,16 @@ public class FindUserInQNADto implements Serializable {
     public static FindUserInQNADto from(User user, User author, CompanyService companyService) {
 
         final Set<Follow> followees = user.getFollowees();
-        final String companyName;
-        if (null == author.getCompany()) {
-            companyName = "";
-        }
-        else {
-            companyName = companyService.findCompanyById(author.getCompany().getId()).getName();
-        }
+
+        final Company company = author.getCompany();
+        final String companyName = null != company ? company.getName() : "";
 
         return FindUserInQNADto.builder()
                 .userId(author.getId())
                 .userName(author.getUsername())
                 .profileImage(author.getImageSrc())
                 .companyName(companyName)
-                .isFollowed(followees.contains(author.getId()))
+                .isFollowed(followees.contains(author)) // FIXME
                 .build();
     }
 }
