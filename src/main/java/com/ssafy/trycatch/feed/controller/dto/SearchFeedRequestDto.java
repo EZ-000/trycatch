@@ -12,7 +12,8 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class SearchFeedRequestDto {
 
-    private String query = "*";
+    @Nullable
+    private String query = null;
 
     private FeedSortOption sort = FeedSortOption.date;
 

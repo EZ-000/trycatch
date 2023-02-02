@@ -40,9 +40,9 @@ public class FeedController {
                 requestDto.getPage(), requestDto.getSize(), requestDto.getSort()
         );
 
-        // TODO : 구독 필터 구현
+        // TODO : 구독 필터 구현, 유저 맞춤 정렬 구현
         final String query = requestDto.getQuery();
-        Page<ESFeed> feedPage = Page.empty();
+        Page<ESFeed> feedPage;
         if (StringUtils.hasText(query)) {
             if (requestDto.isAdvanced()) {
                 // 고급 검색
@@ -51,6 +51,8 @@ public class FeedController {
                 // 일반 검색
                 feedPage = feedService.commonSearch(query, pageable);
             }
+        } else {
+            feedPage = feedService.findAll(pageable);
         }
 
         return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage));
