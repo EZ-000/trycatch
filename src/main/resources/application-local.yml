@@ -43,7 +43,7 @@ settings:
     on_success:
       redirect_uri: https://beta.try-catch.duckdns.org
     on_fail:
-      redirect_uri: https://i8e108.p.ssafy.io/error
+      redirect_uri: https://beta.try-catch.duckdns.org/error
 
 apiPrefix:
   v1

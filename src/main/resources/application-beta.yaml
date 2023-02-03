@@ -21,16 +21,14 @@ spring:
 settings:
   login:
     on_success:
-      redirect_uri: https://beta.try-catch.duckdns.org/
+      redirect_uri: https://beta.try-catch.duckdns.org
     on_fail:
-      redirect_uri: https://i8e108.p.ssafy.io/error
+      redirect_uri: https://beta.try-catch.duckdns.org/error
 
   cross-origin: >
     http://localhost:5173,
     https://beta.try-catch.duckdns.org,
-    https://try-catch.kr
 
-  
 
 apiPrefix:
   v1

@@ -20,14 +20,13 @@ spring:
 
 settings:
   cross-origin: >
-    https://i8e108.p.ssafy.io,
     https://try-catch.kr
 
   login:
     on_success:
-      redirect_uri: https://beta.try-catch.duckdns.org
+      redirect_uri: https://try-catch.kr
     on_fail:
-      redirect_uri: https://i8e108.p.ssafy.io/error
+      redirect_uri: https://try-catch.kr/error
 
 
 apiPrefix:
