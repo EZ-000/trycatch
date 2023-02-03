@@ -69,7 +69,6 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
         final List<FindAnswerResponseNotLoginDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseNotLoginDto.from(answer, companyService))
                 .collect(Collectors.toList());
-        final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
         return FindQuestionResponseNotLoginDto.builder()
                 .questionId(question.getId())
@@ -78,7 +77,7 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())
-                .tags(temptags)
+                .tags(List.of(question.getTags().split(",")))
                 .likeCount(question.getLikes())
                 .answerCount(answerDtos.size())
                 .viewCount(question.getViewCount())

@@ -41,7 +41,7 @@ public class LikesController {
     ) {
         final User user = userService.findUserById(userId);
         final TargetType type = TargetType.valueOf(likesRequestDto.getType());
-        final Likes lastLikes = likesService.getLastLikes(user.getId(), likesRequestDto.getId(),type);
+        final Likes lastLikes = likesService.getLastLikes(user.getId(), likesRequestDto.getId(), type);
         if (lastLikes.getActivated()) throw new LikesDuplicatedException();
         final Likes newLikes = likesRequestDto.newLikes(user);
         likesService.register(newLikes);

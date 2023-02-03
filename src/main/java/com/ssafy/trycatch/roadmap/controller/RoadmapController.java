@@ -58,7 +58,7 @@ public class RoadmapController {
 		return ResponseEntity.ok(RoadmapResponseDto.from(roadmap));
 	}
 
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<RoadmapResponseDto> registerRoadmap(
 		@RequestBody RoadmapRequestDto roadmapRequestDto,
 		@RequestHeader(value = "Authorization", defaultValue = "NONE") String token) {

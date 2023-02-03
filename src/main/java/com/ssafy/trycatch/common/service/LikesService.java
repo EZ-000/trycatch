@@ -4,13 +4,10 @@ import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
-import com.ssafy.trycatch.common.service.exceptions.LikesNotFoundException;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
-import com.ssafy.trycatch.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 
