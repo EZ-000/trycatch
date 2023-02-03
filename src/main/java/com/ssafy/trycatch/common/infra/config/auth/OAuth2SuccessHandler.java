@@ -4,6 +4,7 @@ import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
 
 import java.io.IOException;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.common.infra.config.jwt.Token;
@@ -35,6 +37,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private String redirectUri;
 
 	@Override
+	@Transactional
 	public void onAuthenticationSuccess(
 		HttpServletRequest request,
 		HttpServletResponse response,
@@ -66,7 +69,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		response.addHeader(HeaderDefaultTokenAttributeKey, token.getToken());
 		response.addHeader(HeaderRefreshTokenAttributeKey, token.getRefreshToken());
 		response.setContentType("application/json;charset=UTF-8");
-
+		Cookie cookie = new Cookie("ref", token.getRefreshToken());
+		cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 		String tokenInfo =
 			"?" + HeaderDefaultTokenAttributeKey + "=" + token.getToken() +
 				"&" + HeaderRefreshTokenAttributeKey + "=" + token.getRefreshToken();

@@ -2,6 +2,7 @@ package com.ssafy.trycatch.user.domain;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -12,7 +13,6 @@ import org.hibernate.annotations.DynamicInsert;
 
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.feed.domain.Read;
-import com.ssafy.trycatch.gamification.domain.ChallengeGroup;
 import com.ssafy.trycatch.gamification.domain.MyBadge;
 import com.ssafy.trycatch.gamification.domain.MyChallenge;
 import com.ssafy.trycatch.qna.domain.Answer;
@@ -97,10 +97,6 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	@ToString.Exclude
 	private Set<Answer> answers = new LinkedHashSet<>();
-
-	@OneToMany(mappedBy = "user")
-	@ToString.Exclude
-	private Set<ChallengeGroup> challengeGroups = new LinkedHashSet<>();
 
 	@OneToMany(mappedBy = "user")
 	@ToString.Exclude
