@@ -20,7 +20,8 @@ spring:
 
 settings:
   cross-origin: >
-    https://i8e108.p.ssafy.io
+    https://i8e108.p.ssafy.io,
+    https://try-catch.kr
 
   login:
     on_success:
