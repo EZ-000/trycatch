@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.qna.controller;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.CompanyService;
@@ -9,12 +10,11 @@ import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -49,33 +49,36 @@ public class QuestionController {
         this.bookmarkService = bookmarkService;
     }
 
-    /**
-     Question 엔티티 리스트를 FindQuestionResponseDto 리스트로 변환하여 반환
-     */
     @GetMapping
     public ResponseEntity<List<?>> findAllQuestions(
             @PageableDefault Pageable pageable,
-            @Nullable @AuthenticationPrincipal Long userId ) {
-        List<Question> entities = questionService.findAllQuestions(pageable);
+            @Nullable @AuthenticationPrincipal Long userId,
+            @RequestParam String category
+    ) {
+        final QuestionCategory questionCategory = QuestionCategory.valueOf(category);
+        List<Question> entities = questionService.findAllQuestionsByCategory(questionCategory, pageable);
         if (userId == null) {
-            List<FindQuestionResponseNotLoginDto> questions = entities.stream()
+            List<FindQuestionResponseNotLoginDto> questions = entities
+                    .stream()
                     .map(question -> {
                         List<Answer> answers = answerService.findByQuestionId(question.getId());
                         return FindQuestionResponseNotLoginDto.from(question, answers, companyService);
                     })
                     .collect(Collectors.toList());
             return ResponseEntity.ok(questions);
-        }
-        else {
+        } else {
             List<FindQuestionResponseDto> questions = entities.stream()
                     .map(question -> {
                         final User user = userService.findUserById(userId);
                         final List<Answer> answers = answerService.findByQuestionId(question.getId());
                         final TargetType type = TargetType.QUESTION;
-                        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
+                        final Boolean isLiked = Optional
+                                .ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
                                 .orElse(false);
+
                         final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
                                 .orElse(false);
+
                         return FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
                     })
                     .collect(Collectors.toList());
@@ -85,6 +88,7 @@ public class QuestionController {
 
     /**
      * {@code Question} 엔티티를 생성 후 데이터베이스에 저장
+     *
      * @param createQuestionRequestDto 질문 생성 요청 DTO
      */
     @PostMapping
@@ -97,33 +101,51 @@ public class QuestionController {
         final Question savedEntity = questionService.saveQuestion(newEntity);
 
         final TargetType type = TargetType.QUESTION;
-        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), savedEntity.getId(), type).getActivated())
+        final Boolean isLiked = Optional
+                .ofNullable(likesService.getLikes(user.getId(), savedEntity.getId(), type).getActivated())
                 .orElse(false);
-        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), savedEntity.getId(), type).getActivated())
+
+        final Boolean isBookmarked = Optional
+                .ofNullable(bookmarkService.getBookmark(user.getId(), savedEntity.getId(), type).getActivated())
                 .orElse(false);
+
         return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity, companyService, isLiked, isBookmarked));
     }
 
     /**
-     PutQuestionRequestDto로 받은 수정 요청을 처리하고,
-     CreateQuestionResponseDto로 반환
+     * PutQuestionRequestDto로 받은 수정 요청을 처리하고,
+     * CreateQuestionResponseDto로 반환
      */
     @PutMapping("/{questionId}")
-    public ResponseEntity putQuestion (
+    public ResponseEntity putQuestion(
+            @Nullable @AuthenticationPrincipal Long userId,
             @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
-        final Question entity = questionService.putQuestion(putQuestionRequestDto);
+        questionService.updateQuestion(
+                userId,
+                putQuestionRequestDto.getQuestionId(),
+                putQuestionRequestDto.getCategory(),
+                putQuestionRequestDto.getTitle(),
+                putQuestionRequestDto.getContent(),
+                putQuestionRequestDto.getErrorCode(),
+                putQuestionRequestDto.getTags(),
+                putQuestionRequestDto.getHidden()
+        );
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/questionId")
-    public ResponseEntity<String> deleteQuestion (Long questionId) {
-        questionService.deleteQuestion(questionId);
+    @DeleteMapping("/{questionId}")
+    public ResponseEntity deleteQuestion(
+            @Nullable @AuthenticationPrincipal Long userId,
+            @PathVariable Long questionId
+    ) {
+        questionService.deleteQuestion(questionId, userId);
         return ResponseEntity.ok().build();
     }
 
     /**
      * {@code Question#id}로 {@code Question}을 찾아 {@code QuestionResponseDto}로 반환하여 반환
+     *
      * @param questionId {@code Question}의 id
      */
     @GetMapping("/{questionId}")
@@ -139,8 +161,7 @@ public class QuestionController {
         if (userId == null) {
             final FindQuestionResponseNotLoginDto question = FindQuestionResponseNotLoginDto.from(before, answers, companyService);
             return ResponseEntity.ok(question);
-        }
-        else {
+        } else {
             final User user = userService.findUserById(userId);
             final TargetType type = TargetType.QUESTION;
             final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), before.getId(), type).getActivated())
@@ -173,16 +194,27 @@ public class QuestionController {
         return ResponseEntity.ok(CreateAnswerResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked));
     }
 
+
+    @PutMapping("/{questionId}/answer")
+    public ResponseEntity putAnswer(
+            @Nullable @AuthenticationPrincipal Long userId,
+            @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto
+    ) {
+        answerService.updateAnswer(
+                userId,
+                putAnswerRequestDto.getAnswerId(),
+                putAnswerRequestDto.getContent(),
+                putAnswerRequestDto.getHidden()
+        );
+        return ResponseEntity.ok().build();
+    }
+
     // MOCK API: 질문 검색
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
             @PageableDefault Pageable pageable
     ) {
-        List<Question> entities = questionService.findAllQuestions(pageable);
-        List<SearchQuestionResponseDto> questions = entities.stream()
-                .map(SearchQuestionResponseDto::from)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(questions);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{questionId}/{answerId}")
@@ -191,6 +223,7 @@ public class QuestionController {
     ) {
         // 채택
         final Question question = questionService.findQuestionById(questionId);
+        if (question.getUser().getId() != userId) throw new RequestUserNotValidException();
         final Answer answer = answerService.findById(answerId);
         question.setChosen(true);
         questionService.saveQuestion(question);
@@ -212,10 +245,6 @@ public class QuestionController {
     public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions(
             @PageableDefault Pageable pageable
     ) {
-        List<Question> entities = questionService.findAllQuestions(pageable);
-        List<SuggestQuestionResponseDto> questions = entities.stream()
-                .map(SuggestQuestionResponseDto::from)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(questions);
+        return ResponseEntity.ok().build();
     }
 }
