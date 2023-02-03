@@ -16,6 +16,7 @@ spring:
             scope:
               - user:email
               - read:user
+              - public_repo
 
 settings:
   login:
