@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.service.CrudService;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.FollowRepository;
@@ -131,5 +132,18 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des)
 			.orElseThrow(AlreadyExistException::new);
 		followRepository.delete(follow);
+	}
+
+	public boolean isExist(Long uid) {
+		return repository.existsById(uid);
+	}
+
+	public List<Long> getAnswerIdListByUserId(Long uid) {
+		return repository.findById(uid)
+			.get()
+			.getAnswers()
+			.stream()
+			.map(e -> e.getId())
+			.collect(Collectors.toList());
 	}
 }

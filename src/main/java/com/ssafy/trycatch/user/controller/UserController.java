@@ -23,7 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.qna.service.AnswerService;
+import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
+import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
 import com.ssafy.trycatch.user.controller.dto.VerifyDto;
@@ -41,10 +45,15 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	private final UserService userService;
+	private final QuestionService questionService;
 
 	@Autowired
-	public UserController(UserService userService) {
+	public UserController(
+		UserService userService,
+		QuestionService questionService
+	) {
 		this.userService = userService;
+		this.questionService = questionService;
 	}
 
 	@GetMapping("/name")
@@ -139,7 +148,7 @@ public class UserController {
 				.map(e -> SimpleUserInfo.from(e))
 				.collect(Collectors.toList());
 			return ResponseEntity.ok(resultList);
-		} catch (UserNotFoundException | TypeNotPresentException e) {
+		} catch (UserNotFoundException | TypeNotPresentException u) {
 			return ResponseEntity.badRequest().build();
 		}
 	}
@@ -223,5 +232,76 @@ public class UserController {
 	public ResponseEntity<String> login(@PathParam("code") String code, HttpServletResponse response) {
 		return ResponseEntity.ok("로그인성공");
 	}
+
+	//	---------------------
+	// 	*   User Activity   *
+	// 	---------------------
+
+	@GetMapping("/{uid}/answer/list")
+	public ResponseEntity<UserAnswerDto> findUserAnswers(
+		@PathVariable Long uid,
+		@Nullable @AuthenticationPrincipal Long userId) {
+
+		// Common Logic
+		if (false == userService.isExist(uid)) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		List<Long> answerIdList = userService.getAnswerIdListByUserId(uid);
+		List<Question> questionList = questionService.findQuestionListByAnswerId(answerIdList);
+
+		if (null == userId) {    // Case1. 비회원
+
+		} else {    // Case2. 회원
+		}
+
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{userId}/question/list")
+	public ResponseEntity<String> findUserQuestions(@PathVariable Long userId) {
+		return ResponseEntity.ok("사용자가 작성한 질문 리스트를 조회합니다.");
+	}
+
+	@GetMapping("/{userId}/recent/list")
+	public ResponseEntity<String> findRecentFeed(@PathVariable Long userId) {
+		return ResponseEntity.ok("사용자가 최근 본 피드를 조회합니다.");
+	}
+
+	@GetMapping("/{userId}/subscription/list")
+	public ResponseEntity<String> findSubscriptionList(@PathVariable Long userId) {
+		return ResponseEntity.ok("사용자가 구독하고 있는 기업 블로그 포스트 리스트를 조회합니다.");
+	}
+
+	@GetMapping("/{userId}/history")
+	public ResponseEntity<String> findHistory(@PathVariable Long userId) {
+		return ResponseEntity.ok("사용자의 시간에 따른 레포지토리 분석 결과를 조회합니다.");
+	}
+
+	@GetMapping("/{userId}/badge/list")
+	public ResponseEntity<String> findBadge(@PathVariable Long userId) {
+		return ResponseEntity.ok("획득한 (대표) 배지 리스트를 조회합니다.");
+	}
+
+	@PostMapping("/news")
+	public ResponseEntity<String> subscribeNewsletter() {
+		return ResponseEntity.ok("뉴스레터 받기를 등록합니다.");
+	}
+
+	@PutMapping("/news")
+	public ResponseEntity<String> unsubscribeNewsletter() {
+		return ResponseEntity.ok("뉴스레터 받기를 취소합니다.");
+	}
+
+	@PostMapping("/report")
+	public ResponseEntity<String> report() {
+		return ResponseEntity.ok("사람, 게시글, 답변, 피드 등을 신고합니다.");
+	}
+
+	@GetMapping("/qna/rank")
+	public ResponseEntity<String> findRanks() {
+		return ResponseEntity.ok("질문답변 활동에서 가장 높은 포인트를 얻은 사람 목록을 조회합니다.");
+	}
+
 }
 
