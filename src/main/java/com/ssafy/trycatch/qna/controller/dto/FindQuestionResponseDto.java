@@ -1,8 +1,10 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +12,10 @@ import lombok.Data;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Set;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -19,32 +23,44 @@ import java.util.stream.Collectors;
  */
 @Data
 public class FindQuestionResponseDto implements Serializable {
-    @Size(max = 30)
-    private final String categoryName;
+    private final Long questionId;
     @Size(max = 50)
-    private final String authorUsername;
+    private final FindUserInQNADto author;
+    @Size(max = 30)
+    private final QuestionCategory category;
     @Size(max = 50)
     private final String title;
     private final String content;
-    private final LocalDate createdAt;
-    private final Instant updatedAt;
+    private final String errorCode;
+    private final List<String> tags;
+    private final Integer likeCount;
+    private final Integer answerCount;
     private final Integer viewCount;
-    private final Integer likes;
-    private final Boolean hidden;
-    private final Set<Long> answerIds;
+    private final Long timestamp;
+    private final Long updatedAt;
+    private final Boolean isLiked;
+    private final Boolean isSolved;
+    private final Boolean isBookmarked;
+    private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public FindQuestionResponseDto(String categoryName, String authorUsername, String title, String content, LocalDate createdAt, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
-        this.categoryName = categoryName;
-        this.authorUsername = authorUsername;
+    public FindQuestionResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+        this.questionId = questionId;
+        this.author = author;
+        this.category = category;
         this.title = title;
         this.content = content;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.errorCode = errorCode;
+        this.tags = tags;
+        this.likeCount = likeCount;
+        this.answerCount = answerCount;
         this.viewCount = viewCount;
-        this.likes = likes;
-        this.hidden = hidden;
-        this.answerIds = answerIds;
+        this.timestamp = timestamp;
+        this.updatedAt = updatedAt;
+        this.isLiked = isLiked;
+        this.isSolved = isSolved;
+        this.isBookmarked = isBookmarked;
+        this.answers = answers;
     }
 
     /**
@@ -52,26 +68,34 @@ public class FindQuestionResponseDto implements Serializable {
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindQuestionResponseDto from(Question question) {
-
-        final Category category = question.getCategory();
+    public static FindQuestionResponseDto from(
+            Question question, List<Answer> answers, User user,
+            CompanyService companyService,
+            Boolean isLiked, Boolean isBookmarked ) {
         final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers()
-                .stream()
-                .map(Answer::getId)
-                .collect(Collectors.toSet());
+        final List<FindAnswerResponseDto> answerDtos = answers.stream()
+                .map((Answer answer) -> FindAnswerResponseDto.from(answer, user, companyService))
+                .collect(Collectors.toList());
 
         return FindQuestionResponseDto.builder()
-                .categoryName(category.getName())
-                .authorUsername(author.getUsername())
+                .questionId(question.getId())
+                .author(FindUserInQNADto.from(user, author, companyService))
+                .category(question.getCategoryName())
                 .title(question.getTitle())
-                .content(question.getTitle())
-                .createdAt(question.getCreatedAt())
-                .updatedAt(question.getUpdatedAt())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(List.of(question.getTags().split(",")))
+                .likeCount(question.getLikes())
+                .answerCount(answerDtos.size())
                 .viewCount(question.getViewCount())
-                .likes(question.getLikes())
-                .hidden(question.getHidden())
-                .answerIds(answerIds)
+                .timestamp(question.getCreatedAt()
+                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .toInstant().toEpochMilli())
+                .updatedAt(question.getUpdatedAt().toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .answers(answerDtos)
                 .build();
     }
 }

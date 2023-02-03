@@ -1,57 +1,19 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.qna.domain.Category;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.CategoryService;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class PutQuestionRequestDto {
-
     private Long questionId;
-
+    private String category;
     private String title;
-
     private String content;
-
+    private String errorCode;
+    private List<String> tags;
     private Boolean hidden;
-
-    public void putQuestionRequestDto(String title, String content, Boolean hidden) {
-        this.title = title;
-        this.content = content;
-        this.hidden = hidden;
-    }
-
-    public Long getId() { return this.questionId; }
-
-    public String getTitle() { return this.title; }
-
-    public String getContent() { return this.content; }
-
-    public boolean getHidden() { return this.hidden; }
-
-    public void setTitle(String title) { this.title = title; }
-
-    public void setContent(String content) { this.content = content; }
-
-    public void setHidden(Boolean hidden) { this.hidden = hidden; }
-
-    public Question updateTo(Question entity) {
-        if (!entity.getTitle().equals(title)) {
-            entity.setTitle(title);
-        }
-        if (!entity.getContent().equals(content)) {
-            entity.setContent(content);
-        }
-        if (!entity.getHidden().equals(hidden)) {
-            entity.setHidden(hidden);
-        }
-        return entity;
-    }
 }

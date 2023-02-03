@@ -13,7 +13,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        show_sql: true
+        show_sql: false
     defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -28,7 +28,9 @@ spring:
             client-secret: 8d114cb3161d503734e173fd3e4b6fb118c5fca5
             redirect-uri: http://localhost:8080/login/oauth2/code/github
             scope:
-              - user
+              - user:email
+              - read:user
+              - public_repo
 
 logging:
   level:
@@ -39,7 +41,7 @@ settings:
 
   login:
     on_success:
-      redirect_uri: http://beta.try-catch.duckdns.org
+      redirect_uri: https://beta.try-catch.duckdns.org
     on_fail:
       redirect_uri: https://i8e108.p.ssafy.io/error
 

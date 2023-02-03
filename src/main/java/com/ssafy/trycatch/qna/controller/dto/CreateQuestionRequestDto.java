@@ -1,45 +1,46 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.qna.domain.Category;
-import com.ssafy.trycatch.qna.domain.CategoryRepository;
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.CategoryService;
-import com.ssafy.trycatch.qna.service.exceptions.CategoryNotFoundException;
 import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.service.UserService;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-import lombok.Builder;
+import jakarta.json.JsonObject;
+import jakarta.json.stream.JsonParser;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Data
 @NoArgsConstructor
 public class CreateQuestionRequestDto {
-
-    private Long categoryId;
-
+    private String category;
     private Long authorId;
-
     private String title;
-
     private String content;
+    private String errorCode;
+    private List<String> tags;
 
-    private Boolean hidden;
+    public Question newQuestion(User user) {
+        final User author = user;
+        final QuestionCategory categoryName = QuestionCategory.valueOf(category);
 
-    public Question newQuestion(
-            CategoryService categoryService,
-            UserService userService
-    ) {
-        final Category category = categoryService.findCategoryById(categoryId);
-        final User author = userService.findUserById(authorId);
         return Question.builder()
-                .category(category)
+                .categoryName(categoryName)
                 .user(author)
                 .title(title)
                 .content(content)
-                .hidden(hidden)
+                .errorCode(errorCode)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(Instant.EPOCH.now())
+                .chosen(false)
+                .viewCount(0)
+                .likes(0)
+                .hidden(false)
+                .tags(String.join(",", tags))
                 .build();
     }
 }

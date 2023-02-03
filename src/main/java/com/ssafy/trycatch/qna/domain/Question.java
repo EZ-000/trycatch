@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.qna.domain;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.*;
 
@@ -7,8 +8,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -26,10 +29,9 @@ public class Question {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    @ToString.Exclude
-    private Category category;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "category_name")
+    private QuestionCategory categoryName;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -50,7 +52,7 @@ public class Question {
     private String errorCode;
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private Instant updatedAt;
@@ -67,7 +69,11 @@ public class Question {
     @Column(name = "hidden")
     private Boolean hidden;
 
+    @Column(name = "tags")
+    private String tags;
+
     @OneToMany(mappedBy = "question")
     @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
+
 }

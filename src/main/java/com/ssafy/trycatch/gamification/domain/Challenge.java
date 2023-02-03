@@ -38,10 +38,6 @@ public class Challenge {
 
     @OneToMany(mappedBy = "challenge")
     @ToString.Exclude
-    private Set<ChallengeGroup> challengeGroups = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "challenge")
-    @ToString.Exclude
     private Set<MyChallenge> myChallenges = new LinkedHashSet<>();
 
 }

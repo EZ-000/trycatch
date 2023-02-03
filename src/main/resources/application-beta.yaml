@@ -16,17 +16,19 @@ spring:
             scope:
               - user:email
               - read:user
+              - public_repo
 
 settings:
   login:
     on_success:
-      redirect_uri: http://beta.try-catch.duckdns.org/
+      redirect_uri: https://beta.try-catch.duckdns.org/
     on_fail:
       redirect_uri: https://i8e108.p.ssafy.io/error
 
   cross-origin: >
     http://localhost:5173,
-    http://beta.try-catch.duckdns.org
+    https://beta.try-catch.duckdns.org,
+    https://try-catch.kr
 
   
 

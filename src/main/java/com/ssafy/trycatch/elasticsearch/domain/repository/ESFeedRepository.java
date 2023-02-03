@@ -1,22 +1,23 @@
 package com.ssafy.trycatch.elasticsearch.domain.repository;
 
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
-
 @Repository
 public interface ESFeedRepository extends ElasticsearchRepository<ESFeed, String> {
 
-    List<ESFeed> searchByContent(String content);
+    @Query("{" +
+        "\"query_string\": {" +
+            "\"query\": \"?0\"," +
+            "\"default_field\": \"*\"" +
+    "}}")
+    Page<ESFeed> searchByQueryString(String queryString, Pageable pageable);
 
-    List<ESFeed> findByTags(Collection<String> tags);
-
-    @Query("{\"match\": {\"company_ko\": {\"query\": \"?0\"}}}")
-    List<ESFeed> findByCompanyKo(String companyKo);
+    Page<ESFeed> searchByTitleOrContent(String title, String content, Pageable pageable);
 }
 
 

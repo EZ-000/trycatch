@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.feed.domain;
 
+import com.ssafy.trycatch.common.domain.Company;
 import lombok.*;
 
 import javax.persistence.*;

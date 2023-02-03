@@ -1,6 +1,9 @@
 package com.ssafy.trycatch.roadmap.domain;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import java.util.Optional;
 
-public interface RoadmapRepository extends PagingAndSortingRepository<Roadmap, Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
+	Optional<Roadmap> findByUserId(Long userId);
 }

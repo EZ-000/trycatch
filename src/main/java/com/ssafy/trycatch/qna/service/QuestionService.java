@@ -1,17 +1,22 @@
 package com.ssafy.trycatch.qna.service;
 
+import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.service.exceptions.QuestionCategoryNotFoundException;
 import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESQuestionRepository;
-import com.ssafy.trycatch.qna.controller.dto.PutQuestionRequestDto;
+
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.domain.QuestionRepository;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
+import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,24 +45,41 @@ public class QuestionService {
         return questionRepository.findByTitleLike(title, pageable);
     }
 
-    public List<Question> findAllQuestions(Pageable pageable) {
-        final Page<Question> questionPage = questionRepository.findAll(pageable);
-        return questionPage.stream().collect(Collectors.toList());
+    public List<Question> findAllQuestionsByCategory(QuestionCategory questionCategory, Pageable pageable) {
+        final List<Question> questions = questionRepository
+                .findByCategoryNameOrderByCreatedAtDesc(questionCategory, pageable);
+
+        return questions;
     }
 
-    public Question putQuestion(PutQuestionRequestDto putDto) {
-        final Question before = questionRepository.findById(putDto.getId())
+    @Transactional
+    public void updateQuestion(Long userId, Long questionId, String category, String title, String content, String errorCode, List<String> tags, Boolean hidden) {
+        final Question question = questionRepository
+                .findById(questionId)
                 .orElseThrow(QuestionNotFoundException::new);
-        final Question after = putDto.updateTo(before);
-        return questionRepository.save(after);
+
+        if (question.getUser().getId() != userId) throw new RequestUserNotValidException();
+
+        final QuestionCategory questionCategory = Optional
+                .ofNullable(QuestionCategory.valueOf(category))
+                .orElseThrow(QuestionCategoryNotFoundException::new);
+
+        question.setCategoryName(questionCategory);
+        question.setTitle(title);
+        question.setContent(content);
+        question.setErrorCode(errorCode);
+        question.setTags(String.join(",", tags));
+        question.setHidden(hidden);
+        questionRepository.save(question);
     }
+
 
     /**
-     *
-     * @param questionId
      * @throws IllegalArgumentException questionId가 없는 경우
      */
-    public void deleteQuestion(Long questionId) {
+    public void deleteQuestion(Long questionId, Long userId) {
+        final Question question = questionRepository.findById(questionId).orElseThrow(QuestionNotFoundException::new);
+        if (question.getUser().getId() != userId) throw new RequestUserNotValidException();
         questionRepository.deleteById(questionId);
     }
 
