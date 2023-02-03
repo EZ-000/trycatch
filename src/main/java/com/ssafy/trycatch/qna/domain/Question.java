@@ -69,10 +69,11 @@ public class Question {
     @Column(name = "hidden")
     private Boolean hidden;
 
+    @Column(name = "tags")
+    private String tags;
+
     @OneToMany(mappedBy = "question")
     @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
 
-    @Transient
-    private List<String> tags = new ArrayList<>();
 }

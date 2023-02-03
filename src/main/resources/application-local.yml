@@ -28,7 +28,9 @@ spring:
             client-secret: 8d114cb3161d503734e173fd3e4b6fb118c5fca5
             redirect-uri: http://localhost:8080/login/oauth2/code/github
             scope:
-              - user
+              - user:email
+              - read:user
+              - public_repo
 
 logging:
   level:

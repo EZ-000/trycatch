@@ -41,6 +41,8 @@ public class SearchFeedResponseDto {
 
         private Boolean isBookmarked;
 
+        private String thumbnailImage;
+
         static Item of(ESFeed entity) {
             return Item.builder()
                     .feedId(entity.getId())
@@ -53,6 +55,7 @@ public class SearchFeedResponseDto {
                     .tags(entity.getTags())
                     .keywords(entity.getKeywords())
                     .isBookmarked(false) // FIXME
+                    .thumbnailImage(entity.getThumbnailUrl())
                     .build();
         }
     }

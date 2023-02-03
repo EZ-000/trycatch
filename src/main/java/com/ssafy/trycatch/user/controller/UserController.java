@@ -11,6 +11,7 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -199,8 +200,14 @@ public class UserController {
 		return ResponseEntity.ok("회사 인증 이메일을 전송합니다.");
 	}
 
-	@PutMapping("/{userName}/github/fetch")
-	public ResponseEntity<String> fetchGitHub(@PathVariable String userName) {
+	@GetMapping("/{userName}/github/fetch")
+	public ResponseEntity<String> fetchGitHub(
+			Authentication authentication,
+			@PathVariable String userName
+	) {
+		final String oAuthToken = (String)authentication.getCredentials();
+		System.out.println(oAuthToken);
+
 		return ResponseEntity.ok("GitHub 연동을 갱신합니다.");
 	}
 
