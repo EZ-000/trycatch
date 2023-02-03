@@ -44,10 +44,10 @@ INSERT INTO my_challenge VALUES
                              (2, '2023-01-01 12:00:00', 1, true, 2, 2);
 
 INSERT INTO question
- (category_name, user_id, title, content, error_code, created_at, updated_at, chosen, view_count, likes, hidden)
+ (category_name, user_id, title, content, error_code, created_at, updated_at, chosen, view_count, likes, hidden, tags)
 VALUES
- ('DEV', 1, 'title 1', '2023-01-01', 'error code 1', current_date, current_date, 0, 0, 0, 0),
- ('DEV', 1, 'title 2', '2023-01-02', 'error code 2', current_date, current_date, 0, 0, 0, 0);
+ ('DEV', 1, 'title 1', '2023-01-01', 'error code 1', current_date, current_date, 0, 0, 0, 0, ''),
+ ('DEV', 1, 'title 2', '2023-01-02', 'error code 2', current_date, current_date, 0, 0, 0, 0, '여기는,태그가,있어요');
 
 INSERT INTO ranking VALUES
                         (1, 'DEV', 1),

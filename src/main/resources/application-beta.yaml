@@ -27,7 +27,8 @@ settings:
 
   cross-origin: >
     http://localhost:5173,
-    https://beta.try-catch.duckdns.org
+    https://beta.try-catch.duckdns.org,
+    https://try-catch.kr
 
   
 
