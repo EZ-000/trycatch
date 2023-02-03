@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,18 +41,18 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	@GetMapping("/my")
-	public ResponseEntity<SimpleUserInfo> findMyInfo(
+	@GetMapping("/name")
+	public ResponseEntity<String> findNameById(
 		@Nullable @AuthenticationPrincipal Long userId) {
 		if (null == userId) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 		final User user = userService.findUserById(userId);
 
-		return ResponseEntity.ok(SimpleUserInfo.from(user));
+		return ResponseEntity.ok(user.getUsername());
 	}
 
-	@GetMapping("/{userName}")
+	@GetMapping("/id/{userName}")
 	public ResponseEntity<Long> findUserId(@PathVariable String userName) {
 		try {
 			final Long userId = userService.findUserByName(userName).getId();
@@ -76,7 +77,7 @@ public class UserController {
 		@PathVariable Long targetId,
 		@Nullable @AuthenticationPrincipal Long userId) {
 		if (null == userId) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 
 		try {

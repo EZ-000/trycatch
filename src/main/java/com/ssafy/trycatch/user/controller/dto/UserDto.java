@@ -16,13 +16,13 @@ public class UserDto {
 	private String profileImg;
 	private Integer subscriptionCount;
 	private Integer followerCount;
-	private Integer followeeCount;
+	private Integer followingCount;
 	private List<String> tags;
 	private Boolean isFollowed;
 
 	@Builder
 	public UserDto(Long userId, String userName, String companyName, String introduction, String profileImg,
-		Integer subscriptionCount, Integer followerCount, Integer followeeCount, List<String> tags,
+		Integer subscriptionCount, Integer followerCount, Integer followingCount, List<String> tags,
 		Boolean isFollowed) {
 		this.userId = userId;
 		this.userName = userName;
@@ -31,7 +31,7 @@ public class UserDto {
 		this.profileImg = profileImg;
 		this.subscriptionCount = subscriptionCount;
 		this.followerCount = followerCount;
-		this.followeeCount = followeeCount;
+		this.followingCount = followingCount;
 		this.tags = tags;
 		this.isFollowed = isFollowed;
 	}
@@ -45,7 +45,7 @@ public class UserDto {
 			.profileImg(saved.getImageSrc())
 			.subscriptionCount(saved.getSubscriptions().size())
 			.followerCount(saved.getFollowers().size())
-			.followeeCount(saved.getFollowees().size())
+			.followingCount(saved.getFollowees().size())
 			.tags(tagList)
 			.isFollowed(false)
 			.build();
