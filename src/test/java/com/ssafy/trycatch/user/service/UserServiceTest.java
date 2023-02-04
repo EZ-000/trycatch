@@ -25,7 +25,7 @@ class UserServiceTest {
 	@DisplayName("--- inActive Test ---")
 	public void inActive() {
 		final Long beforeCount = userRepository.count();
-		final Long userId = 3L;
+		final Long userId = beforeCount+1;
 		User addUser = User.builder()
 			.id(userId)
 			.activated(true)
