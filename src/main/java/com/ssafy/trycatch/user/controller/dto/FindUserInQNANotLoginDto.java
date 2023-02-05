@@ -21,9 +21,11 @@ public class FindUserInQNANotLoginDto implements Serializable {
         }
 
         return FindUserInQNANotLoginDto.builder().userId(author.getId()).userName(author.getUsername())
-                                       .profileImage(author.getImageSrc()).companyName(companyName).isFollowed(
-                        false).build();
+                                                 .profileImage(author.getImageSrc()).companyName(companyName)
+                                                 .isFollowed(
+                                                         false).build();
     }
+
     public final Long userId;
     public final String userName;
     public final String profileImage;

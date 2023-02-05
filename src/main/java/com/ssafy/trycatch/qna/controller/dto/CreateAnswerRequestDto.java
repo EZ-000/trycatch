@@ -17,6 +17,6 @@ public class CreateAnswerRequestDto {
 
     public Answer newAnswer(Question question, User user) {
         return Answer.builder().question(question).user(user).content(content).createdAt(LocalDateTime.now())
-                     .updatedAt(Instant.now()).chosen(false).likes(0).hidden(false).build();
+                               .updatedAt(Instant.now()).chosen(false).likes(0).hidden(false).build();
     }
 }

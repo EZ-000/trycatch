@@ -20,6 +20,7 @@ public class TrycatchApplication {
     public static void main(String[] args) {
         SpringApplication.run(TrycatchApplication.class, args);
     }
+
     @Value("${settings.cross-origin}")
     private String[] allowOrigins;
 

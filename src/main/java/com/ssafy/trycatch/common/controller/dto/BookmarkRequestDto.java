@@ -17,6 +17,6 @@ public class BookmarkRequestDto {
         final TargetType targetType = TargetType.valueOf(type);
 
         return Bookmark.builder().userId(user.getId()).targetId(id).targetType(targetType).activated(true)
-                       .build();
+                                 .build();
     }
 }

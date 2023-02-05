@@ -27,7 +27,6 @@ import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
-import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.common.service.LikesService;
 import com.ssafy.trycatch.qna.controller.dto.AcceptAnswerResponseDto;
 import com.ssafy.trycatch.qna.controller.dto.CreateAnswerRequestDto;
@@ -53,25 +52,26 @@ import com.ssafy.trycatch.user.domain.User;
 public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
-    private final CompanyService companyService;
     private final LikesService likesService;
     private final BookmarkService bookmarkService;
 
     @Autowired
     public QuestionController(
-            QuestionService questionService, AnswerService answerService, CompanyService companyService,
-            LikesService likesService, BookmarkService bookmarkService
+            QuestionService questionService,
+            AnswerService answerService,
+            LikesService likesService,
+            BookmarkService bookmarkService
     ) {
         this.questionService = questionService;
         this.answerService = answerService;
-        this.companyService = companyService;
         this.likesService = likesService;
         this.bookmarkService = bookmarkService;
     }
 
     @GetMapping
     public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
-            @AuthUserElseGuest User requestUser, @RequestParam String category,
+            @AuthUserElseGuest User requestUser,
+            @RequestParam String category,
             @PageableDefault Pageable pageable
     ) {
         final QuestionCategory enumCategory = QuestionCategory.of(category);
@@ -81,17 +81,20 @@ public class QuestionController {
         for (Question question : questions) {
 
             final long targetId = question.getId();
-            final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(), targetId,
-                                                                        QUESTION);
-            final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(),
-                                                                                   targetId, QUESTION);
+            final boolean isLiked
+                    = likesService.isLikedByUserAndTarget(requestUser.getId(), targetId, QUESTION);
+
+            final boolean isBookmarked
+                    = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(), targetId, QUESTION);
+
             final User author = question.getUser();
+            final SimpleUserDto userInQNADto = SimpleUserDto.builder()
+                    .author(author)
+                    .requestUser(requestUser)
+                    .build();
 
-            final SimpleUserDto userInQNADto = SimpleUserDto.builder().author(author).requestUser(requestUser)
-                                                            .build();
-
-            final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(question, userInQNADto,
-                                                                                     isLiked, isBookmarked);
+            final FindQuestionResponseDto responseDto
+                    = FindQuestionResponseDto.from(question, userInQNADto, isLiked, isBookmarked);
 
             responseDtoList.add(responseDto);
         }
@@ -106,7 +109,8 @@ public class QuestionController {
      */
     @PostMapping
     public ResponseEntity<CreateQuestionResponseDto> createQuestion(
-            @AuthUserElseGuest User requestUser, @RequestBody CreateQuestionRequestDto createQuestionRequestDto
+            @AuthUserElseGuest User requestUser,
+            @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
 
         if (!createQuestionRequestDto.getAuthorId().equals(requestUser.getId())) {
@@ -116,16 +120,21 @@ public class QuestionController {
         final Question savedEntity = questionService.saveQuestion(createQuestionRequestDto);
 
         final long targetId = savedEntity.getId();
+
         final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(), targetId, QUESTION);
-        final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(), targetId,
-                                                                               QUESTION);
+
+        final boolean isBookmarked
+                = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(), targetId, QUESTION);
+
         final User user = savedEntity.getUser();
 
-        final SimpleUserDto userInQNADto = SimpleUserDto.builder().author(user).requestUser(requestUser)
-                                                        .build();
+        final SimpleUserDto userInQNADto = SimpleUserDto.builder()
+                .author(user)
+                .requestUser(requestUser)
+                .build();
 
-        final CreateQuestionResponseDto responseDto = CreateQuestionResponseDto.from(savedEntity, userInQNADto,
-                                                                                     isLiked, isBookmarked);
+        final CreateQuestionResponseDto responseDto
+                = CreateQuestionResponseDto.from(savedEntity, userInQNADto, isLiked, isBookmarked);
 
         return ResponseEntity.ok(responseDto);
     }
@@ -136,18 +145,22 @@ public class QuestionController {
      */
     @PutMapping("/{questionId}")
     public ResponseEntity<Void> putQuestion(
-            @AuthUserElseGuest User requestUser, @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
+            @AuthUserElseGuest User requestUser,
+            @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
-        questionService.updateQuestion(requestUser.getId(), putQuestionRequestDto.getQuestionId(),
-                                       putQuestionRequestDto.getCategory(), putQuestionRequestDto.getTitle(),
-                                       putQuestionRequestDto.getContent(), putQuestionRequestDto.getErrorCode(),
-                                       putQuestionRequestDto.getTags(), putQuestionRequestDto.getHidden());
+        questionService.updateQuestion(
+                requestUser.getId(), putQuestionRequestDto.getQuestionId(),
+                putQuestionRequestDto.getCategory(), putQuestionRequestDto.getTitle(),
+                putQuestionRequestDto.getContent(), putQuestionRequestDto.getErrorCode(),
+                putQuestionRequestDto.getTags(), putQuestionRequestDto.getHidden()
+        );
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{questionId}")
     public ResponseEntity<Void> deleteQuestion(
-            @AuthUserElseGuest User requestUser, @PathVariable Long questionId
+            @AuthUserElseGuest User requestUser,
+            @PathVariable Long questionId
     ) {
         questionService.deleteQuestion(questionId, requestUser.getId());
         return ResponseEntity.ok().build();
@@ -160,26 +173,34 @@ public class QuestionController {
      */
     @GetMapping("/{questionId}")
     public ResponseEntity<FindQuestionResponseDto> findQuestionById(
-            @PathVariable("questionId") Long questionId, @AuthUserElseGuest User requestUser
+            @PathVariable("questionId") Long questionId,
+            @AuthUserElseGuest User requestUser
     ) {
         final Question question = questionService.findQuestionById(questionId);
         final User author = question.getUser();
 
-        final SimpleUserDto simpleUserDto = SimpleUserDto.builder().author(author).requestUser(requestUser)
-                                                         .build();
+        final SimpleUserDto simpleUserDto = SimpleUserDto.builder()
+                .author(author)
+                .requestUser(requestUser)
+                .build();
+
         final long authorId = author.getId();
+
         final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(), authorId, QUESTION);
-        final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(), authorId,
-                                                                               QUESTION);
-        final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(question, simpleUserDto,
-                                                                                 isLiked, isBookmarked);
+
+        final boolean isBookmarked
+                = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(), authorId, QUESTION);
+
+        final FindQuestionResponseDto responseDto
+                = FindQuestionResponseDto.from(question, simpleUserDto, isLiked, isBookmarked);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/{questionId}/answer")
     public ResponseEntity<CreateAnswerResponseDto> createAnswers(
-            @PathVariable Long questionId, @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
+            @PathVariable Long questionId,
+            @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
             @AuthUserElseGuest User requestUser
     ) {
         // 생성
@@ -188,37 +209,45 @@ public class QuestionController {
         // 응답
         final List<Answer> answers = answerService.findByQuestionId(question.getId());
         final TargetType type = QUESTION;
-        final Boolean isLiked = Optional.ofNullable(
-                likesService.getLikes(requestUser.getId(), question.getId(), type).getActivated()).orElse(
-                false);
-        final Boolean isBookmarked = Optional.ofNullable(
-                bookmarkService.getBookmark(requestUser.getId(), question.getId(), type).getActivated()).orElse(
-                false);
+        final Boolean isLiked
+                = Optional.ofNullable(likesService.getLikes(requestUser.getId(), question.getId(), type)
+                                                  .getActivated())
+                          .orElse(false);
+
+        final Boolean isBookmarked
+                = Optional.ofNullable(bookmarkService.getBookmark(requestUser.getId(), question.getId(), type)
+                                                     .getActivated())
+                          .orElse(false);
         return ResponseEntity.ok(
                 CreateAnswerResponseDto.from(question, answers, requestUser, isLiked, isBookmarked));
     }
 
     @PutMapping("/{questionId}/answer")
     public ResponseEntity<Void> putAnswer(
-            @AuthUserElseGuest User requestUser, @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto,
+            @AuthUserElseGuest User requestUser,
+            @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto,
             @PathVariable String questionId
     ) {
-        answerService.updateAnswer(requestUser.getId(), putAnswerRequestDto.getAnswerId(),
-                                   putAnswerRequestDto.getContent(), putAnswerRequestDto.getHidden());
+        answerService.updateAnswer(
+                requestUser.getId(),
+                putAnswerRequestDto.getAnswerId(),
+                putAnswerRequestDto.getContent(),
+                putAnswerRequestDto.getHidden()
+        );
         return ResponseEntity.ok().build();
     }
 
     // MOCK API: 질문 검색
     @GetMapping("/search")
-    public ResponseEntity<List<SearchQuestionResponseDto>> search(
-            @PageableDefault Pageable pageable
-    ) {
+    public ResponseEntity<List<SearchQuestionResponseDto>> search(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{questionId}/{answerId}")
     public ResponseEntity<AcceptAnswerResponseDto> acceptAnswer(
-            @PathVariable Long questionId, @PathVariable Long answerId, @AuthUserElseGuest User requestUser
+            @PathVariable Long questionId,
+            @PathVariable Long answerId,
+            @AuthUserElseGuest User requestUser
     ) {
         // 채택
         final Question question = questionService.acceptAnswer(questionId, answerId);
@@ -229,12 +258,15 @@ public class QuestionController {
 
         final SimpleUserDto authorDto = SimpleUserDto.builder().author(author).requestUser(requestUser).build();
         final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(), author.getId(),
-                                                                    QUESTION);
+                                                                    QUESTION
+        );
         final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(),
-                                                                               author.getId(), QUESTION);
+                                                                               author.getId(), QUESTION
+        );
         final AcceptAnswerResponseDto responseDto = AcceptAnswerResponseDto.from(question, answerDtoList,
                                                                                  authorDto, isLiked,
-                                                                                 isBookmarked);
+                                                                                 isBookmarked
+        );
 
         return ResponseEntity.ok(responseDto);
     }

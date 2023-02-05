@@ -44,8 +44,9 @@ public class CreateAnswerResponseDto implements Serializable {
                                               answerDtos.size()).viewCount(question.getViewCount()).timestamp(question.getCreatedAt().atZone(
                                               ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
                                               question.getUpdatedAt().toEpochMilli()).isLiked(isLiked).isSolved(question.getChosen())
-                                      .isBookmarked(isBookmarked).answers(answerDtos).build();
+                                                .isBookmarked(isBookmarked).answers(answerDtos).build();
     }
+
     private final Long questionId;
     @Size(max = 50)
     private final SimpleUserDto author;

@@ -42,6 +42,7 @@ public class FindAnswerResponseDto implements Serializable {
                 timestamp).updatedAt(answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(
                 false).accepted(answer.getChosen()).build();
     }
+
     private final Long answerId;
     private final SimpleUserDto author;
     private final String content;

@@ -14,14 +14,17 @@ public class SimpleUserDto implements Serializable {
     public static Builder builder() {
         return new Builder();
     }
+
     public final Long userId;
     public final String userName;
     public final String profileImage;
     public final String companyName;
     public final Boolean isFollowed;
 
-    private SimpleUserDto(Long userId, String userName, String profileImage, String companyName,
-                          Boolean isFollowed) {
+    private SimpleUserDto(
+            Long userId, String userName, String profileImage, String companyName,
+            Boolean isFollowed
+    ) {
         this.userId = userId;
         this.userName = userName;
         this.profileImage = profileImage;
@@ -43,7 +46,8 @@ public class SimpleUserDto implements Serializable {
         final Company company = author.getCompany();
         final String companyName = null == company ? "" : company.getName();
         return new SimpleUserDto(author.getId(), author.getUsername(), author.getImageSrc(), companyName,
-                                 false);
+                                 false
+        );
     }
 
     public static class Builder {

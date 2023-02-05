@@ -10,7 +10,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     List<Bookmark> streamByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, TargetType targetType);
 
-    boolean existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(Long userId, Long targetId,
-                                                                   TargetType targetType);
+    boolean existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(
+            Long userId, Long targetId,
+            TargetType targetType
+    );
 
 }

@@ -10,5 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Target({ ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @AuthenticationPrincipal(
-        expression = "#this == 'anonymousUser' ? @userService.getGuest() : @userRepository.findById(#id)")
+        expression = "#this == 'anonymousUser' ? @userService.getGuest() : @userRepository.findById(#id)"
+)
 public @interface AuthUserElseGuest {}

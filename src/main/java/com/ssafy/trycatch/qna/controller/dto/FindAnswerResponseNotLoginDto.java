@@ -31,6 +31,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
                 answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(false).accepted(
                 answer.getChosen()).build();
     }
+
     private final Long answerId;
     private final FindUserInQNANotLoginDto author;
     private final String content;
