@@ -1,13 +1,14 @@
 package com.ssafy.trycatch.common.infra.config.auth;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ssafy.trycatch.common.infra.config.auth.exceptions.NotSupportedOAuth;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ToString
 @Builder(access = AccessLevel.PRIVATE)
@@ -35,7 +36,10 @@ final class OAuth2Attribute {
     private static OAuth2Attribute ofGitHub(
             String attributeKey, Map<String, Object> attributes
     ) {
-        return OAuth2Attribute.builder().id(attributes.get("id").toString()).name((String) attributes.get("login")).nodeId((String) attributes.get("node_id")).imageSrc((String) attributes.get("avatar_url")).gitHubAddress((String) attributes.get("html_url")).email((String) attributes.get("email")).attributes(attributes).attributeKey(attributeKey).build();
+        return OAuth2Attribute.builder().id(attributes.get("id").toString()).name(
+                (String) attributes.get("login")).nodeId((String) attributes.get("node_id")).imageSrc(
+                (String) attributes.get("avatar_url")).gitHubAddress((String) attributes.get("html_url")).email(
+                (String) attributes.get("email")).attributes(attributes).attributeKey(attributeKey).build();
     }
 
     Map<String, Object> convertToMap() {

@@ -1,6 +1,7 @@
 package com.ssafy.trycatch.user.controller.dto;
 
 import com.ssafy.trycatch.user.domain.Withdrawal;
+
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,27 +1,45 @@
 package com.ssafy.trycatch.user.service;
 
-import com.ssafy.trycatch.common.service.CrudService;
-import com.ssafy.trycatch.feed.domain.ReadRepository;
-import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
-import com.ssafy.trycatch.user.domain.*;
-import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
-import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
+import com.ssafy.trycatch.user.domain.Follow;
+import com.ssafy.trycatch.user.domain.FollowRepository;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.domain.UserRepository;
+import com.ssafy.trycatch.user.domain.Withdrawal;
+import com.ssafy.trycatch.user.domain.WithdrawalRepository;
+import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
+import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
+import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
-    private static final User GUEST = User.builder().id(-1L).githubNodeId("").username("guest").gitAddress("https://github.com").email("").activated(false).calendarMail("").followees(Collections.emptySet()).followers(Collections.emptySet()).answers(Collections.emptySet()).subscriptions(Collections.emptySet()).questions(Collections.emptySet()).myBadges(Collections.emptySet()).myChallenges(Collections.emptySet()).histories(Collections.emptySet()).build();
+    private static final User GUEST = User.builder().id(-1L).githubNodeId("").username("guest").gitAddress(
+                                                  "https://github.com").email("").activated(false).calendarMail("").followees(Collections.emptySet())
+                                          .followers(Collections.emptySet()).answers(Collections.emptySet())
+                                          .subscriptions(Collections.emptySet()).questions(
+                    Collections.emptySet()).myBadges(Collections.emptySet()).myChallenges(
+                    Collections.emptySet()).histories(Collections.emptySet()).build();
+
+    @SuppressWarnings("unsued")
+    public static User getGuest() {
+        return GUEST;
+    }
     private final ReadRepository readRepository;
     private final WithdrawalRepository withdrawalRepository;
     private final FollowRepository followRepository;
@@ -34,11 +52,6 @@ public class UserService extends CrudService<User, Long, UserRepository> {
         this.readRepository = readRepository;
         this.withdrawalRepository = withdrawalRepository;
         this.followRepository = followRepository;
-    }
-
-    @SuppressWarnings("unsued")
-    public static User getGuest() {
-        return GUEST;
     }
 
     public User findUserById(@NotNull Long userId) {
@@ -80,7 +93,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     public List<User> findFollowList(Long uid, String type) {
         User user = repository.findById(uid).orElseThrow(UserNotFoundException::new);
 
-        return getFollowset(user, type).orElseThrow(TypeNotFoundException::new).stream().map(e -> repository.findById(e.getId()).orElseThrow(UserNotFoundException::new)).collect(Collectors.toList());
+        return getFollowset(user, type).orElseThrow(TypeNotFoundException::new).stream().map(
+                e -> repository.findById(e.getId()).orElseThrow(UserNotFoundException::new)).collect(
+                Collectors.toList());
     }
 
     private Optional<Set<Follow>> getFollowset(User user, String type) {
@@ -122,7 +137,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
             throw new AlreadyExistException();
         }
 
-        Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des).orElseThrow(AlreadyExistException::new);
+        Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des).orElseThrow(
+                AlreadyExistException::new);
         followRepository.delete(follow);
     }
 
@@ -131,6 +147,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     public List<Long> getAnswerIdListByUserId(Long uid) {
-        return repository.findById(uid).get().getAnswers().stream().map(e -> e.getId()).collect(Collectors.toList());
+        return repository.findById(uid).get().getAnswers().stream().map(e -> e.getId()).collect(
+                Collectors.toList());
     }
 }

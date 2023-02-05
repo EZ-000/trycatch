@@ -1,12 +1,14 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import lombok.Data;
-import org.springframework.lang.Nullable;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import org.springframework.lang.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
+import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data

@@ -1,5 +1,19 @@
 package com.ssafy.trycatch.roadmap.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.roadmap.controller.dto.RoadmapListResponseDto;
@@ -9,12 +23,6 @@ import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/${apiPrefix}/roadmap")
@@ -35,7 +43,8 @@ public class RoadmapController {
     @GetMapping("/list")
     public ResponseEntity<List<RoadmapListResponseDto>> findAllRoadmap() {
         List<Roadmap> allRoadmaps = roadmapService.findAll();
-        List<RoadmapListResponseDto> allDtoList = allRoadmaps.stream().map(RoadmapListResponseDto::from).collect(Collectors.toList());
+        List<RoadmapListResponseDto> allDtoList = allRoadmaps.stream().map(RoadmapListResponseDto::from)
+                                                             .collect(Collectors.toList());
         return ResponseEntity.ok(allDtoList);
     }
 

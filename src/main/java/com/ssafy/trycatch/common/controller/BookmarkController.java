@@ -1,5 +1,15 @@
 package com.ssafy.trycatch.common.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
 import com.ssafy.trycatch.common.domain.Bookmark;
@@ -10,9 +20,6 @@ import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/${apiPrefix}/bookmark")
@@ -46,7 +53,8 @@ public class BookmarkController {
             @AuthUserElseGuest User requestUser, @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
-        final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
+        final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
+                                                                      bookmarkRequestDto.getId(), type);
         if (lastBookmark.getActivated()) {
             throw new BookmarkDuplicatedException();
         }
@@ -60,7 +68,8 @@ public class BookmarkController {
             @AuthUserElseGuest User requestUser, @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
-        final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
+        final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
+                                                                      bookmarkRequestDto.getId(), type);
         lastBookmark.setActivated(!lastBookmark.getActivated());
         bookmarkService.register(lastBookmark);
         return ResponseEntity.ok().build();

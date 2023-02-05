@@ -2,11 +2,17 @@ package com.ssafy.trycatch.roadmap.controller.dto;
 
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 public class RoadmapResponseDto {
+    public static RoadmapResponseDto from(Roadmap roadmap) {
+        return RoadmapResponseDto.builder().author(SimpleUserInfo.from(roadmap.getUser())).title(
+                                         roadmap.getTitle()).tag(roadmap.getTag()).nodes(roadmap.getNode()).edges(roadmap.getEdge())
+                                 .build();
+    }
     private SimpleUserInfo author;
     private String title;
     private String tag;
@@ -20,9 +26,5 @@ public class RoadmapResponseDto {
         this.tag = tag;
         this.nodes = nodes;
         this.edges = edges;
-    }
-
-    public static RoadmapResponseDto from(Roadmap roadmap) {
-        return RoadmapResponseDto.builder().author(SimpleUserInfo.from(roadmap.getUser())).title(roadmap.getTitle()).tag(roadmap.getTag()).nodes(roadmap.getNode()).edges(roadmap.getEdge()).build();
     }
 }

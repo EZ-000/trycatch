@@ -1,16 +1,18 @@
 package com.ssafy.trycatch.common.infra.config.jwt;
 
+import java.security.Key;
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.security.Key;
-import java.util.Date;
 
 @Service
 public class TokenService {
@@ -33,7 +35,11 @@ public class TokenService {
         claims.put("id", uid);
 
         Date now = new Date();
-        return new Token(Jwts.builder().setHeaderParam("typ", "JWT").setClaims(claims).setIssuedAt(now).setExpiration(new Date(now.getTime() + tokenPeriod)).signWith(key, SignatureAlgorithm.HS256).compact(), Jwts.builder().setHeaderParam("typ", "JWT").setClaims(claims).setIssuedAt(now).setExpiration(new Date(now.getTime() + refreshPeriod)).signWith(key, SignatureAlgorithm.HS256).compact());
+        return new Token(Jwts.builder().setHeaderParam("typ", "JWT").setClaims(claims).setIssuedAt(now)
+                             .setExpiration(new Date(now.getTime() + tokenPeriod))
+                             .signWith(key, SignatureAlgorithm.HS256).compact(), Jwts.builder().setHeaderParam(
+                "typ", "JWT").setClaims(claims).setIssuedAt(now).setExpiration(
+                new Date(now.getTime() + refreshPeriod)).signWith(key, SignatureAlgorithm.HS256).compact());
     }
 
     public boolean verifyToken(String token) {
@@ -46,7 +52,8 @@ public class TokenService {
     }
 
     public String getUid(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("id", String.class);
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("id",
+                                                                                                   String.class);
         //return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("id",String.class);
     }
 

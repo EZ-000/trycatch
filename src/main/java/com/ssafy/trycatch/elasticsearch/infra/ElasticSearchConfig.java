@@ -13,7 +13,6 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
     @Value("${elasticsearch.host}")
     private String host;
 
-
     @NonNull
     @Override
     public ClientConfiguration clientConfiguration() {
