@@ -11,4 +11,6 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     Optional<Likes> findByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, TargetType targetType);
 
     List<Likes> streamByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, TargetType targetType);
+
+    boolean existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(Long userId, Long targetId, TargetType targetType);
 }

@@ -1,44 +1,26 @@
 package com.ssafy.trycatch.user.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
-
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.user.controller.dto.*;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.UserService;
+import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
+import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.AnswerService;
-import com.ssafy.trycatch.qna.service.QuestionService;
-import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
-import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
-import com.ssafy.trycatch.user.controller.dto.UserDto;
-import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
-import com.ssafy.trycatch.user.controller.dto.VerifyDto;
-import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
-import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController

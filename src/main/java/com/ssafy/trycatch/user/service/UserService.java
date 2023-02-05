@@ -1,29 +1,20 @@
 package com.ssafy.trycatch.user.service;
 
+import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
+import com.ssafy.trycatch.user.domain.*;
+import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
+import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
+import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.ssafy.trycatch.common.service.CrudService;
-import com.ssafy.trycatch.feed.domain.ReadRepository;
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
-import com.ssafy.trycatch.user.domain.Follow;
-import com.ssafy.trycatch.user.domain.FollowRepository;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.domain.Withdrawal;
-import com.ssafy.trycatch.user.domain.WithdrawalRepository;
-import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
-import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -32,10 +23,13 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	private final WithdrawalRepository withdrawalRepository;
 	private final FollowRepository followRepository;
 
-	@Autowired
-	public UserService(UserRepository userRepository, ReadRepository readRepository,
-		WithdrawalRepository withdrawalRepository, FollowRepository followRepository) {
-		super(userRepository);
+	public UserService(
+			UserRepository repository,
+			ReadRepository readRepository,
+			WithdrawalRepository withdrawalRepository,
+			FollowRepository followRepository
+	) {
+		super(repository);
 		this.readRepository = readRepository;
 		this.withdrawalRepository = withdrawalRepository;
 		this.followRepository = followRepository;

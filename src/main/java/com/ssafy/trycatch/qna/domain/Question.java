@@ -9,9 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -76,4 +74,12 @@ public class Question {
     @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
 
+
+    public void increaseViewCount() {
+        viewCount++;
+    }
+
+    public void increaseViewCount(Integer view) {
+        viewCount += view;
+    }
 }

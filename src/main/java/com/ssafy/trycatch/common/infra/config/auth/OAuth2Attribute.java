@@ -1,14 +1,13 @@
 package com.ssafy.trycatch.common.infra.config.auth;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ssafy.trycatch.common.infra.config.auth.exceptions.NotSupportedOAuth;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ToString
 @Builder(access = AccessLevel.PRIVATE)

@@ -2,12 +2,10 @@ package com.ssafy.trycatch.common.service;
 
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
-import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.annotation.Target;
 import java.util.List;
 
 @Service
@@ -34,5 +32,9 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
             lastBookmark = new Bookmark(0L, 0L, 0L, TargetType.DEFAULT, false);
         }
         return lastBookmark;
+    }
+
+    public Boolean isBookmarkByUserAndTarget(Long userId, Long targetId, TargetType targetType) {
+        return repository.existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(userId, targetId, targetType);
     }
 }

@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.roadmap.controller.dto;
 
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
-
 import lombok.Builder;
 import lombok.Data;
 

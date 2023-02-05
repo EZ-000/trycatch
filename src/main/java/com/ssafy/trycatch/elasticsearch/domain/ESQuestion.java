@@ -1,11 +1,13 @@
 package com.ssafy.trycatch.elasticsearch.domain;
 
-import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,18 +29,23 @@ public class ESQuestion {
     @Field(type = FieldType.Text)
     private String content;
 
+    @Field(type = FieldType.Text)
+    private List<String> tags;
+
     @Builder
-    public ESQuestion(String category, String title, String content) {
+    public ESQuestion(String category, String title, String content, List<String> tags) {
         this.category = category;
         this.title = title;
         this.content = content;
+        this.tags = tags;
     }
 
-    public static ESQuestion of(Question entity) {
+    public static ESQuestion of(CreateQuestionRequestDto requestDto) {
         return ESQuestion.builder()
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .category(entity.getCategoryName().toString())
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .category(requestDto.getCategory())
+                .tags(requestDto.getTags())
                 .build();
     }
 }

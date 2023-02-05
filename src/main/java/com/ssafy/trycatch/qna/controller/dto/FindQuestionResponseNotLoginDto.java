@@ -12,8 +12,6 @@ import lombok.Data;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +62,13 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindQuestionResponseNotLoginDto from(Question question, List<Answer> answers, CompanyService companyService) {
+    public static FindQuestionResponseNotLoginDto from(
+            Question question,
+            List<Answer> answers,
+            CompanyService companyService
+    ) {
+
+
         final User author = question.getUser();
         final List<FindAnswerResponseNotLoginDto> answerDtos = answers.stream()
                 .map((Answer answer) -> FindAnswerResponseNotLoginDto.from(answer, companyService))

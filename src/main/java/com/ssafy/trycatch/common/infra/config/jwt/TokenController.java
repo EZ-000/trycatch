@@ -1,14 +1,13 @@
 package com.ssafy.trycatch.common.infra.config.jwt;
 
-import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.RequiredArgsConstructor;
+import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
 
 @RequiredArgsConstructor
 @RestController

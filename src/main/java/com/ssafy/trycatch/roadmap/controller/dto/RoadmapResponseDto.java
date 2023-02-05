@@ -2,7 +2,6 @@ package com.ssafy.trycatch.roadmap.controller.dto;
 
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
-
 import lombok.Builder;
 import lombok.Data;
 

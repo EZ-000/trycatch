@@ -2,7 +2,6 @@ package com.ssafy.trycatch.qna.domain;
 
 import com.ssafy.trycatch.common.domain.QuestionCategory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
