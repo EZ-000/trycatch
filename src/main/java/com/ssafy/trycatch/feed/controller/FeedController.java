@@ -1,9 +1,11 @@
 package com.ssafy.trycatch.feed.controller;
 
+import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
 import com.ssafy.trycatch.feed.service.FeedService;
+import com.ssafy.trycatch.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AbstractPageRequest;
@@ -12,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,35 +29,6 @@ public class FeedController {
 
     private final FeedService feedService;
 
-
-    // localhost:8080/v1/feed/search?query=qr
-    @GetMapping("/search")
-    public ResponseEntity<SearchFeedResponseDto> search(
-            @AuthenticationPrincipal Long userId,
-            SearchFeedRequestDto requestDto
-    ) {
-
-        final Pageable pageable = newPageable(
-                requestDto.getPage(), requestDto.getSize(), requestDto.getSort()
-        );
-
-        // TODO : 구독 필터 구현, 유저 맞춤 정렬 구현
-        final String query = requestDto.getQuery();
-        Page<ESFeed> feedPage;
-        if (StringUtils.hasText(query)) {
-            if (requestDto.isAdvanced()) {
-                // 고급 검색
-                feedPage = feedService.advanceSearch(query, pageable);
-            } else {
-                // 일반 검색
-                feedPage = feedService.commonSearch(query, pageable);
-            }
-        } else {
-            feedPage = feedService.findAll(pageable);
-        }
-
-        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage));
-    }
 
     @Autowired
     public FeedController(FeedService feedService) {
@@ -81,7 +53,7 @@ public class FeedController {
             @NonNull
             @Override
             public Pageable first() {
-                return newPageable(0 , size, sort);
+                return newPageable(0, size, sort);
             }
 
             @NonNull
@@ -96,5 +68,31 @@ public class FeedController {
                 return newPageable(pageNumber, size, sort);
             }
         };
+    }
+
+    // localhost:8080/v1/feed/search?query=qr
+    @GetMapping("/search")
+    public ResponseEntity<SearchFeedResponseDto> search(
+            @AuthUserElseGuest User requestUser, SearchFeedRequestDto requestDto
+    ) {
+
+        final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
+
+        // TODO : 구독 필터 구현, 유저 맞춤 정렬 구현
+        final String query = requestDto.getQuery();
+        Page<ESFeed> feedPage;
+        if (StringUtils.hasText(query)) {
+            if (requestDto.isAdvanced()) {
+                // 고급 검색
+                feedPage = feedService.advanceSearch(query, pageable);
+            } else {
+                // 일반 검색
+                feedPage = feedService.commonSearch(query, pageable);
+            }
+        } else {
+            feedPage = feedService.findAll(pageable);
+        }
+
+        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage));
     }
 }

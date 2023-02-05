@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,125 +21,116 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
-	private final ReadRepository readRepository;
-	private final WithdrawalRepository withdrawalRepository;
-	private final FollowRepository followRepository;
+    private static final User GUEST = User.builder().id(-1L).githubNodeId("").username("guest").gitAddress("https://github.com").email("").activated(false).calendarMail("").followees(Collections.emptySet()).followers(Collections.emptySet()).answers(Collections.emptySet()).subscriptions(Collections.emptySet()).questions(Collections.emptySet()).myBadges(Collections.emptySet()).myChallenges(Collections.emptySet()).histories(Collections.emptySet()).build();
+    private final ReadRepository readRepository;
+    private final WithdrawalRepository withdrawalRepository;
+    private final FollowRepository followRepository;
 
-	public UserService(
-			UserRepository repository,
-			ReadRepository readRepository,
-			WithdrawalRepository withdrawalRepository,
-			FollowRepository followRepository
-	) {
-		super(repository);
-		this.readRepository = readRepository;
-		this.withdrawalRepository = withdrawalRepository;
-		this.followRepository = followRepository;
-	}
+    public UserService(
+            UserRepository repository, ReadRepository readRepository, WithdrawalRepository withdrawalRepository,
+            FollowRepository followRepository
+    ) {
+        super(repository);
+        this.readRepository = readRepository;
+        this.withdrawalRepository = withdrawalRepository;
+        this.followRepository = followRepository;
+    }
 
-	public User findUserById(Long userId) {
-		return repository.findById(userId).orElseThrow(UserNotFoundException::new);
-	}
+    @SuppressWarnings("unsued")
+    public static User getGuest() {
+        return GUEST;
+    }
 
-	@Transactional
-	public void inActivateUser(long uid, Withdrawal reason) {
-		User savedUser = repository.findById(uid).orElseThrow();
-		savedUser.setActivated(false);
-		repository.save(savedUser);
-		withdrawalRepository.save(reason);
-	}
+    public User findUserById(@NotNull Long userId) {
+        return repository.findById(userId).orElseThrow(UserNotFoundException::new);
+    }
 
-	public Long findNameToId(String userName) {
-		return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
-	}
+    @Transactional
+    public void inActivateUser(long uid, Withdrawal reason) {
+        User savedUser = repository.findById(uid).orElseThrow();
+        savedUser.setActivated(false);
+        repository.save(savedUser);
+        withdrawalRepository.save(reason);
+    }
 
-	public User findUserByName(String userName) {
-		return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
-	}
+    public Long findNameToId(String userName) {
+        return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
+    }
 
-	public User getDetailUserInfo(Long userId) {
-		return repository.findById(userId).orElseThrow(UserNotFoundException::new);
-	}
+    public User findUserByName(String userName) {
+        return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+    }
 
-	@Transactional
-	public void modifyUser(Long userId, UserModifytDto modifytDto) {
-		User targetUser = repository.findById(userId).orElseThrow(UserNotFoundException::new);
-		if (null != modifytDto.introduction) {
-			targetUser.setIntroduction(modifytDto.getIntroduction());
-		}
-		if (null != modifytDto.profileImage) {
-			targetUser.setImageSrc(modifytDto.getProfileImage());
-		}
-		repository.save(targetUser);
-	}
+    public User getDetailUserInfo(Long userId) {
+        return repository.findById(userId).orElseThrow(UserNotFoundException::new);
+    }
 
-	public List<User> findFollowList(Long uid, String type) {
-		User user = repository.findById(uid).orElseThrow(UserNotFoundException::new);
+    @Transactional
+    public void modifyUser(Long userId, UserModifytDto modifytDto) {
+        User targetUser = repository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (null != modifytDto.introduction) {
+            targetUser.setIntroduction(modifytDto.getIntroduction());
+        }
+        if (null != modifytDto.profileImage) {
+            targetUser.setImageSrc(modifytDto.getProfileImage());
+        }
+        repository.save(targetUser);
+    }
 
-		return getFollowset(user, type).orElseThrow(TypeNotFoundException::new)
-			.stream()
-			.map(e -> repository.findById(e.getId()).orElseThrow(UserNotFoundException::new))
-			.collect(Collectors.toList());
-	}
+    public List<User> findFollowList(Long uid, String type) {
+        User user = repository.findById(uid).orElseThrow(UserNotFoundException::new);
 
-	private Optional<Set<Follow>> getFollowset(User user, String type) {
-		if (type.equals("follower")) {
-			return Optional.of(user.getFollowers());
-		} else if (type.equals("followee")) {
-			return Optional.of(user.getFollowees());
-		} else {
-			return null;
-		}
-	}
+        return getFollowset(user, type).orElseThrow(TypeNotFoundException::new).stream().map(e -> repository.findById(e.getId()).orElseThrow(UserNotFoundException::new)).collect(Collectors.toList());
+    }
 
-	public Boolean getVerification(Long userId) {
-		return repository.findById(userId).orElseThrow(UserNotFoundException::new)
-			.getConfirmationCode() == 1 ? true :
-			false;
-	}
+    private Optional<Set<Follow>> getFollowset(User user, String type) {
+        if (type.equals("follower")) {
+            return Optional.of(user.getFollowers());
+        } else if (type.equals("followee")) {
+            return Optional.of(user.getFollowees());
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * ID: src 인 유저가 ID: des 인 유저를 Follow
-	 * @param src
-	 * @param des
-	 */
-	public void follow(Long src, Long des) {
-		if (src == des) {
-			throw new AlreadyExistException();
-		}
-		final User srcUser = repository.findById(src).orElseThrow(UserNotFoundException::new);
-		final User desUser = repository.findById(des).orElseThrow(UserNotFoundException::new);
+    public Boolean getVerification(Long userId) {
+        return repository.findById(userId).orElseThrow(UserNotFoundException::new).getConfirmationCode() == 1;
+    }
 
-		if (true == followRepository.existsByFollowerIdAndFolloweeId(src, des)) {
-			throw new AlreadyExistException();
-		}
+    /**
+     * ID: src 인 유저가 ID: des 인 유저를 Follow
+     *
+     * @param src
+     * @param des
+     */
+    public void follow(Long src, Long des) {
+        if (src == des) {
+            throw new AlreadyExistException();
+        }
+        final User srcUser = repository.findById(src).orElseThrow(UserNotFoundException::new);
+        final User desUser = repository.findById(des).orElseThrow(UserNotFoundException::new);
 
-		followRepository.save(Follow.builder()
-			.follower(srcUser)
-			.followee(desUser)
-			.build());
-	}
+        if (followRepository.existsByFollowerIdAndFolloweeId(src, des)) {
+            throw new AlreadyExistException();
+        }
 
-	public void unfollow(Long src, Long des) {
-		if (src == des) {
-			throw new AlreadyExistException();
-		}
+        followRepository.save(Follow.builder().follower(srcUser).followee(desUser).build());
+    }
 
-		Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des)
-			.orElseThrow(AlreadyExistException::new);
-		followRepository.delete(follow);
-	}
+    public void unfollow(Long src, Long des) {
+        if (src == des) {
+            throw new AlreadyExistException();
+        }
 
-	public boolean isExist(Long uid) {
-		return repository.existsById(uid);
-	}
+        Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des).orElseThrow(AlreadyExistException::new);
+        followRepository.delete(follow);
+    }
 
-	public List<Long> getAnswerIdListByUserId(Long uid) {
-		return repository.findById(uid)
-			.get()
-			.getAnswers()
-			.stream()
-			.map(e -> e.getId())
-			.collect(Collectors.toList());
-	}
+    public boolean isExist(Long uid) {
+        return repository.existsById(uid);
+    }
+
+    public List<Long> getAnswerIdListByUserId(Long uid) {
+        return repository.findById(uid).get().getAnswers().stream().map(e -> e.getId()).collect(Collectors.toList());
+    }
 }

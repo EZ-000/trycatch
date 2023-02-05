@@ -12,32 +12,32 @@ import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
 @RequiredArgsConstructor
 @RestController
 public class TokenController {
-	private final TokenService tokenService;
+    private final TokenService tokenService;
 
-	@GetMapping("/token/expired")
-	public String auth() {
-		throw new RuntimeException();
-	}
+    @GetMapping("/token/expired")
+    public String auth() {
+        throw new RuntimeException();
+    }
 
-	@GetMapping("/token/refresh")
-	public String refreshAuth(HttpServletRequest request, HttpServletResponse response) {
-		String token = request.getHeader(CheckRefreshTokenAttributeKey);
+    @GetMapping("/token/refresh")
+    public String refreshAuth(HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader(CheckRefreshTokenAttributeKey);
 
-		if (token != null && tokenService.verifyToken(token)) {
-			String uid = tokenService.getUid(token);
+        if (token != null && tokenService.verifyToken(token)) {
+            String uid = tokenService.getUid(token);
 
-			// for check
-			// String accessToken = tokenService.getAccessToken(token);
+            // for check
+            // String accessToken = tokenService.getAccessToken(token);
 
-			Token newToken = tokenService.generateToken(uid, "USER");
+            Token newToken = tokenService.generateToken(uid, "USER");
 
-			response.addHeader(HeaderDefaultTokenAttributeKey, newToken.getToken());
-			response.addHeader(HeaderRefreshTokenAttributeKey, newToken.getRefreshToken());
-			response.setContentType("application/json;charset=UTF-8");
+            response.addHeader(HeaderDefaultTokenAttributeKey, newToken.getToken());
+            response.addHeader(HeaderRefreshTokenAttributeKey, newToken.getRefreshToken());
+            response.setContentType("application/json;charset=UTF-8");
 
-			return "HAPPY NEW TOKEN";
-		}
+            return "HAPPY NEW TOKEN";
+        }
 
-		throw new RuntimeException();
-	}
+        throw new RuntimeException();
+    }
 }

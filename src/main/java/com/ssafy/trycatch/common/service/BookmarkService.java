@@ -17,9 +17,7 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
     }
 
     public Bookmark getBookmark(Long userId, Long targetId, TargetType targetType) {
-        return repository
-                .findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
-                .orElseGet(Bookmark::new);
+        return repository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(Bookmark::new);
     }
 
     public Bookmark getLastBookmark(Long userId, Long targetId, TargetType targetType) {
@@ -27,8 +25,7 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
         final Bookmark lastBookmark;
         if (bookmarkList.size() != 0) {
             lastBookmark = bookmarkList.get(bookmarkList.size() - 1);
-        }
-        else {
+        } else {
             lastBookmark = new Bookmark(0L, 0L, 0L, TargetType.DEFAULT, false);
         }
         return lastBookmark;

@@ -38,7 +38,7 @@ public class SearchFeedRequestDto {
 
     @JsonSetter("publishDateEnd")
     public void setPublishDateEnd(String s) {
-        this.publishDateEnd =  LocalDate.parse(s, DateTimeFormatter.ISO_DATE);
+        this.publishDateEnd = LocalDate.parse(s, DateTimeFormatter.ISO_DATE);
     }
 
     public enum FeedSortOption {

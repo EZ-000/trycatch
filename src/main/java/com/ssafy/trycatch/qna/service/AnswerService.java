@@ -37,11 +37,10 @@ public class AnswerService {
 
     @Transactional
     public void updateAnswer(Long userId, Long answerId, String content, Boolean hidden) {
-        final Answer answer = answerRepository
-                .findById(answerId)
-                .orElseThrow(AnswerNotFoundException::new);
+        final Answer answer = answerRepository.findById(answerId).orElseThrow(AnswerNotFoundException::new);
 
-        if (answer.getUser().getId() != userId) throw new RequestUserNotValidException();
+        if (answer.getUser().getId() != userId)
+            throw new RequestUserNotValidException();
 
         answer.setContent(content);
         answer.setHidden(hidden);

@@ -23,7 +23,10 @@ public class FindAnswerResponseDto implements Serializable {
 
 
     @Builder
-    public FindAnswerResponseDto(Long answerId, SimpleUserDto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked, Boolean accepted) {
+    public FindAnswerResponseDto(
+            Long answerId, SimpleUserDto author, String content, Long timestamp, Long updatedAt, Integer likeCount,
+            Boolean isLiked, Boolean accepted
+    ) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
@@ -36,6 +39,7 @@ public class FindAnswerResponseDto implements Serializable {
 
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
@@ -44,37 +48,15 @@ public class FindAnswerResponseDto implements Serializable {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
 
-        return FindAnswerResponseDto.builder()
-                .answerId(answer.getId())
-                .author(SimpleUserDto.from(user, author))
-                .content(answer.getContent())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(answer.getUpdatedAt().toEpochMilli())
-                .likeCount(answer.getLikes())
-                .isLiked(false)
-                .accepted(answer.getChosen())
-                .build();
+        return FindAnswerResponseDto.builder().answerId(answer.getId()).author(SimpleUserDto.builder().author(author).requestUser(user).build()).content(answer.getContent()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(false).accepted(answer.getChosen()).build();
     }
 
     public static FindAnswerResponseDto from(Answer answer) {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
-        final long timestamp = question.getCreatedAt()
-                                        .atZone(ZoneId.of("Asia/Seoul"))
-                                        .toInstant().toEpochMilli();
+        final long timestamp = question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
 
-        return FindAnswerResponseDto.builder()
-                .answerId(answer.getId())
-                .author(SimpleUserDto.from(author))
-                .content(answer.getContent())
-                .timestamp(timestamp)
-                .updatedAt(answer.getUpdatedAt().toEpochMilli())
-                .likeCount(answer.getLikes())
-                .isLiked(false)
-                .accepted(answer.getChosen())
-                .build();
+        return FindAnswerResponseDto.builder().answerId(answer.getId()).author(SimpleUserDto.builder().author(author).build()).content(answer.getContent()).timestamp(timestamp).updatedAt(answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(false).accepted(answer.getChosen()).build();
     }
 }
 

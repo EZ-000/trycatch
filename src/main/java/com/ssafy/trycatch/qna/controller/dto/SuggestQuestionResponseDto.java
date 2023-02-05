@@ -30,7 +30,10 @@ public class SuggestQuestionResponseDto {
     private final Set<Long> answerIds;
 
     @Builder
-    public SuggestQuestionResponseDto(QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public SuggestQuestionResponseDto(
+            QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp,
+            Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds
+    ) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
@@ -45,29 +48,14 @@ public class SuggestQuestionResponseDto {
 
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
     public static SuggestQuestionResponseDto from(Question question) {
         final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers()
-                .stream()
-                .map(Answer::getId)
-                .collect(Collectors.toSet());
+        final Set<Long> answerIds = question.getAnswers().stream().map(Answer::getId).collect(Collectors.toSet());
 
-        return SuggestQuestionResponseDto.builder()
-                .categoryName(question.getCategoryName())
-                .authorUsername(author.getUsername())
-                .title(question.getTitle())
-                .content(question.getTitle())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(question.getUpdatedAt())
-                .viewCount(question.getViewCount())
-                .likes(question.getLikes())
-                .hidden(question.getHidden())
-                .answerIds(answerIds)
-                .build();
+        return SuggestQuestionResponseDto.builder().categoryName(question.getCategoryName()).authorUsername(author.getUsername()).title(question.getTitle()).content(question.getTitle()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(question.getUpdatedAt()).viewCount(question.getViewCount()).likes(question.getLikes()).hidden(question.getHidden()).answerIds(answerIds).build();
     }
 }

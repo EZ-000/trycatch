@@ -10,19 +10,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class FollowService extends CrudService<Follow, Long, FollowRepository> {
 
-	@Autowired
-	public FollowService(FollowRepository followRepository) {
-		super(followRepository);
-	}
+    @Autowired
+    public FollowService(FollowRepository followRepository) {
+        super(followRepository);
+    }
 
-	public Follow follow(User srcUser, User desUser) {
-		return repository.save(Follow.builder()
-			.follower(srcUser)
-			.followee(desUser)
-			.build());
-	}
+    public Follow follow(User srcUser, User desUser) {
+        return repository.save(Follow.builder().follower(srcUser).followee(desUser).build());
+    }
 
-	public Boolean isFollowByFollowerAndFollowee(Long followerId, Long followeeId) {
-		return repository.existsByFollowerIdAndFolloweeId(followerId, followeeId);
-	}
+    public Boolean isFollowByFollowerAndFollowee(Long followerId, Long followeeId) {
+        return repository.existsByFollowerIdAndFolloweeId(followerId, followeeId);
+    }
 }

@@ -35,7 +35,10 @@ public class PutQuestionResponseDto implements Serializable {
     private final Set<Long> answerIds;
 
     @Builder
-    public PutQuestionResponseDto(QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public PutQuestionResponseDto(
+            QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp,
+            Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds
+    ) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
@@ -50,24 +53,8 @@ public class PutQuestionResponseDto implements Serializable {
 
     public static PutQuestionResponseDto from(Question question) {
         final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers()
-                .stream()
-                .map(Answer::getId)
-                .collect(Collectors.toSet());
+        final Set<Long> answerIds = question.getAnswers().stream().map(Answer::getId).collect(Collectors.toSet());
 
-        return PutQuestionResponseDto.builder()
-                .categoryName(question.getCategoryName())
-                .authorUsername(author.getUsername())
-                .title(question.getTitle())
-                .content(question.getTitle())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(question.getUpdatedAt())
-                .viewCount(question.getViewCount())
-                .likes(question.getLikes())
-                .hidden(question.getHidden())
-                .answerIds(answerIds)
-                .build();
+        return PutQuestionResponseDto.builder().categoryName(question.getCategoryName()).authorUsername(author.getUsername()).title(question.getTitle()).content(question.getTitle()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(question.getUpdatedAt()).viewCount(question.getViewCount()).likes(question.getLikes()).hidden(question.getHidden()).answerIds(answerIds).build();
     }
 }

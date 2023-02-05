@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.common.domain.QuestionCategory;
-import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
@@ -43,7 +42,12 @@ public class CreateAnswerResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public CreateAnswerResponseDto(Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public CreateAnswerResponseDto(
+            Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content,
+            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
+            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            List<FindAnswerResponseDto> answers
+    ) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -64,38 +68,17 @@ public class CreateAnswerResponseDto implements Serializable {
 
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
     public static CreateAnswerResponseDto from(
-            Question question, List<Answer> answers, User user,
-            CompanyService companyService,
-            Boolean isLiked, Boolean isBookmarked ) {
+            Question question, List<Answer> answers, User user, Boolean isLiked, Boolean isBookmarked
+    ) {
         final User author = question.getUser();
-        final List<FindAnswerResponseDto> answerDtos = answers.stream()
-                .map((Answer answer) -> FindAnswerResponseDto.from(answer, user))
-                .collect(Collectors.toList());
-        final List<String> temptags = new ArrayList<String>(Arrays.asList("42good", "1stprizeisours"));
+        final List<FindAnswerResponseDto> answerDtos = answers.stream().map((Answer answer) -> FindAnswerResponseDto.from(answer, user)).collect(Collectors.toList());
+        final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
-        return CreateAnswerResponseDto.builder()
-                .questionId(question.getId())
-                .author(SimpleUserDto.from(user, author))
-                .category(question.getCategoryName())
-                .title(question.getTitle())
-                .content(question.getContent())
-                .errorCode(question.getErrorCode())
-                .tags(temptags)
-                .likeCount(question.getLikes())
-                .answerCount(answerDtos.size())
-                .viewCount(question.getViewCount())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(question.getUpdatedAt().toEpochMilli())
-                .isLiked(isLiked)
-                .isSolved(question.getChosen())
-                .isBookmarked(isBookmarked)
-                .answers(answerDtos)
-                .build();
+        return CreateAnswerResponseDto.builder().questionId(question.getId()).author(SimpleUserDto.builder().author(author).requestUser(user).build()).category(question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(question.getErrorCode()).tags(temptags).likeCount(question.getLikes()).answerCount(answerDtos.size()).viewCount(question.getViewCount()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(question.getUpdatedAt().toEpochMilli()).isLiked(isLiked).isSolved(question.getChosen()).isBookmarked(isBookmarked).answers(answerDtos).build();
     }
 }

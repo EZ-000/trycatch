@@ -38,7 +38,12 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
     private final List<FindAnswerResponseNotLoginDto> answers;
 
     @Builder
-    public FindQuestionResponseNotLoginDto(Long questionId, FindUserInQNANotLoginDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseNotLoginDto> answers) {
+    public FindQuestionResponseNotLoginDto(
+            Long questionId, FindUserInQNANotLoginDto author, QuestionCategory category, String title, String content,
+            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
+            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            List<FindAnswerResponseNotLoginDto> answers
+    ) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -59,40 +64,18 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
 
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
     public static FindQuestionResponseNotLoginDto from(
-            Question question,
-            List<Answer> answers,
-            CompanyService companyService
+            Question question, List<Answer> answers, CompanyService companyService
     ) {
 
 
         final User author = question.getUser();
-        final List<FindAnswerResponseNotLoginDto> answerDtos = answers.stream()
-                .map((Answer answer) -> FindAnswerResponseNotLoginDto.from(answer, companyService))
-                .collect(Collectors.toList());
+        final List<FindAnswerResponseNotLoginDto> answerDtos = answers.stream().map((Answer answer) -> FindAnswerResponseNotLoginDto.from(answer, companyService)).collect(Collectors.toList());
 
-        return FindQuestionResponseNotLoginDto.builder()
-                .questionId(question.getId())
-                .author(FindUserInQNANotLoginDto.from(author, companyService))
-                .category(question.getCategoryName())
-                .title(question.getTitle())
-                .content(question.getContent())
-                .errorCode(question.getErrorCode())
-                .tags(List.of(question.getTags().split(",")))
-                .likeCount(question.getLikes())
-                .answerCount(answerDtos.size())
-                .viewCount(question.getViewCount())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(question.getUpdatedAt().toEpochMilli())
-                .isLiked(false)
-                .isSolved(question.getChosen())
-                .isBookmarked(false)
-                .answers(answerDtos)
-                .build();
+        return FindQuestionResponseNotLoginDto.builder().questionId(question.getId()).author(FindUserInQNANotLoginDto.from(author, companyService)).category(question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(question.getErrorCode()).tags(List.of(question.getTags().split(","))).likeCount(question.getLikes()).answerCount(answerDtos.size()).viewCount(question.getViewCount()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(question.getUpdatedAt().toEpochMilli()).isLiked(false).isSolved(question.getChosen()).isBookmarked(false).answers(answerDtos).build();
     }
 }

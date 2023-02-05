@@ -7,22 +7,18 @@ import lombok.Data;
 
 @Data
 public class RoadmapListResponseDto {
-	private SimpleUserInfo author;
-	private String title;
-	private String tag;
+    private SimpleUserInfo author;
+    private String title;
+    private String tag;
 
-	@Builder
-	public RoadmapListResponseDto(SimpleUserInfo author, String title, String tag) {
-		this.author = author;
-		this.title = title;
-		this.tag = tag;
-	}
+    @Builder
+    public RoadmapListResponseDto(SimpleUserInfo author, String title, String tag) {
+        this.author = author;
+        this.title = title;
+        this.tag = tag;
+    }
 
-	public static RoadmapListResponseDto from(Roadmap roadmap) {
-		return RoadmapListResponseDto.builder()
-			.author(SimpleUserInfo.from(roadmap.getUser()))
-			.title(roadmap.getTitle())
-			.tag(roadmap.getTag())
-			.build();
-	}
+    public static RoadmapListResponseDto from(Roadmap roadmap) {
+        return RoadmapListResponseDto.builder().author(SimpleUserInfo.from(roadmap.getUser())).title(roadmap.getTitle()).tag(roadmap.getTag()).build();
+    }
 }

@@ -36,10 +36,8 @@ public class QuestionService {
 
     @Autowired
     public QuestionService(
-            QuestionRepository questionRepository,
-            ESQuestionRepository esQuestionRepository,
-            UserRepository userRepository,
-            AnswerRepository answerRepository
+            QuestionRepository questionRepository, ESQuestionRepository esQuestionRepository,
+            UserRepository userRepository, AnswerRepository answerRepository
     ) {
         this.questionRepository = questionRepository;
         this.esQuestionRepository = esQuestionRepository;
@@ -52,9 +50,7 @@ public class QuestionService {
     }
 
     public Question saveQuestion(CreateQuestionRequestDto requestDto) {
-        final User author = userRepository.
-                findById(requestDto.getAuthorId())
-                .orElseThrow(UserNotFoundException::new);
+        final User author = userRepository.findById(requestDto.getAuthorId()).orElseThrow(UserNotFoundException::new);
 
         final Question question = requestDto.newQuestion(author);
         questionRepository.save(question);
@@ -66,16 +62,12 @@ public class QuestionService {
     }
 
     public Question acceptAnswer(Long questionId, Long answerId) {
-        final Question question = questionRepository
-                .findById(questionId)
-                .orElseThrow(QuestionNotFoundException::new);
+        final Question question = questionRepository.findById(questionId).orElseThrow(QuestionNotFoundException::new);
 
         question.setChosen(true);
         questionRepository.save(question);
 
-        final Answer answer = answerRepository
-                .findById(answerId)
-                .orElseThrow(AnswerNotFoundException::new);
+        final Answer answer = answerRepository.findById(answerId).orElseThrow(AnswerNotFoundException::new);
 
         answer.setChosen(true);
         answerRepository.save(answer);
@@ -92,23 +84,22 @@ public class QuestionService {
     }
 
     public List<Question> findAllQuestionsByCategory(QuestionCategory questionCategory, Pageable pageable) {
-        final List<Question> questions = questionRepository
-                .findByCategoryNameOrderByCreatedAtDesc(questionCategory, pageable);
+        final List<Question> questions = questionRepository.findByCategoryNameOrderByCreatedAtDesc(questionCategory, pageable);
 
         return questions;
     }
 
     @Transactional
-    public void updateQuestion(Long userId, Long questionId, String category, String title, String content, String errorCode, List<String> tags, Boolean hidden) {
-        final Question question = questionRepository
-                .findById(questionId)
-                .orElseThrow(QuestionNotFoundException::new);
+    public void updateQuestion(
+            Long userId, Long questionId, String category, String title, String content, String errorCode,
+            List<String> tags, Boolean hidden
+    ) {
+        final Question question = questionRepository.findById(questionId).orElseThrow(QuestionNotFoundException::new);
 
-        if (question.getUser().getId() != userId) throw new RequestUserNotValidException();
+        if (question.getUser().getId() != userId)
+            throw new RequestUserNotValidException();
 
-        final QuestionCategory questionCategory = Optional
-                .ofNullable(QuestionCategory.valueOf(category))
-                .orElseThrow(QuestionCategoryNotFoundException::new);
+        final QuestionCategory questionCategory = Optional.ofNullable(QuestionCategory.valueOf(category)).orElseThrow(QuestionCategoryNotFoundException::new);
 
         question.setCategoryName(questionCategory);
         question.setTitle(title);
@@ -125,11 +116,12 @@ public class QuestionService {
      */
     public void deleteQuestion(Long questionId, Long userId) {
         final Question question = questionRepository.findById(questionId).orElseThrow(QuestionNotFoundException::new);
-        if (question.getUser().getId() != userId) throw new RequestUserNotValidException();
+        if (question.getUser().getId() != userId)
+            throw new RequestUserNotValidException();
         questionRepository.deleteById(questionId);
     }
 
-	public List<Question> findQuestionListByAnswerId(List<Long> answerIdList) {
+    public List<Question> findQuestionListByAnswerId(List<Long> answerIdList) {
         // answerIdList.stream().map(e->questionRepository)
         return Collections.emptyList();
     }

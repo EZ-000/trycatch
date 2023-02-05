@@ -13,5 +13,4 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     boolean existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(Long userId, Long targetId, TargetType targetType);
 
 
-
 }

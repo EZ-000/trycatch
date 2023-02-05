@@ -14,6 +14,13 @@ public class FeedService {
 
     private final ESFeedRepository esFeedRepository;
 
+    @Autowired
+    public FeedService(
+            ESFeedRepository esFeedRepository
+    ) {
+        this.esFeedRepository = esFeedRepository;
+    }
+
     public Page<ESFeed> findAll(Pageable pageable) {
         return esFeedRepository.findAll(pageable);
     }
@@ -25,13 +32,5 @@ public class FeedService {
 
     public Page<ESFeed> advanceSearch(String queryString, Pageable pageable) {
         return esFeedRepository.searchByQueryString(queryString, pageable);
-    }
-
-
-    @Autowired
-    public FeedService(
-            ESFeedRepository esFeedRepository
-    ) {
-        this.esFeedRepository = esFeedRepository;
     }
 }

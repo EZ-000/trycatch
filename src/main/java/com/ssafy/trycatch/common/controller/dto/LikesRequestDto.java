@@ -15,12 +15,7 @@ public class LikesRequestDto {
     public Likes newLikes(User user) {
         final TargetType targetType = TargetType.valueOf(type);
 
-        return Likes.builder()
-                .userId(user.getId())
-                .targetId(id)
-                .targetType(targetType)
-                .activated(true)
-                .build();
+        return Likes.builder().userId(user.getId()).targetId(id).targetType(targetType).activated(true).build();
     }
 }
 

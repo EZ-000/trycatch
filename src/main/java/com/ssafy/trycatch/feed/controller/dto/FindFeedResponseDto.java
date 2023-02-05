@@ -21,6 +21,11 @@ public class FindFeedResponseDto {
         this.feedList = feedList;
     }
 
+    public static FindFeedResponseDto newDummy(Integer amount) {
+        final List<Feed> feeds = LongStream.range(1, amount + 1).mapToObj(Feed::newDummy).collect(Collectors.toList());
+        return new FindFeedResponseDto(feeds);
+    }
+
     @Data
     @Builder
     public static class Feed {
@@ -46,41 +51,15 @@ public class FindFeedResponseDto {
         private Boolean isBookmarked;
 
         public static Feed newDummy(Long id) {
-            List<String> tags = List.of("" +id);
+            List<String> tags = List.of("" + id);
             LocalDateTime now = LocalDateTime.now();
-            return Feed.builder()
-                    .feedId("" + id)
-                    .title("title-" + id)
-                    .summary("summary-" + id)
-                    .companyName("company-" + id)
-                    .createdAt("2023-01-01")
-                    .url("https://i8e108.p.ssafy.io/")
-                    .thumbnailImage("https://i8e108.p.ssafy.io/assets/favicon-1170e8b7.ico")
-                    .tags(tags)
-                    .build();
+            return Feed.builder().feedId("" + id).title("title-" + id).summary("summary-" + id).companyName("company-" + id).createdAt("2023-01-01").url("https://i8e108.p.ssafy.io/").thumbnailImage("https://i8e108.p.ssafy.io/assets/favicon-1170e8b7.ico").tags(tags).build();
         }
 
         public static Feed newFeed(ESFeed esFeed) {
 
-            return Feed.builder()
-                    .feedId(esFeed.getId())
-                    .title(esFeed.getTitle())
-                    .summary(esFeed.getSummary())
-                    .companyName(esFeed.getName())
-                    .createdAt(esFeed.getPublishDate().format(dateFormat))
-                    .url(esFeed.getUrl())
-                    .thumbnailImage(esFeed.getThumbnailUrl())
-                    .tags(esFeed.getTags())
-                    .keywords(esFeed.getKeywords())
-                    .isBookmarked(false) // FIXME
+            return Feed.builder().feedId(esFeed.getId()).title(esFeed.getTitle()).summary(esFeed.getSummary()).companyName(esFeed.getName()).createdAt(esFeed.getPublishDate().format(dateFormat)).url(esFeed.getUrl()).thumbnailImage(esFeed.getThumbnailUrl()).tags(esFeed.getTags()).keywords(esFeed.getKeywords()).isBookmarked(false) // FIXME
                     .build();
         }
-    }
-
-    public static FindFeedResponseDto newDummy(Integer amount) {
-        final List<Feed> feeds = LongStream.range(1, amount + 1)
-                .mapToObj(Feed::newDummy)
-                .collect(Collectors.toList());
-        return new FindFeedResponseDto(feeds);
     }
 }

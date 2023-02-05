@@ -24,7 +24,10 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
 
 
     @Builder
-    public FindAnswerResponseNotLoginDto(Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Long updatedAt, Integer likeCount, Boolean isLiked, Boolean accepted) {
+    public FindAnswerResponseNotLoginDto(
+            Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Long updatedAt,
+            Integer likeCount, Boolean isLiked, Boolean accepted
+    ) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
@@ -37,6 +40,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
 
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
@@ -45,18 +49,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
 
-        return FindAnswerResponseNotLoginDto.builder()
-                .answerId(answer.getId())
-                .author(FindUserInQNANotLoginDto.from(author, companyService))
-                .content(answer.getContent())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(answer.getUpdatedAt().toEpochMilli())
-                .likeCount(answer.getLikes())
-                .isLiked(false)
-                .accepted(answer.getChosen())
-                .build();
+        return FindAnswerResponseNotLoginDto.builder().answerId(answer.getId()).author(FindUserInQNANotLoginDto.from(author, companyService)).content(answer.getContent()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(false).accepted(answer.getChosen()).build();
     }
 }
 

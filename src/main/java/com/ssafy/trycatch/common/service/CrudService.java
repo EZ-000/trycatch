@@ -57,7 +57,7 @@ public abstract class CrudService<T, ID, R extends JpaRepository<T, ID>> {
         return repository.findAll(example);
     }
 
-    public <S extends T> List<S> findAll(Example<S> example, Sort sort){
+    public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
         return repository.findAll(example, sort);
     }
 

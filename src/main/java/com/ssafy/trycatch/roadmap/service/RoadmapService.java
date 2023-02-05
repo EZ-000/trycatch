@@ -9,25 +9,25 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RoadmapService extends CrudService<Roadmap, Long, RoadmapRepository> {
-	@Autowired
-	public RoadmapService(RoadmapRepository roadmapRepository) {
-		super(roadmapRepository);
-	}
+    @Autowired
+    public RoadmapService(RoadmapRepository roadmapRepository) {
+        super(roadmapRepository);
+    }
 
-	public Roadmap findRoadmap(Long userId) {
-		return repository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
-	}
+    public Roadmap findRoadmap(Long userId) {
+        return repository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
+    }
 
-	public void modify(Long userId, Roadmap roadmap) {
-		Roadmap saved = repository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
-		saved.setEdge(roadmap.getEdge());
-		saved.setNode(roadmap.getNode());
-		saved.setTitle(roadmap.getTitle());
-		saved.setTag(roadmap.getTag());
-		repository.save(saved);
-	}
+    public void modify(Long userId, Roadmap roadmap) {
+        Roadmap saved = repository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
+        saved.setEdge(roadmap.getEdge());
+        saved.setNode(roadmap.getNode());
+        saved.setTitle(roadmap.getTitle());
+        saved.setTag(roadmap.getTag());
+        repository.save(saved);
+    }
 
-	public Long findId(Long userId) {
-		return repository.findByUserId(userId).orElseThrow().getId();
-	}
+    public Long findId(Long userId) {
+        return repository.findByUserId(userId).orElseThrow().getId();
+    }
 }
