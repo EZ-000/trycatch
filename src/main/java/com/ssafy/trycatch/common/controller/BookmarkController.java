@@ -54,7 +54,8 @@ public class BookmarkController {
     ) {
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
         final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
-                                                                      bookmarkRequestDto.getId(), type);
+                                                                      bookmarkRequestDto.getId(), type
+        );
         if (lastBookmark.getActivated()) {
             throw new BookmarkDuplicatedException();
         }
@@ -69,7 +70,8 @@ public class BookmarkController {
     ) {
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
         final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
-                                                                      bookmarkRequestDto.getId(), type);
+                                                                      bookmarkRequestDto.getId(), type
+        );
         lastBookmark.setActivated(!lastBookmark.getActivated());
         bookmarkService.register(lastBookmark);
         return ResponseEntity.ok().build();

@@ -28,6 +28,7 @@ public class ESQuestion {
         return ESQuestion.builder().title(requestDto.getTitle()).content(requestDto.getContent()).category(
                 requestDto.getCategory()).tags(requestDto.getTags()).build();
     }
+
     @Id
     private String id;
     @Field(type = FieldType.Keyword)

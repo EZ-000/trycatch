@@ -10,6 +10,7 @@ public enum QuestionCategory {
             return DEFAULT;
         }
     }
+
     private final String category;
 
     QuestionCategory(String category) {this.category = category;}

@@ -11,8 +11,9 @@ public class RoadmapResponseDto {
     public static RoadmapResponseDto from(Roadmap roadmap) {
         return RoadmapResponseDto.builder().author(SimpleUserInfo.from(roadmap.getUser())).title(
                                          roadmap.getTitle()).tag(roadmap.getTag()).nodes(roadmap.getNode()).edges(roadmap.getEdge())
-                                 .build();
+                                           .build();
     }
+
     private SimpleUserInfo author;
     private String title;
     private String tag;

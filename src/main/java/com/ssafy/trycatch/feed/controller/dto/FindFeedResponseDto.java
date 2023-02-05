@@ -21,6 +21,7 @@ public class FindFeedResponseDto {
                 Collectors.toList());
         return new FindFeedResponseDto(feeds);
     }
+
     List<Feed> feedList;
 
     @Builder
@@ -43,11 +44,13 @@ public class FindFeedResponseDto {
         public static Feed newFeed(ESFeed esFeed) {
 
             return Feed.builder().feedId(esFeed.getId()).title(esFeed.getTitle()).summary(esFeed.getSummary())
-                       .companyName(esFeed.getName()).createdAt(esFeed.getPublishDate().format(dateFormat)).url(
+                                 .companyName(esFeed.getName()).createdAt(esFeed.getPublishDate()
+                                                                                .format(dateFormat)).url(
                             esFeed.getUrl()).thumbnailImage(esFeed.getThumbnailUrl()).tags(esFeed.getTags())
-                       .keywords(esFeed.getKeywords()).isBookmarked(false) // FIXME
-                       .build();
+                                 .keywords(esFeed.getKeywords()).isBookmarked(false) // FIXME
+                                 .build();
         }
+
         private String feedId;
         private String title;
         private String summary;

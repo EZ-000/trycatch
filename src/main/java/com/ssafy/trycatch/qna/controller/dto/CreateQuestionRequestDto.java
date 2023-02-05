@@ -26,7 +26,9 @@ public class CreateQuestionRequestDto {
         final QuestionCategory categoryName = QuestionCategory.valueOf(category);
 
         return Question.builder().categoryName(categoryName).user(author).title(title).content(content)
-                       .errorCode(errorCode).createdAt(LocalDateTime.now()).updatedAt(Instant.now()).chosen(
-                        false).viewCount(0).likes(0).hidden(false).tags(String.join(",", tags)).build();
+                                 .errorCode(errorCode).createdAt(LocalDateTime.now()).updatedAt(Instant.now())
+                                 .chosen(
+                                         false).viewCount(0).likes(0).hidden(false).tags(String.join(",", tags))
+                                 .build();
     }
 }

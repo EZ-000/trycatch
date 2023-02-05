@@ -12,6 +12,7 @@ public class RoadmapListResponseDto {
         return RoadmapListResponseDto.builder().author(SimpleUserInfo.from(roadmap.getUser())).title(
                 roadmap.getTitle()).tag(roadmap.getTag()).build();
     }
+
     private SimpleUserInfo author;
     private String title;
     private String tag;

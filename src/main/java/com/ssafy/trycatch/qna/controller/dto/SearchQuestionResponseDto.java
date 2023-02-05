@@ -34,6 +34,7 @@ public class SearchQuestionResponseDto {
                 question.getUpdatedAt()).viewCount(question.getViewCount()).likes(question.getLikes()).hidden(
                 question.getHidden()).answerIds(answerIds).build();
     }
+
     @Size(max = 30)
     private final QuestionCategory categoryName;
     @Size(max = 50)

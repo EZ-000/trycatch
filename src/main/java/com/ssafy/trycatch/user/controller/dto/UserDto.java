@@ -14,8 +14,9 @@ public class UserDto {
                               saved.getCompany().getName()).introduction(saved.getIntroduction()).profileImg(
                               saved.getImageSrc()).subscriptionCount(saved.getSubscriptions().size()).followerCount(
                               saved.getFollowers().size()).followingCount(saved.getFollowees().size()).tags(tagList)
-                      .isFollowed(false).build();
+                                .isFollowed(false).build();
     }
+
     private Long userId;
     private String userName;
     private String companyName;

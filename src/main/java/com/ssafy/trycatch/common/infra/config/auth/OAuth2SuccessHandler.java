@@ -55,8 +55,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         tempUser.setCompany(companyRepository.findById(1L).orElseThrow());
         final User savedUser = userRepository.save(tempUser);
 
-        final Token token = tokenService.generateToken(savedUser.getId().toString(),
-                                                       oAuth2User.getAttribute("AC_TOKEN"));
+        final Token token = tokenService.generateToken(
+                savedUser.getId().toString(),
+                oAuth2User.getAttribute("AC_TOKEN")
+        );
 
         log.debug("{}", token);
 

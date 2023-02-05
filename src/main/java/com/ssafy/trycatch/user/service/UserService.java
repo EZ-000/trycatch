@@ -31,8 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService extends CrudService<User, Long, UserRepository> {
     private static final User GUEST = User.builder().id(-1L).githubNodeId("").username("guest").gitAddress(
                                                   "https://github.com").email("").activated(false).calendarMail("").followees(Collections.emptySet())
-                                          .followers(Collections.emptySet()).answers(Collections.emptySet())
-                                          .subscriptions(Collections.emptySet()).questions(
+                                                    .followers(Collections.emptySet())
+                                                    .answers(Collections.emptySet())
+                                                    .subscriptions(Collections.emptySet()).questions(
                     Collections.emptySet()).myBadges(Collections.emptySet()).myChallenges(
                     Collections.emptySet()).histories(Collections.emptySet()).build();
 
@@ -40,6 +41,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     public static User getGuest() {
         return GUEST;
     }
+
     private final ReadRepository readRepository;
     private final WithdrawalRepository withdrawalRepository;
     private final FollowRepository followRepository;

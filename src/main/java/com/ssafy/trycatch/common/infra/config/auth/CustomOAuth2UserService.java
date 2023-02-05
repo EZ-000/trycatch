@@ -27,13 +27,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                            .getUserNameAttributeName();
 
         OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(registrationId, userNameAttributeName,
-                                                             oAuth2User.getAttributes());
+                                                             oAuth2User.getAttributes()
+        );
 
         log.info("{}", oAuth2Attribute);
 
         Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
         memberAttribute.put("AC_TOKEN", userRequest.getAccessToken().getTokenValue());
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                                     memberAttribute, "nodeId");
+                                     memberAttribute, "nodeId"
+        );
     }
 }

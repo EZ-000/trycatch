@@ -36,15 +36,19 @@ public class FindQuestionResponseNotLoginDto implements Serializable {
 
         return FindQuestionResponseNotLoginDto.builder().questionId(question.getId()).author(
                                                       FindUserInQNANotLoginDto.from(author, companyService)).category(question.getCategoryName())
-                                              .title(question.getTitle()).content(question.getContent())
-                                              .errorCode(question.getErrorCode()).tags(
+                                                        .title(question.getTitle())
+                                                        .content(question.getContent())
+                                                        .errorCode(question.getErrorCode()).tags(
                         List.of(question.getTags().split(","))).likeCount(question.getLikes()).answerCount(
                         answerDtos.size()).viewCount(question.getViewCount()).timestamp(
                         question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli())
-                                              .updatedAt(question.getUpdatedAt().toEpochMilli()).isLiked(false)
-                                              .isSolved(question.getChosen()).isBookmarked(false).answers(
-                        answerDtos).build();
+                                                        .updatedAt(question.getUpdatedAt().toEpochMilli())
+                                                        .isLiked(false)
+                                                        .isSolved(question.getChosen()).isBookmarked(false)
+                                                        .answers(
+                                                                answerDtos).build();
     }
+
     private final Long questionId;
     @Size(max = 50)
     private final FindUserInQNANotLoginDto author;
