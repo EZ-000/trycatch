@@ -17,22 +17,18 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
     private final ReadRepository readRepository;
 
     @Autowired
-    public LikesService(LikesRepository likesRepository,
-                        ReadRepository readRepository) {
+    public LikesService(
+            LikesRepository likesRepository, ReadRepository readRepository
+    ) {
         super(likesRepository);
         this.readRepository = readRepository;
     }
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
-        return repository
-                .findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
-                .orElseGet(Likes::new);
+        return repository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(Likes::new);
     }
 
     public Boolean isLikedByUserAndTarget(@Nullable Long userId, Long targetId, TargetType targetType) {
-        if (null == userId) {
-            return false;
-        }
         return repository.existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(userId, targetId, targetType);
     }
 
@@ -41,8 +37,7 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
         final Likes lastLikes;
         if (likesList.size() != 0) {
             lastLikes = likesList.get(likesList.size() - 1);
-        }
-        else {
+        } else {
             lastLikes = new Likes(0L, 0L, 0L, TargetType.DEFAULT, false);
         }
         return lastLikes;

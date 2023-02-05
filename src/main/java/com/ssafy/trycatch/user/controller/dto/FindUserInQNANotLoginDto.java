@@ -16,7 +16,9 @@ public class FindUserInQNANotLoginDto implements Serializable {
     public final Boolean isFollowed;
 
     @Builder
-    public FindUserInQNANotLoginDto(Long userId, String userName, String profileImage, String companyName, Boolean isFollowed) {
+    public FindUserInQNANotLoginDto(
+            Long userId, String userName, String profileImage, String companyName, Boolean isFollowed
+    ) {
         this.userId = userId;
         this.userName = userName;
         this.profileImage = profileImage;
@@ -30,20 +32,10 @@ public class FindUserInQNANotLoginDto implements Serializable {
         final String companyName;
         if (null == author.getCompany()) {
             companyName = "";
-        }
-        else {
-            companyName = companyService
-                    .findById(author.getCompany().getId())
-                    .orElseThrow()
-                    .getName();
+        } else {
+            companyName = companyService.findById(author.getCompany().getId()).orElseThrow().getName();
         }
 
-        return FindUserInQNANotLoginDto.builder()
-                .userId(author.getId())
-                .userName(author.getUsername())
-                .profileImage(author.getImageSrc())
-                .companyName(companyName)
-                .isFollowed(false)
-                .build();
+        return FindUserInQNANotLoginDto.builder().userId(author.getId()).userName(author.getUsername()).profileImage(author.getImageSrc()).companyName(companyName).isFollowed(false).build();
     }
 }

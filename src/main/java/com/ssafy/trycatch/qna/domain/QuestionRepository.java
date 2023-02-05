@@ -14,5 +14,4 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
     List<Question> findByCategoryNameOrderByCreatedAtDesc(QuestionCategory categoryName, Pageable pageable);
 
 
-
 }

@@ -36,7 +36,12 @@ public class FindQuestionResponseDto implements Serializable {
     private final Boolean isBookmarked;
 
     @Builder
-    public FindQuestionResponseDto(Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public FindQuestionResponseDto(
+            Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content,
+            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
+            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            List<FindAnswerResponseDto> answers
+    ) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -56,33 +61,14 @@ public class FindQuestionResponseDto implements Serializable {
 
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
      * @param question 엔티티
      * @return 새로운 DTO 인스턴스
      */
     public static FindQuestionResponseDto from(
-            Question question,
-            SimpleUserDto simpleUserDto,
-            Boolean isLiked,
-            Boolean isBookmarked
+            Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked
     ) {
 
-        return FindQuestionResponseDto.builder()
-                .questionId(question.getId())
-                .author(simpleUserDto)
-                .category(question.getCategoryName())
-                .title(question.getTitle())
-                .content(question.getContent())
-                .errorCode(question.getErrorCode())
-                .tags(List.of(question.getTags().split(",")))
-                .likeCount(question.getLikes())
-                .viewCount(question.getViewCount())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(question.getUpdatedAt().toEpochMilli())
-                .isLiked(isLiked)
-                .isSolved(question.getChosen())
-                .isBookmarked(isBookmarked)
-                .build();
+        return FindQuestionResponseDto.builder().questionId(question.getId()).author(simpleUserDto).category(question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(question.getErrorCode()).tags(List.of(question.getTags().split(","))).likeCount(question.getLikes()).viewCount(question.getViewCount()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(question.getUpdatedAt().toEpochMilli()).isLiked(isLiked).isSolved(question.getChosen()).isBookmarked(isBookmarked).build();
     }
 }

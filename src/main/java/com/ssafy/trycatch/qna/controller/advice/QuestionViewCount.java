@@ -30,7 +30,7 @@ public class QuestionViewCount {
     @Pointcut("execution(com.ssafy.trycatch.qna.domain.Question *.*(..))")
     private void returnQuestion() {}
 
-    @AfterReturning(value="viewCount() && returnQuestion()", returning="question")
+    @AfterReturning(value = "viewCount() && returnQuestion()", returning = "question")
     public void after(JoinPoint joinPoint, Question question) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();

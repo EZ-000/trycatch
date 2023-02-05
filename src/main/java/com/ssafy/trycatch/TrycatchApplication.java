@@ -13,15 +13,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class TrycatchApplication {
+
+    @Value("${settings.cross-origin}")
+    private String[] allowOrigins;
 
     public static void main(String[] args) {
         SpringApplication.run(TrycatchApplication.class, args);
     }
-
-    @Value("${settings.cross-origin}")
-    private String[] allowOrigins;
 
     /**
      * setting.cross-origin 목록에 있는 도메인에 대해 CORS 허용
