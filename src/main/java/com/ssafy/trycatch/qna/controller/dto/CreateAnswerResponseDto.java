@@ -4,7 +4,7 @@ import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.controller.dto.FindUserInQNADto;
+import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class CreateAnswerResponseDto implements Serializable {
     private final Long questionId;
     @Size(max = 50)
-    private final FindUserInQNADto author;
+    private final SimpleUserDto author;
     @Size(max = 30)
     private final QuestionCategory category;
     @Size(max = 50)
@@ -43,7 +43,7 @@ public class CreateAnswerResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public CreateAnswerResponseDto(Long questionId, FindUserInQNADto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public CreateAnswerResponseDto(Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -73,13 +73,13 @@ public class CreateAnswerResponseDto implements Serializable {
             Boolean isLiked, Boolean isBookmarked ) {
         final User author = question.getUser();
         final List<FindAnswerResponseDto> answerDtos = answers.stream()
-                .map((Answer answer) -> FindAnswerResponseDto.from(answer, user, companyService))
+                .map((Answer answer) -> FindAnswerResponseDto.from(answer, user))
                 .collect(Collectors.toList());
         final List<String> temptags = new ArrayList<String>(Arrays.asList("42good", "1stprizeisours"));
 
         return CreateAnswerResponseDto.builder()
                 .questionId(question.getId())
-                .author(FindUserInQNADto.from(user, author, companyService))
+                .author(SimpleUserDto.from(user, author))
                 .category(question.getCategoryName())
                 .title(question.getTitle())
                 .content(question.getContent())

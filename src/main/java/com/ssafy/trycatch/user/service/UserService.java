@@ -1,15 +1,13 @@
 package com.ssafy.trycatch.user.service;
 
+import com.ssafy.trycatch.common.domain.Bookmark;
+import com.ssafy.trycatch.user.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.service.CrudService;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.domain.Withdrawal;
-import com.ssafy.trycatch.user.domain.WithdrawalRepository;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +18,12 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	private final ReadRepository readRepository;
 	private final WithdrawalRepository withdrawalRepository;
 
-	@Autowired
-	public UserService(UserRepository userRepository,
-		ReadRepository readRepository,
-		WithdrawalRepository withdrawalRepository) {
-		super(userRepository);
+	public UserService(
+			UserRepository repository,
+			ReadRepository readRepository,
+			WithdrawalRepository withdrawalRepository
+	) {
+		super(repository);
 		this.readRepository = readRepository;
 		this.withdrawalRepository = withdrawalRepository;
 	}

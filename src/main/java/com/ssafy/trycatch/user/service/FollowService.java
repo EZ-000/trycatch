@@ -21,4 +21,8 @@ public class FollowService extends CrudService<Follow, Long, FollowRepository> {
 			.followee(desUser)
 			.build());
 	}
+
+	public Boolean isFollowByFollowerAndFollowee(Long followerId, Long followeeId) {
+		return repository.existsByFollowerIdAndFolloweeId(followerId, followeeId);
+	}
 }

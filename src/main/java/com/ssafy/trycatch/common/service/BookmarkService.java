@@ -35,4 +35,8 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
         }
         return lastBookmark;
     }
+
+    public Boolean isBookmarkByUserAndTarget(Long userId, Long targetId, TargetType targetType) {
+        return repository.existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(userId, targetId, targetType);
+    }
 }

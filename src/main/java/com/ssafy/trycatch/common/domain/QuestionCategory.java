@@ -5,9 +5,17 @@ public enum QuestionCategory {
     CAREER("career"),
     DEFAULT("default");
 
-    private String category;
+    private final String category;
 
     QuestionCategory(String category) { this.category = category; }
 
     public String getCategory() { return category; }
+
+    public static QuestionCategory of(String name) {
+        try {
+            return valueOf(name);
+        } catch (Exception e) {
+            return DEFAULT;
+        }
+    }
 }

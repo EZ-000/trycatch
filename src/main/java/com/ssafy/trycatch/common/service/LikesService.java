@@ -6,6 +6,7 @@ import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,13 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
         return repository
                 .findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
                 .orElseGet(Likes::new);
+    }
+
+    public Boolean isLikedByUserAndTarget(@Nullable Long userId, Long targetId, TargetType targetType) {
+        if (null == userId) {
+            return false;
+        }
+        return repository.existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(userId, targetId, targetType);
     }
 
     public Likes getLastLikes(Long userId, Long targetId, TargetType targetType) {

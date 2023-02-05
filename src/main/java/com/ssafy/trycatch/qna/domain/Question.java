@@ -76,4 +76,12 @@ public class Question {
     @ToString.Exclude
     private Set<Answer> answers = new LinkedHashSet<>();
 
+
+    public void increaseViewCount() {
+        viewCount++;
+    }
+
+    public void increaseViewCount(Integer view) {
+        viewCount += view;
+    }
 }
