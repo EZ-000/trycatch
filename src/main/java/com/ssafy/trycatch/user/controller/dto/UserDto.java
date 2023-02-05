@@ -1,13 +1,22 @@
 package com.ssafy.trycatch.user.controller.dto;
 
+import java.util.List;
+
 import com.ssafy.trycatch.user.domain.User;
+
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class UserDto {
+    public static UserDto from(User saved, List<String> tagList) {
+        return UserDto.builder().userId(saved.getId()).userName(saved.getUsername()).companyName(
+                              saved.getCompany().getName()).introduction(saved.getIntroduction()).profileImg(
+                              saved.getImageSrc()).subscriptionCount(saved.getSubscriptions().size()).followerCount(
+                              saved.getFollowers().size()).followingCount(saved.getFollowees().size()).tags(tagList)
+                                .isFollowed(false).build();
+    }
+
     private Long userId;
     private String userName;
     private String companyName;
@@ -35,9 +44,5 @@ public class UserDto {
         this.followingCount = followingCount;
         this.tags = tags;
         this.isFollowed = isFollowed;
-    }
-
-    public static UserDto from(User saved, List<String> tagList) {
-        return UserDto.builder().userId(saved.getId()).userName(saved.getUsername()).companyName(saved.getCompany().getName()).introduction(saved.getIntroduction()).profileImg(saved.getImageSrc()).subscriptionCount(saved.getSubscriptions().size()).followerCount(saved.getFollowers().size()).followingCount(saved.getFollowees().size()).tags(tagList).isFollowed(false).build();
     }
 }

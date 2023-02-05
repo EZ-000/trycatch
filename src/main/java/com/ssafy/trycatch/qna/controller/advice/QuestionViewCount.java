@@ -1,8 +1,7 @@
 package com.ssafy.trycatch.qna.controller.advice;
 
-import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.domain.QuestionRepository;
+import java.lang.reflect.Method;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,7 +10,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
+import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.qna.domain.QuestionRepository;
 
 @Aspect
 @Component

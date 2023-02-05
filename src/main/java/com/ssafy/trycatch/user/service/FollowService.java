@@ -1,11 +1,12 @@
 package com.ssafy.trycatch.user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ssafy.trycatch.common.service.CrudService;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.FollowRepository;
 import com.ssafy.trycatch.user.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class FollowService extends CrudService<Follow, Long, FollowRepository> {

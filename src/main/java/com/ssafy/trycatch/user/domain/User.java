@@ -1,5 +1,25 @@
 package com.ssafy.trycatch.user.domain;
 
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.DynamicInsert;
+
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.gamification.domain.MyBadge;
@@ -7,15 +27,13 @@ import com.ssafy.trycatch.gamification.domain.MyChallenge;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
-import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Builder
 @AllArgsConstructor
@@ -120,7 +138,8 @@ public class User {
     @Builder
     public User(
             Long id, String githubNodeId, String username, String gitAddress, String email, Boolean activated,
-            String calendarMail, Integer confirmationCode, String introduction, LocalDate createdAt, Integer points,
+            String calendarMail, Integer confirmationCode, String introduction, LocalDate createdAt,
+            Integer points,
             String imageSrc, Company company
     ) {
         this.id = id;

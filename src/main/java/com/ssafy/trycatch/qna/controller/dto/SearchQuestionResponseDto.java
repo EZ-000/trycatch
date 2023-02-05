@@ -1,20 +1,40 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.common.domain.QuestionCategory;
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.domain.User;
-import lombok.Builder;
-import lombok.Data;
-
-import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Size;
+
+import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.qna.domain.Answer;
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.user.domain.User;
+
+import lombok.Builder;
+import lombok.Data;
+
 @Data
 public class SearchQuestionResponseDto {
+    /**
+     * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
+     *
+     * @param question 엔티티
+     * @return 새로운 DTO 인스턴스
+     */
+    public static SearchQuestionResponseDto from(Question question) {
+        final User author = question.getUser();
+        final Set<Long> answerIds = question.getAnswers().stream().map(Answer::getId).collect(
+                Collectors.toSet());
+
+        return SearchQuestionResponseDto.builder().categoryName(question.getCategoryName()).authorUsername(
+                author.getUsername()).title(question.getTitle()).content(question.getTitle()).timestamp(
+                question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
+                question.getUpdatedAt()).viewCount(question.getViewCount()).likes(question.getLikes()).hidden(
+                question.getHidden()).answerIds(answerIds).build();
+    }
+
     @Size(max = 30)
     private final QuestionCategory categoryName;
     @Size(max = 50)
@@ -44,18 +64,5 @@ public class SearchQuestionResponseDto {
         this.likes = likes;
         this.hidden = hidden;
         this.answerIds = answerIds;
-    }
-
-    /**
-     * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
-     *
-     * @param question 엔티티
-     * @return 새로운 DTO 인스턴스
-     */
-    public static SearchQuestionResponseDto from(Question question) {
-        final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers().stream().map(Answer::getId).collect(Collectors.toSet());
-
-        return SearchQuestionResponseDto.builder().categoryName(question.getCategoryName()).authorUsername(author.getUsername()).title(question.getTitle()).content(question.getTitle()).timestamp(question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(question.getUpdatedAt()).viewCount(question.getViewCount()).likes(question.getLikes()).hidden(question.getHidden()).answerIds(answerIds).build();
     }
 }

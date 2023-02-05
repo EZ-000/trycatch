@@ -1,12 +1,7 @@
 package com.ssafy.trycatch.feed.controller;
 
-import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
-import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
-import com.ssafy.trycatch.feed.service.FeedService;
-import com.ssafy.trycatch.user.domain.User;
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
@@ -19,8 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
+import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
+import com.ssafy.trycatch.feed.service.FeedService;
+import com.ssafy.trycatch.user.domain.User;
 
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -28,7 +29,6 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class FeedController {
 
     private final FeedService feedService;
-
 
     @Autowired
     public FeedController(FeedService feedService) {
