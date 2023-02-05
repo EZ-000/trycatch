@@ -48,17 +48,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // 만약 데이터베이스에 유저가 존재한다면, 해당 객체를 가져오고
         // 만약 존재하지 않는다면, 저장 후 가져오도록 작성됨
-        User tempUser = userRepository.findByGithubNodeId(currentUserNodeId).orElse(
-                userRequestMapper.newEntity(oAuth2User));
+        User tempUser = userRepository.findByGithubNodeId(currentUserNodeId)
+                                      .orElse(userRequestMapper.newEntity(oAuth2User));
 
         tempUser.setActivated(true);
-        tempUser.setCompany(companyRepository.findById(1L).orElseThrow());
+        tempUser.setCompany(companyRepository.findById(1L)
+                                             .orElseThrow());
         final User savedUser = userRepository.save(tempUser);
 
-        final Token token = tokenService.generateToken(
-                savedUser.getId().toString(),
-                oAuth2User.getAttribute("AC_TOKEN")
-        );
+        final Token token = tokenService.generateToken(savedUser.getId()
+                                                                .toString(),
+                                                       oAuth2User.getAttribute("AC_TOKEN"));
 
         log.debug("{}", token);
 

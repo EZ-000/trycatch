@@ -31,7 +31,9 @@ public class BookmarkController {
 
     @Autowired
     public BookmarkController(
-            BookmarkService bookmarkService, UserService userService, QuestionService questionService,
+            BookmarkService bookmarkService,
+            UserService userService,
+            QuestionService questionService,
             AnswerService answerService
     ) {
         this.bookmarkService = bookmarkService;
@@ -45,7 +47,8 @@ public class BookmarkController {
     public ResponseEntity<Void> findMyBookmark(
             @AuthUserElseGuest User requestUser, @RequestParam String type
     ) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 
     @PostMapping
@@ -54,14 +57,15 @@ public class BookmarkController {
     ) {
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
         final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
-                                                                      bookmarkRequestDto.getId(), type
-        );
+                                                                      bookmarkRequestDto.getId(),
+                                                                      type);
         if (lastBookmark.getActivated()) {
             throw new BookmarkDuplicatedException();
         }
         final Bookmark newBookmark = bookmarkRequestDto.newBookmark(requestUser);
         bookmarkService.register(newBookmark);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 
     @PutMapping
@@ -70,10 +74,11 @@ public class BookmarkController {
     ) {
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
         final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
-                                                                      bookmarkRequestDto.getId(), type
-        );
+                                                                      bookmarkRequestDto.getId(),
+                                                                      type);
         lastBookmark.setActivated(!lastBookmark.getActivated());
         bookmarkService.register(lastBookmark);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 }

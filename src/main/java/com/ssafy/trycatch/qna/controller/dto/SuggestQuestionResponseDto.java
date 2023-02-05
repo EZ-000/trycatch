@@ -25,14 +25,26 @@ public class SuggestQuestionResponseDto {
      */
     public static SuggestQuestionResponseDto from(Question question) {
         final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers().stream().map(Answer::getId).collect(
-                Collectors.toSet());
+        final Set<Long> answerIds = question.getAnswers()
+                                            .stream()
+                                            .map(Answer::getId)
+                                            .collect(Collectors.toSet());
 
-        return SuggestQuestionResponseDto.builder().categoryName(question.getCategoryName()).authorUsername(
-                author.getUsername()).title(question.getTitle()).content(question.getTitle()).timestamp(
-                question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
-                question.getUpdatedAt()).viewCount(question.getViewCount()).likes(question.getLikes()).hidden(
-                question.getHidden()).answerIds(answerIds).build();
+        return SuggestQuestionResponseDto.builder()
+                .categoryName(question.getCategoryName())
+                .authorUsername(author.getUsername())
+                .title(question.getTitle())
+                .content(question.getTitle())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(question.getUpdatedAt())
+                .viewCount(question.getViewCount())
+                .likes(question.getLikes())
+                .hidden(question.getHidden())
+                .answerIds(answerIds)
+                .build();
     }
 
     @Size(max = 30)
@@ -51,8 +63,16 @@ public class SuggestQuestionResponseDto {
 
     @Builder
     public SuggestQuestionResponseDto(
-            QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp,
-            Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds
+            QuestionCategory categoryName,
+            String authorUsername,
+            String title,
+            String content,
+            Long timestamp,
+            Instant updatedAt,
+            Integer viewCount,
+            Integer likes,
+            Boolean hidden,
+            Set<Long> answerIds
     ) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;

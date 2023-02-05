@@ -25,15 +25,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.httpBasic().disable().cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS).and().authorizeRequests().antMatchers("/token/**", "/v1/**")
-            .permitAll().anyRequest()
+        http.httpBasic()
+            .disable()
+            .cors()
+            .and()
+            .csrf()
+            .disable()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeRequests()
+            .antMatchers("/token/**", "/v1/**")
+            .permitAll()
+            .anyRequest()
             // 인증이 모두 필요
             .authenticated()
             // 인증을 모두 허용
             //.permitAll()
-            .and().oauth2Login().successHandler(successHandler).failureHandler(failureHandler)
-            .userInfoEndpoint().userService(oAuth2UserService);
+            .and()
+            .oauth2Login()
+            .successHandler(successHandler)
+            .failureHandler(failureHandler)
+            .userInfoEndpoint()
+            .userService(oAuth2UserService);
         http.addFilterBefore(new JwtAuthFilter(tokenService), OAuth2LoginAuthenticationFilter.class);
 
         return http.build();

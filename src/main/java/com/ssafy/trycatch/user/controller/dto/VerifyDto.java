@@ -6,7 +6,9 @@ import lombok.Data;
 @Data
 public class VerifyDto {
     public static VerifyDto from(Boolean result) {
-        return VerifyDto.builder().isVerified(result).build();
+        return VerifyDto.builder()
+                .isVerified(result)
+                .build();
     }
 
     public final Boolean isVerified;

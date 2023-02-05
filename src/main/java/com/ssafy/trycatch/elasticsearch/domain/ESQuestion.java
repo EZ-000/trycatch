@@ -25,8 +25,12 @@ import lombok.ToString;
 public class ESQuestion {
 
     public static ESQuestion of(CreateQuestionRequestDto requestDto) {
-        return ESQuestion.builder().title(requestDto.getTitle()).content(requestDto.getContent()).category(
-                requestDto.getCategory()).tags(requestDto.getTags()).build();
+        return ESQuestion.builder()
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .category(requestDto.getCategory())
+                .tags(requestDto.getTags())
+                .build();
     }
 
     @Id

@@ -22,6 +22,12 @@ public class RoadmapRequestDto {
     }
 
     public Roadmap toEntity(User writer) {
-        return Roadmap.builder().user(writer).title(title).tag(tag).node(nodes).edge(edges).build();
+        return Roadmap.builder()
+                .user(writer)
+                .title(title)
+                .tag(tag)
+                .node(nodes)
+                .edge(edges)
+                .build();
     }
 }

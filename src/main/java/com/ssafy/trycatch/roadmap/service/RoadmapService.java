@@ -16,11 +16,13 @@ public class RoadmapService extends CrudService<Roadmap, Long, RoadmapRepository
     }
 
     public Roadmap findRoadmap(Long userId) {
-        return repository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
+        return repository.findByUserId(userId)
+                         .orElseThrow(RoadmapNotFoundException::new);
     }
 
     public void modify(Long userId, Roadmap roadmap) {
-        Roadmap saved = repository.findByUserId(userId).orElseThrow(RoadmapNotFoundException::new);
+        Roadmap saved = repository.findByUserId(userId)
+                                  .orElseThrow(RoadmapNotFoundException::new);
         saved.setEdge(roadmap.getEdge());
         saved.setNode(roadmap.getNode());
         saved.setTitle(roadmap.getTitle());
@@ -29,6 +31,8 @@ public class RoadmapService extends CrudService<Roadmap, Long, RoadmapRepository
     }
 
     public Long findId(Long userId) {
-        return repository.findByUserId(userId).orElseThrow().getId();
+        return repository.findByUserId(userId)
+                         .orElseThrow()
+                         .getId();
     }
 }

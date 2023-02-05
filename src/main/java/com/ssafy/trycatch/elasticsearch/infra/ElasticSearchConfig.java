@@ -17,6 +17,8 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
     @Override
     public ClientConfiguration clientConfiguration() {
         // ES version up to 7.14
-        return ClientConfiguration.builder().connectedTo(host).build();
+        return ClientConfiguration.builder()
+                .connectedTo(host)
+                .build();
     }
 }

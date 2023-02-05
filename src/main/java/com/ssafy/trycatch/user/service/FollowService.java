@@ -17,7 +17,10 @@ public class FollowService extends CrudService<Follow, Long, FollowRepository> {
     }
 
     public Follow follow(User srcUser, User desUser) {
-        return repository.save(Follow.builder().follower(srcUser).followee(desUser).build());
+        return repository.save(Follow.builder()
+                                       .follower(srcUser)
+                                       .followee(desUser)
+                                       .build());
     }
 
     public Boolean isFollowByFollowerAndFollowee(Long followerId, Long followeeId) {

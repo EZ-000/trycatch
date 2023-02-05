@@ -33,7 +33,8 @@ public class TrycatchApplication {
             @SuppressWarnings("NullableProblems")
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(allowOrigins);
+                registry.addMapping("/**")
+                        .allowedOrigins(allowOrigins);
             }
         };
     }

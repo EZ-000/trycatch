@@ -61,20 +61,24 @@ public class UserController {
     @GetMapping("/id/{userName}")
     public ResponseEntity<Long> findUserId(@PathVariable String userName) {
         try {
-            final Long userId = userService.findUserByName(userName).getId();
+            final Long userId = userService.findUserByName(userName)
+                                           .getId();
             return ResponseEntity.ok(userId);
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
     @GetMapping("/image/{userId}")
     public ResponseEntity<String> findUserImage(@PathVariable Long userId) {
         try {
-            final String img = userService.findUserById(userId).getImageSrc();
+            final String img = userService.findUserById(userId)
+                                          .getImageSrc();
             return ResponseEntity.ok(img);
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -89,7 +93,8 @@ public class UserController {
 
             return ResponseEntity.ok(result);
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -101,20 +106,23 @@ public class UserController {
             userService.modifyUser(requestUser.getId(), modifyDto);
             return ResponseEntity.ok("사용자 정보를 수정합니다.");
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
     @DeleteMapping("/detail/{targetId}")
     public ResponseEntity<String> removeUser(
-            @PathVariable Long targetId, @AuthUserElseGuest User requestUser,
+            @PathVariable Long targetId,
+            @AuthUserElseGuest User requestUser,
             @RequestBody WithdrawalRequestDto reason
     ) {
         try {
             userService.inActivateUser(requestUser.getId(), reason.toEntity());
             return ResponseEntity.ok("사용자가 탈퇴합니다. 단, 테이블에서는 활성 상태가 수정됩니다.");
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -123,11 +131,14 @@ public class UserController {
             @PathVariable Long uid, @RequestParam("type") String type
     ) {
         try {
-            final List<SimpleUserInfo> resultList = userService.findFollowList(uid, type).stream().map(
-                    e -> SimpleUserInfo.from(e)).collect(Collectors.toList());
+            final List<SimpleUserInfo> resultList = userService.findFollowList(uid, type)
+                                                               .stream()
+                                                               .map(e -> SimpleUserInfo.from(e))
+                                                               .collect(Collectors.toList());
             return ResponseEntity.ok(resultList);
         } catch (UserNotFoundException | TypeNotPresentException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -138,9 +149,11 @@ public class UserController {
         try {
             // follow userId가 uid를 팔로우 한다.
             userService.follow(requestUser.getId(), uid);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok()
+                                 .build();
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -151,9 +164,11 @@ public class UserController {
         try {
             // unfollow userId가 uid를 팔로우 취소한다.
             userService.unfollow(requestUser.getId(), uid);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok()
+                                 .build();
         } catch (UserNotFoundException | AlreadyExistException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -163,7 +178,8 @@ public class UserController {
             Boolean result = userService.getVerification(uid);
             return ResponseEntity.ok(VerifyDto.from(result));
         } catch (UserNotFoundException u) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
     }
 
@@ -214,13 +230,15 @@ public class UserController {
     ) {
         // Common Logic
         if (!userService.isExist(uid)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest()
+                                 .build();
         }
 
         List<Long> answerIdList = userService.getAnswerIdListByUserId(uid);
         List<Question> questionList = questionService.findQuestionListByAnswerId(answerIdList);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 
     @GetMapping("/{userId}/question/list")

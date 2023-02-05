@@ -33,18 +33,37 @@ public class CreateAnswerResponseDto implements Serializable {
             Question question, List<Answer> answers, User user, Boolean isLiked, Boolean isBookmarked
     ) {
         final User author = question.getUser();
-        final List<FindAnswerResponseDto> answerDtos = answers.stream().map(
-                (Answer answer) -> FindAnswerResponseDto.from(answer, user)).collect(Collectors.toList());
+        final List<FindAnswerResponseDto> answerDtos = answers.stream()
+                                                              .map((Answer answer) -> FindAnswerResponseDto.from(answer,
+                                                                                                                 user))
+                                                              .collect(Collectors.toList());
         final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
-        return CreateAnswerResponseDto.builder().questionId(question.getId()).author(
-                                              SimpleUserDto.builder().author(author).requestUser(user).build()).category(
-                                              question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(
-                                              question.getErrorCode()).tags(temptags).likeCount(question.getLikes()).answerCount(
-                                              answerDtos.size()).viewCount(question.getViewCount()).timestamp(question.getCreatedAt().atZone(
-                                              ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
-                                              question.getUpdatedAt().toEpochMilli()).isLiked(isLiked).isSolved(question.getChosen())
-                                                .isBookmarked(isBookmarked).answers(answerDtos).build();
+        return CreateAnswerResponseDto.builder()
+                .questionId(question.getId())
+                .author(SimpleUserDto.builder()
+                                .author(author)
+                                .requestUser(user)
+                                .build())
+                .category(question.getCategoryName())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(temptags)
+                .likeCount(question.getLikes())
+                .answerCount(answerDtos.size())
+                .viewCount(question.getViewCount())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(question.getUpdatedAt()
+                                   .toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .answers(answerDtos)
+                .build();
     }
 
     private final Long questionId;
@@ -69,9 +88,21 @@ public class CreateAnswerResponseDto implements Serializable {
 
     @Builder
     public CreateAnswerResponseDto(
-            Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content,
-            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
-            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            Long questionId,
+            SimpleUserDto author,
+            QuestionCategory category,
+            String title,
+            String content,
+            String errorCode,
+            List<String> tags,
+            Integer likeCount,
+            Integer answerCount,
+            Integer viewCount,
+            Long timestamp,
+            Long updatedAt,
+            Boolean isLiked,
+            Boolean isSolved,
+            Boolean isBookmarked,
             List<FindAnswerResponseDto> answers
     ) {
         this.questionId = questionId;

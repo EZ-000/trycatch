@@ -31,7 +31,9 @@ public class LikesController {
 
     @Autowired
     public LikesController(
-            LikesService likesService, UserService userService, QuestionService questionService,
+            LikesService likesService,
+            UserService userService,
+            QuestionService questionService,
             AnswerService answerService
     ) {
         this.likesService = likesService;
@@ -60,7 +62,8 @@ public class LikesController {
             answer.setLikes(answer.getLikes() + 1);
             answerService.saveAnswer(answer);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 
     @PutMapping
@@ -80,6 +83,7 @@ public class LikesController {
             answer.setLikes(answer.getLikes() - 1);
             answerService.saveAnswer(answer);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 }

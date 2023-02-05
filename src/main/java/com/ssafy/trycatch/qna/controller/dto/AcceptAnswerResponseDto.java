@@ -16,20 +16,37 @@ import lombok.Data;
 @Data
 public class AcceptAnswerResponseDto implements Serializable {
     public static AcceptAnswerResponseDto from(
-            Question question, List<FindAnswerResponseDto> answerDtoList, SimpleUserDto author, Boolean isLiked,
+            Question question,
+            List<FindAnswerResponseDto> answerDtoList,
+            SimpleUserDto author,
+            Boolean isLiked,
             Boolean isBookmarked
     ) {
-        final Long timestamp = question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant()
+        final Long timestamp = question.getCreatedAt()
+                                       .atZone(ZoneId.of("Asia/Seoul"))
+                                       .toInstant()
                                        .toEpochMilli();
 
-        return AcceptAnswerResponseDto.builder().questionId(question.getId()).author(author).category(
-                                              question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(
-                                              question.getErrorCode()).tags(List.of(question.getTags().split(","))).likeCount(
-                                              question.getLikes()).answerCount(answerDtoList.size()).viewCount(question.getViewCount())
-                                                .timestamp(timestamp).updatedAt(question.getUpdatedAt()
-                                                                                        .toEpochMilli())
-                                                .isLiked(isLiked).isSolved(question.getChosen()).isBookmarked(
-                        isBookmarked).answers(answerDtoList).build();
+        return AcceptAnswerResponseDto.builder()
+                .questionId(question.getId())
+                .author(author)
+                .category(question.getCategoryName())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(List.of(question.getTags()
+                                      .split(",")))
+                .likeCount(question.getLikes())
+                .answerCount(answerDtoList.size())
+                .viewCount(question.getViewCount())
+                .timestamp(timestamp)
+                .updatedAt(question.getUpdatedAt()
+                                   .toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .answers(answerDtoList)
+                .build();
     }
 
     private final Long questionId;
@@ -54,9 +71,21 @@ public class AcceptAnswerResponseDto implements Serializable {
 
     @Builder
     public AcceptAnswerResponseDto(
-            Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content,
-            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
-            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            Long questionId,
+            SimpleUserDto author,
+            QuestionCategory category,
+            String title,
+            String content,
+            String errorCode,
+            List<String> tags,
+            Integer likeCount,
+            Integer answerCount,
+            Integer viewCount,
+            Long timestamp,
+            Long updatedAt,
+            Boolean isLiked,
+            Boolean isSolved,
+            Boolean isBookmarked,
             List<FindAnswerResponseDto> answers
     ) {
         this.questionId = questionId;
