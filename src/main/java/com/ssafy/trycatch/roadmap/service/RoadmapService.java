@@ -35,4 +35,9 @@ public class RoadmapService extends CrudService<Roadmap, Long, RoadmapRepository
                          .orElseThrow()
                          .getId();
     }
+
+    public Roadmap findByRoadmapId(Long roadmapId) {
+        return repository.findById(roadmapId).orElseThrow(RoadmapNotFoundException::new);
+    }
+
 }
