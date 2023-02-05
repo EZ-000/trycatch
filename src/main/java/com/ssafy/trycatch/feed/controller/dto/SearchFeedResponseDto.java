@@ -1,16 +1,24 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.data.domain.Page;
-
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+
+import lombok.Builder;
+import lombok.Data;
+
 @Data
 public class SearchFeedResponseDto {
+
+    public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage) {
+        return new SearchFeedResponseDto(esFeedPage.stream()
+                                                   .map(Item::of)
+                                                   .collect(Collectors.toList()));
+    }
 
     private List<Item> feedList;
 
@@ -50,7 +58,8 @@ public class SearchFeedResponseDto {
                     .summary(entity.getSummary())
                     .companyName(entity.getName())
                     .logoSrc(entity.getName())  // FIXME
-                    .createAt(entity.getPublishDate().format(DateTimeFormatter.ISO_DATE))
+                    .createAt(entity.getPublishDate()
+                                    .format(DateTimeFormatter.ISO_DATE))
                     .url(entity.getUrl())
                     .tags(entity.getTags())
                     .keywords(entity.getKeywords())
@@ -58,13 +67,5 @@ public class SearchFeedResponseDto {
                     .thumbnailImage(entity.getThumbnailUrl())
                     .build();
         }
-    }
-
-    public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage) {
-        return new SearchFeedResponseDto(
-                esFeedPage.stream()
-                          .map(Item::of)
-                          .collect(Collectors.toList())
-        );
     }
 }

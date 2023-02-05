@@ -5,16 +5,16 @@ import lombok.Data;
 
 @Data
 public class VerifyDto {
-	public final Boolean isVerified;
+    public static VerifyDto from(Boolean result) {
+        return VerifyDto.builder()
+                .isVerified(result)
+                .build();
+    }
 
-	@Builder
-	public VerifyDto(Boolean isVerified) {
-		this.isVerified = isVerified;
-	}
+    public final Boolean isVerified;
 
-	public static VerifyDto from(Boolean result) {
-		return VerifyDto.builder()
-			.isVerified(result)
-			.build();
-	}
+    @Builder
+    public VerifyDto(Boolean isVerified) {
+        this.isVerified = isVerified;
+    }
 }

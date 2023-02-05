@@ -1,15 +1,7 @@
 package com.ssafy.trycatch.common.domain;
 
 public enum QuestionCategory {
-    DEV("dev"),
-    CAREER("career"),
-    DEFAULT("default");
-
-    private final String category;
-
-    QuestionCategory(String category) { this.category = category; }
-
-    public String getCategory() { return category; }
+    DEV("dev"), CAREER("career"), DEFAULT("default");
 
     public static QuestionCategory of(String name) {
         try {
@@ -18,4 +10,10 @@ public enum QuestionCategory {
             return DEFAULT;
         }
     }
+
+    private final String category;
+
+    QuestionCategory(String category) {this.category = category;}
+
+    public String getCategory() {return category;}
 }

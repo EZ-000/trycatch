@@ -1,7 +1,5 @@
 package com.ssafy.trycatch.feed.domain;
 
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 
 @SpringBootTest
 @PropertySource("classpath:application.yaml")
@@ -26,7 +24,7 @@ class ESFeedRepositoryTest {
 
     @Test
     public void testSearch() {
-        Page<ESFeed> feeds =  esFeedRepository.findAll(new Pageable() {
+        Page<ESFeed> feeds = esFeedRepository.findAll(new Pageable() {
             @Override
             public int getPageNumber() {
                 return 0;

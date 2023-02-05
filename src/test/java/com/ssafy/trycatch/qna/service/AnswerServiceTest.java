@@ -1,19 +1,19 @@
 package com.ssafy.trycatch.qna.service;
 
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.AnswerRepository;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.ssafy.trycatch.qna.domain.Answer;
+import com.ssafy.trycatch.qna.domain.AnswerRepository;
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.UserService;
 
 @SpringBootTest
 class AnswerServiceTest {
@@ -60,8 +60,8 @@ class AnswerServiceTest {
 
         // then
         boolean result = answerService.findByQuestionId(questionId)
-                .stream()
-                .allMatch(answer -> answer.getQuestion().getId().equals(questionId));
+                                      .stream()
+                                      .allMatch(answer -> answer.getQuestion().getId().equals(questionId));
 
         assertTrue(result);
     }

@@ -1,6 +1,5 @@
 package com.ssafy.trycatch;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,10 +9,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class TrycatchApplication {
 
     public static void main(String[] args) {
@@ -32,7 +33,8 @@ public class TrycatchApplication {
             @SuppressWarnings("NullableProblems")
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(allowOrigins);
+                registry.addMapping("/**")
+                        .allowedOrigins(allowOrigins);
             }
         };
     }

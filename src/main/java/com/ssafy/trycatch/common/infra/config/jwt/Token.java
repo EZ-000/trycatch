@@ -8,15 +8,15 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 public class Token {
-	public static String CheckAccessTokenAttributeKey = "Authorization";
-	public static String CheckRefreshTokenAttributeKey = "RefreshToken";
-	public static String HeaderDefaultTokenAttributeKey = "acc";
-	public static String HeaderRefreshTokenAttributeKey = "ref";
-	private String token;
-	private String refreshToken;
+    public static String CheckAccessTokenAttributeKey = "Authorization";
+    public static String CheckRefreshTokenAttributeKey = "RefreshToken";
+    public static String HeaderDefaultTokenAttributeKey = "acc";
+    public static String HeaderRefreshTokenAttributeKey = "ref";
+    private String token;
+    private String refreshToken;
 
-	public Token(String token, String refreshToken) {
-		this.token = token;
-		this.refreshToken = refreshToken;
-	}
+    public Token(String token, String refreshToken) {
+        this.token = token;
+        this.refreshToken = refreshToken;
+    }
 }

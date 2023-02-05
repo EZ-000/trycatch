@@ -1,6 +1,9 @@
 package com.ssafy.trycatch.feed.controller;
 
-import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
 @SpringBootTest
 @ExtendWith(RestDocumentationExtension.class)
 @PropertySource("classpath:application.yaml")
@@ -33,18 +28,20 @@ class FeedControllerTest {
     private String apiVersion;
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider documentationContextProvider) {
+    void setUp(WebApplicationContext webApplicationContext,
+               RestDocumentationContextProvider documentationContextProvider) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
-                .build();
+                                      .apply(MockMvcRestDocumentation.documentationConfiguration(
+                                              documentationContextProvider))
+                                      .build();
     }
 
     @Test
     void findFeeds() throws Exception {
         this.mockMvc.perform(
-                get("/" + apiVersion + "/feed/search")
-        )
-                .andExpect(status().isOk())
-                .andDo(document("feed"));
+                    get("/" + apiVersion + "/feed/search")
+            )
+                    .andExpect(status().isOk())
+                    .andDo(document("feed"));
     }
 }

@@ -3,6 +3,7 @@ package com.ssafy.trycatch.common.controller.dto;
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.user.domain.User;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

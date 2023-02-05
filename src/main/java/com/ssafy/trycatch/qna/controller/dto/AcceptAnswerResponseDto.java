@@ -1,18 +1,54 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.common.domain.QuestionCategory;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
-import lombok.Builder;
-import lombok.Data;
-
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZoneId;
 import java.util.List;
 
+import javax.validation.constraints.Size;
+
+import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
+
+import lombok.Builder;
+import lombok.Data;
+
 @Data
 public class AcceptAnswerResponseDto implements Serializable {
+    public static AcceptAnswerResponseDto from(
+            Question question,
+            List<FindAnswerResponseDto> answerDtoList,
+            SimpleUserDto author,
+            Boolean isLiked,
+            Boolean isBookmarked
+    ) {
+        final Long timestamp = question.getCreatedAt()
+                                       .atZone(ZoneId.of("Asia/Seoul"))
+                                       .toInstant()
+                                       .toEpochMilli();
+
+        return AcceptAnswerResponseDto.builder()
+                .questionId(question.getId())
+                .author(author)
+                .category(question.getCategoryName())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(List.of(question.getTags()
+                                      .split(",")))
+                .likeCount(question.getLikes())
+                .answerCount(answerDtoList.size())
+                .viewCount(question.getViewCount())
+                .timestamp(timestamp)
+                .updatedAt(question.getUpdatedAt()
+                                   .toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .answers(answerDtoList)
+                .build();
+    }
+
     private final Long questionId;
     @Size(max = 50)
     private final SimpleUserDto author;
@@ -34,7 +70,24 @@ public class AcceptAnswerResponseDto implements Serializable {
     private final List<FindAnswerResponseDto> answers;
 
     @Builder
-    public AcceptAnswerResponseDto(Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content, String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount, Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked, List<FindAnswerResponseDto> answers) {
+    public AcceptAnswerResponseDto(
+            Long questionId,
+            SimpleUserDto author,
+            QuestionCategory category,
+            String title,
+            String content,
+            String errorCode,
+            List<String> tags,
+            Integer likeCount,
+            Integer answerCount,
+            Integer viewCount,
+            Long timestamp,
+            Long updatedAt,
+            Boolean isLiked,
+            Boolean isSolved,
+            Boolean isBookmarked,
+            List<FindAnswerResponseDto> answers
+    ) {
         this.questionId = questionId;
         this.author = author;
         this.category = category;
@@ -51,37 +104,5 @@ public class AcceptAnswerResponseDto implements Serializable {
         this.isSolved = isSolved;
         this.isBookmarked = isBookmarked;
         this.answers = answers;
-    }
-
-    public static AcceptAnswerResponseDto from(
-            Question question,
-            List<FindAnswerResponseDto> answerDtoList,
-            SimpleUserDto author,
-            Boolean isLiked,
-            Boolean isBookmarked
-    ) {
-        final Long timestamp = question
-                .getCreatedAt()
-                .atZone(ZoneId.of("Asia/Seoul"))
-                .toInstant().toEpochMilli();
-
-        return AcceptAnswerResponseDto.builder()
-                .questionId(question.getId())
-                .author(author)
-                .category(question.getCategoryName())
-                .title(question.getTitle())
-                .content(question.getContent())
-                .errorCode(question.getErrorCode())
-                .tags(List.of(question.getTags().split(",")))
-                .likeCount(question.getLikes())
-                .answerCount(answerDtoList.size())
-                .viewCount(question.getViewCount())
-                .timestamp(timestamp)
-                .updatedAt(question.getUpdatedAt().toEpochMilli())
-                .isLiked(isLiked)
-                .isSolved(question.getChosen())
-                .isBookmarked(isBookmarked)
-                .answers(answerDtoList)
-                .build();
     }
 }
