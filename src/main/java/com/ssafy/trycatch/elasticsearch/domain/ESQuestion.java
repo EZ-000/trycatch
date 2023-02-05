@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.elasticsearch.domain;
 
 import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
-import com.ssafy.trycatch.qna.domain.Question;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;

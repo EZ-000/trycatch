@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.common.service;
 
-import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;

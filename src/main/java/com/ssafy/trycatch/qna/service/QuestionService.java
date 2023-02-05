@@ -4,7 +4,6 @@ import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.service.exceptions.QuestionCategoryNotFoundException;
 import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESQuestionRepository;
-
 import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
 import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
 import com.ssafy.trycatch.qna.domain.Answer;

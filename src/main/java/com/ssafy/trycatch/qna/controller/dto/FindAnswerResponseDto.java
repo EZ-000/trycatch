@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;

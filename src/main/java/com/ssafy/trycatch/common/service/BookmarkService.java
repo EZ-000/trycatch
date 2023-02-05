@@ -2,12 +2,10 @@ package com.ssafy.trycatch.common.service;
 
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
-import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.annotation.Target;
 import java.util.List;
 
 @Service

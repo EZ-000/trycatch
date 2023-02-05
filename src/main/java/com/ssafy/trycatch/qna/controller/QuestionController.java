@@ -10,12 +10,10 @@ import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
-import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.FollowService;
 import com.ssafy.trycatch.user.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -27,7 +25,6 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

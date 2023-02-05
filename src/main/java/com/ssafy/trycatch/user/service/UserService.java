@@ -1,31 +1,20 @@
 package com.ssafy.trycatch.user.service;
 
+import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
+import com.ssafy.trycatch.user.domain.*;
+import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
+import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
+import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.ssafy.trycatch.common.domain.Bookmark;
-import com.ssafy.trycatch.user.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.ssafy.trycatch.common.service.CrudService;
-import com.ssafy.trycatch.feed.domain.ReadRepository;
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
-import com.ssafy.trycatch.user.domain.Follow;
-import com.ssafy.trycatch.user.domain.FollowRepository;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.domain.Withdrawal;
-import com.ssafy.trycatch.user.domain.WithdrawalRepository;
-import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
-import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

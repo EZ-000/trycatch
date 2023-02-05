@@ -1,13 +1,12 @@
 package com.ssafy.trycatch.common.infra.config.auth;
 
-import static com.ssafy.trycatch.common.infra.config.jwt.Token.*;
-
-import java.io.IOException;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ssafy.trycatch.common.domain.CompanyRepository;
+import com.ssafy.trycatch.common.infra.config.jwt.Token;
+import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.domain.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -15,14 +14,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.trycatch.common.domain.CompanyRepository;
-import com.ssafy.trycatch.common.infra.config.jwt.Token;
-import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.ssafy.trycatch.common.infra.config.jwt.Token.HeaderDefaultTokenAttributeKey;
+import static com.ssafy.trycatch.common.infra.config.jwt.Token.HeaderRefreshTokenAttributeKey;
 
 @Slf4j
 @RequiredArgsConstructor
