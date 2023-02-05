@@ -25,8 +25,8 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
     }
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
-        return repository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType).orElseGet(
-                Likes::new);
+        return repository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
+                         .orElseGet(Likes::new);
     }
 
     public Boolean isLikedByUserAndTarget(@Nullable Long userId, Long targetId, TargetType targetType) {

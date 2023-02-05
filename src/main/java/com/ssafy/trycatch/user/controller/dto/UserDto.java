@@ -10,11 +10,22 @@ import lombok.Data;
 @Data
 public class UserDto {
     public static UserDto from(User saved, List<String> tagList) {
-        return UserDto.builder().userId(saved.getId()).userName(saved.getUsername()).companyName(
-                              saved.getCompany().getName()).introduction(saved.getIntroduction()).profileImg(
-                              saved.getImageSrc()).subscriptionCount(saved.getSubscriptions().size()).followerCount(
-                              saved.getFollowers().size()).followingCount(saved.getFollowees().size()).tags(tagList)
-                                .isFollowed(false).build();
+        return UserDto.builder()
+                .userId(saved.getId())
+                .userName(saved.getUsername())
+                .companyName(saved.getCompany()
+                                  .getName())
+                .introduction(saved.getIntroduction())
+                .profileImg(saved.getImageSrc())
+                .subscriptionCount(saved.getSubscriptions()
+                                        .size())
+                .followerCount(saved.getFollowers()
+                                    .size())
+                .followingCount(saved.getFollowees()
+                                     .size())
+                .tags(tagList)
+                .isFollowed(false)
+                .build();
     }
 
     private Long userId;
@@ -30,8 +41,15 @@ public class UserDto {
 
     @Builder
     public UserDto(
-            Long userId, String userName, String companyName, String introduction, String profileImg,
-            Integer subscriptionCount, Integer followerCount, Integer followingCount, List<String> tags,
+            Long userId,
+            String userName,
+            String companyName,
+            String introduction,
+            String profileImg,
+            Integer subscriptionCount,
+            Integer followerCount,
+            Integer followingCount,
+            List<String> tags,
             Boolean isFollowed
     ) {
         this.userId = userId;

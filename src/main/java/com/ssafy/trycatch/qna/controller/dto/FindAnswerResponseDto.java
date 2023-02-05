@@ -24,23 +24,46 @@ public class FindAnswerResponseDto implements Serializable {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
 
-        return FindAnswerResponseDto.builder().answerId(answer.getId()).author(SimpleUserDto.builder().author(
-                author).requestUser(user).build()).content(answer.getContent()).timestamp(
-                question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
-                answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(false).accepted(
-                answer.getChosen()).build();
+        return FindAnswerResponseDto.builder()
+                .answerId(answer.getId())
+                .author(SimpleUserDto.builder()
+                                .author(author)
+                                .requestUser(user)
+                                .build())
+                .content(answer.getContent())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(answer.getUpdatedAt()
+                                 .toEpochMilli())
+                .likeCount(answer.getLikes())
+                .isLiked(false)
+                .accepted(answer.getChosen())
+                .build();
     }
 
     public static FindAnswerResponseDto from(Answer answer) {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
-        final long timestamp = question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant()
+        final long timestamp = question.getCreatedAt()
+                                       .atZone(ZoneId.of("Asia/Seoul"))
+                                       .toInstant()
                                        .toEpochMilli();
 
-        return FindAnswerResponseDto.builder().answerId(answer.getId()).author(
-                SimpleUserDto.builder().author(author).build()).content(answer.getContent()).timestamp(
-                timestamp).updatedAt(answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(
-                false).accepted(answer.getChosen()).build();
+        return FindAnswerResponseDto.builder()
+                .answerId(answer.getId())
+                .author(SimpleUserDto.builder()
+                                .author(author)
+                                .build())
+                .content(answer.getContent())
+                .timestamp(timestamp)
+                .updatedAt(answer.getUpdatedAt()
+                                 .toEpochMilli())
+                .likeCount(answer.getLikes())
+                .isLiked(false)
+                .accepted(answer.getChosen())
+                .build();
     }
 
     private final Long answerId;
@@ -54,9 +77,14 @@ public class FindAnswerResponseDto implements Serializable {
 
     @Builder
     public FindAnswerResponseDto(
-            Long answerId, SimpleUserDto author, String content, Long timestamp, Long updatedAt,
+            Long answerId,
+            SimpleUserDto author,
+            String content,
+            Long timestamp,
+            Long updatedAt,
             Integer likeCount,
-            Boolean isLiked, Boolean accepted
+            Boolean isLiked,
+            Boolean accepted
     ) {
         this.answerId = answerId;
         this.author = author;

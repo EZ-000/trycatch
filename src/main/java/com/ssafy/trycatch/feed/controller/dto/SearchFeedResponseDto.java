@@ -15,7 +15,9 @@ import lombok.Data;
 public class SearchFeedResponseDto {
 
     public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage) {
-        return new SearchFeedResponseDto(esFeedPage.stream().map(Item::of).collect(Collectors.toList()));
+        return new SearchFeedResponseDto(esFeedPage.stream()
+                                                   .map(Item::of)
+                                                   .collect(Collectors.toList()));
     }
 
     private List<Item> feedList;
@@ -50,12 +52,20 @@ public class SearchFeedResponseDto {
         private String thumbnailImage;
 
         static Item of(ESFeed entity) {
-            return Item.builder().feedId(entity.getId()).title(entity.getTitle()).summary(entity.getSummary())
-                                 .companyName(entity.getName()).logoSrc(entity.getName())  // FIXME
-                                 .createAt(entity.getPublishDate().format(DateTimeFormatter.ISO_DATE)).url(
-                            entity.getUrl()).tags(entity.getTags()).keywords(entity.getKeywords()).isBookmarked(
-                            false) // FIXME
-                                 .thumbnailImage(entity.getThumbnailUrl()).build();
+            return Item.builder()
+                    .feedId(entity.getId())
+                    .title(entity.getTitle())
+                    .summary(entity.getSummary())
+                    .companyName(entity.getName())
+                    .logoSrc(entity.getName())  // FIXME
+                    .createAt(entity.getPublishDate()
+                                    .format(DateTimeFormatter.ISO_DATE))
+                    .url(entity.getUrl())
+                    .tags(entity.getTags())
+                    .keywords(entity.getKeywords())
+                    .isBookmarked(false) // FIXME
+                    .thumbnailImage(entity.getThumbnailUrl())
+                    .build();
         }
     }
 }

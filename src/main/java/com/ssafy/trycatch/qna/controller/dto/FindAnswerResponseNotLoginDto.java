@@ -25,11 +25,20 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
 
-        return FindAnswerResponseNotLoginDto.builder().answerId(answer.getId()).author(
-                FindUserInQNANotLoginDto.from(author, companyService)).content(answer.getContent()).timestamp(
-                question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
-                answer.getUpdatedAt().toEpochMilli()).likeCount(answer.getLikes()).isLiked(false).accepted(
-                answer.getChosen()).build();
+        return FindAnswerResponseNotLoginDto.builder()
+                .answerId(answer.getId())
+                .author(FindUserInQNANotLoginDto.from(author, companyService))
+                .content(answer.getContent())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(answer.getUpdatedAt()
+                                 .toEpochMilli())
+                .likeCount(answer.getLikes())
+                .isLiked(false)
+                .accepted(answer.getChosen())
+                .build();
     }
 
     private final Long answerId;
@@ -43,8 +52,14 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
 
     @Builder
     public FindAnswerResponseNotLoginDto(
-            Long answerId, FindUserInQNANotLoginDto author, String content, Long timestamp, Long updatedAt,
-            Integer likeCount, Boolean isLiked, Boolean accepted
+            Long answerId,
+            FindUserInQNANotLoginDto author,
+            String content,
+            Long timestamp,
+            Long updatedAt,
+            Integer likeCount,
+            Boolean isLiked,
+            Boolean accepted
     ) {
         this.answerId = answerId;
         this.author = author;

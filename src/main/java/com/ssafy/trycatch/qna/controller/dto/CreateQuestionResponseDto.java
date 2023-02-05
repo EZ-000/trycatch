@@ -29,14 +29,29 @@ public class CreateQuestionResponseDto implements Serializable {
             Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked
     ) {
 
-        return CreateQuestionResponseDto.builder().questionId(question.getId()).author(simpleUserDto).category(
-                                                question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(
-                                                question.getErrorCode()).tags(List.of(question.getTags().split(","))).likeCount(0).answerCount(
-                                                0).viewCount(question.getViewCount()).timestamp(question.getCreatedAt().atZone(
-                                                ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
-                                                question.getUpdatedAt().toEpochMilli()).isLiked(isLiked).isSolved(question.getChosen())
-                                                  .isBookmarked(isBookmarked).answers(new ArrayList<>())
-                                                  .build();
+        return CreateQuestionResponseDto.builder()
+                .questionId(question.getId())
+                .author(simpleUserDto)
+                .category(question.getCategoryName())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(List.of(question.getTags()
+                                      .split(",")))
+                .likeCount(0)
+                .answerCount(0)
+                .viewCount(question.getViewCount())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(question.getUpdatedAt()
+                                   .toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .answers(new ArrayList<>())
+                .build();
     }
 
     private final Long questionId;
@@ -61,9 +76,21 @@ public class CreateQuestionResponseDto implements Serializable {
 
     @Builder
     public CreateQuestionResponseDto(
-            Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content,
-            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
-            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            Long questionId,
+            SimpleUserDto author,
+            QuestionCategory category,
+            String title,
+            String content,
+            String errorCode,
+            List<String> tags,
+            Integer likeCount,
+            Integer answerCount,
+            Integer viewCount,
+            Long timestamp,
+            Long updatedAt,
+            Boolean isLiked,
+            Boolean isSolved,
+            Boolean isBookmarked,
             List<FindAnswerResponseDto> answers
     ) {
         this.questionId = questionId;

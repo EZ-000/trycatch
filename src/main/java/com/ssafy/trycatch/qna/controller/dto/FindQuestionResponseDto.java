@@ -28,13 +28,27 @@ public class FindQuestionResponseDto implements Serializable {
             Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked
     ) {
 
-        return FindQuestionResponseDto.builder().questionId(question.getId()).author(simpleUserDto).category(
-                                              question.getCategoryName()).title(question.getTitle()).content(question.getContent()).errorCode(
-                                              question.getErrorCode()).tags(List.of(question.getTags().split(","))).likeCount(
-                                              question.getLikes()).viewCount(question.getViewCount()).timestamp(
-                                              question.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()).updatedAt(
-                                              question.getUpdatedAt().toEpochMilli()).isLiked(isLiked).isSolved(question.getChosen())
-                                                .isBookmarked(isBookmarked).build();
+        return FindQuestionResponseDto.builder()
+                .questionId(question.getId())
+                .author(simpleUserDto)
+                .category(question.getCategoryName())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(List.of(question.getTags()
+                                      .split(",")))
+                .likeCount(question.getLikes())
+                .viewCount(question.getViewCount())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(question.getUpdatedAt()
+                                   .toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .build();
     }
 
     private final Long questionId;
@@ -58,9 +72,21 @@ public class FindQuestionResponseDto implements Serializable {
 
     @Builder
     public FindQuestionResponseDto(
-            Long questionId, SimpleUserDto author, QuestionCategory category, String title, String content,
-            String errorCode, List<String> tags, Integer likeCount, Integer answerCount, Integer viewCount,
-            Long timestamp, Long updatedAt, Boolean isLiked, Boolean isSolved, Boolean isBookmarked,
+            Long questionId,
+            SimpleUserDto author,
+            QuestionCategory category,
+            String title,
+            String content,
+            String errorCode,
+            List<String> tags,
+            Integer likeCount,
+            Integer answerCount,
+            Integer viewCount,
+            Long timestamp,
+            Long updatedAt,
+            Boolean isLiked,
+            Boolean isSolved,
+            Boolean isBookmarked,
             List<FindAnswerResponseDto> answers
     ) {
         this.questionId = questionId;

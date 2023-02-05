@@ -17,6 +17,9 @@ public class WithdrawalRequestDto {
     }
 
     public Withdrawal toEntity() {
-        return Withdrawal.builder().id(userId).reason(content).build();
+        return Withdrawal.builder()
+                .id(userId)
+                .reason(content)
+                .build();
     }
 }

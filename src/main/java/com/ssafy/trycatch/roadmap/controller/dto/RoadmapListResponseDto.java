@@ -9,8 +9,11 @@ import lombok.Data;
 @Data
 public class RoadmapListResponseDto {
     public static RoadmapListResponseDto from(Roadmap roadmap) {
-        return RoadmapListResponseDto.builder().author(SimpleUserInfo.from(roadmap.getUser())).title(
-                roadmap.getTitle()).tag(roadmap.getTag()).build();
+        return RoadmapListResponseDto.builder()
+                .author(SimpleUserInfo.from(roadmap.getUser()))
+                .title(roadmap.getTitle())
+                .tag(roadmap.getTag())
+                .build();
     }
 
     private SimpleUserInfo author;

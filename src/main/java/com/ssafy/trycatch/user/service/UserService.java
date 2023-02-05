@@ -29,13 +29,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
-    private static final User GUEST = User.builder().id(-1L).githubNodeId("").username("guest").gitAddress(
-                                                  "https://github.com").email("").activated(false).calendarMail("").followees(Collections.emptySet())
-                                                    .followers(Collections.emptySet())
-                                                    .answers(Collections.emptySet())
-                                                    .subscriptions(Collections.emptySet()).questions(
-                    Collections.emptySet()).myBadges(Collections.emptySet()).myChallenges(
-                    Collections.emptySet()).histories(Collections.emptySet()).build();
+    private static final User GUEST = User.builder()
+            .id(-1L)
+            .githubNodeId("")
+            .username("guest")
+            .gitAddress("https://github.com")
+            .email("")
+            .activated(false)
+            .calendarMail("")
+            .followees(Collections.emptySet())
+            .followers(Collections.emptySet())
+            .answers(Collections.emptySet())
+            .subscriptions(Collections.emptySet())
+            .questions(Collections.emptySet())
+            .myBadges(Collections.emptySet())
+            .myChallenges(Collections.emptySet())
+            .histories(Collections.emptySet())
+            .build();
 
     @SuppressWarnings("unsued")
     public static User getGuest() {
@@ -47,7 +57,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     private final FollowRepository followRepository;
 
     public UserService(
-            UserRepository repository, ReadRepository readRepository, WithdrawalRepository withdrawalRepository,
+            UserRepository repository,
+            ReadRepository readRepository,
+            WithdrawalRepository withdrawalRepository,
             FollowRepository followRepository
     ) {
         super(repository);
@@ -57,32 +69,39 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     public User findUserById(@NotNull Long userId) {
-        return repository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return repository.findById(userId)
+                         .orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
     public void inActivateUser(long uid, Withdrawal reason) {
-        User savedUser = repository.findById(uid).orElseThrow();
+        User savedUser = repository.findById(uid)
+                                   .orElseThrow();
         savedUser.setActivated(false);
         repository.save(savedUser);
         withdrawalRepository.save(reason);
     }
 
     public Long findNameToId(String userName) {
-        return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new).getId();
+        return repository.findByUsername(userName)
+                         .orElseThrow(UserNotFoundException::new)
+                         .getId();
     }
 
     public User findUserByName(String userName) {
-        return repository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+        return repository.findByUsername(userName)
+                         .orElseThrow(UserNotFoundException::new);
     }
 
     public User getDetailUserInfo(Long userId) {
-        return repository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return repository.findById(userId)
+                         .orElseThrow(UserNotFoundException::new);
     }
 
     @Transactional
     public void modifyUser(Long userId, UserModifytDto modifytDto) {
-        User targetUser = repository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User targetUser = repository.findById(userId)
+                                    .orElseThrow(UserNotFoundException::new);
         if (null != modifytDto.introduction) {
             targetUser.setIntroduction(modifytDto.getIntroduction());
         }
@@ -93,11 +112,14 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     public List<User> findFollowList(Long uid, String type) {
-        User user = repository.findById(uid).orElseThrow(UserNotFoundException::new);
+        User user = repository.findById(uid)
+                              .orElseThrow(UserNotFoundException::new);
 
-        return getFollowset(user, type).orElseThrow(TypeNotFoundException::new).stream().map(
-                e -> repository.findById(e.getId()).orElseThrow(UserNotFoundException::new)).collect(
-                Collectors.toList());
+        return getFollowset(user, type).orElseThrow(TypeNotFoundException::new)
+                                       .stream()
+                                       .map(e -> repository.findById(e.getId())
+                                                           .orElseThrow(UserNotFoundException::new))
+                                       .collect(Collectors.toList());
     }
 
     private Optional<Set<Follow>> getFollowset(User user, String type) {
@@ -111,7 +133,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     public Boolean getVerification(Long userId) {
-        return repository.findById(userId).orElseThrow(UserNotFoundException::new).getConfirmationCode() == 1;
+        return repository.findById(userId)
+                         .orElseThrow(UserNotFoundException::new)
+                         .getConfirmationCode() == 1;
     }
 
     /**
@@ -124,14 +148,19 @@ public class UserService extends CrudService<User, Long, UserRepository> {
         if (src == des) {
             throw new AlreadyExistException();
         }
-        final User srcUser = repository.findById(src).orElseThrow(UserNotFoundException::new);
-        final User desUser = repository.findById(des).orElseThrow(UserNotFoundException::new);
+        final User srcUser = repository.findById(src)
+                                       .orElseThrow(UserNotFoundException::new);
+        final User desUser = repository.findById(des)
+                                       .orElseThrow(UserNotFoundException::new);
 
         if (followRepository.existsByFollowerIdAndFolloweeId(src, des)) {
             throw new AlreadyExistException();
         }
 
-        followRepository.save(Follow.builder().follower(srcUser).followee(desUser).build());
+        followRepository.save(Follow.builder()
+                                      .follower(srcUser)
+                                      .followee(desUser)
+                                      .build());
     }
 
     public void unfollow(Long src, Long des) {
@@ -139,8 +168,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
             throw new AlreadyExistException();
         }
 
-        Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des).orElseThrow(
-                AlreadyExistException::new);
+        Follow follow = followRepository.findByFollower_IdAndFollowee_Id(src, des)
+                                        .orElseThrow(AlreadyExistException::new);
         followRepository.delete(follow);
     }
 
@@ -149,7 +178,11 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     public List<Long> getAnswerIdListByUserId(Long uid) {
-        return repository.findById(uid).get().getAnswers().stream().map(e -> e.getId()).collect(
-                Collectors.toList());
+        return repository.findById(uid)
+                         .get()
+                         .getAnswers()
+                         .stream()
+                         .map(e -> e.getId())
+                         .collect(Collectors.toList());
     }
 }

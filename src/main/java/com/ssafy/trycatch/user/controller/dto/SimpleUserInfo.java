@@ -12,8 +12,14 @@ public class SimpleUserInfo {
     public static SimpleUserInfo from(User user) {
         if (null == user.getCompany()) {throw new ValidateException("Null Company");}
 
-        return SimpleUserInfo.builder().userId(user.getId()).userName(user.getUsername()).profileImage(
-                user.getImageSrc()).companyName(user.getCompany().getName()).isFollowed(false).build();
+        return SimpleUserInfo.builder()
+                .userId(user.getId())
+                .userName(user.getUsername())
+                .profileImage(user.getImageSrc())
+                .companyName(user.getCompany()
+                                 .getName())
+                .isFollowed(false)
+                .build();
     }
 
     private Long userId;
@@ -24,8 +30,7 @@ public class SimpleUserInfo {
 
     @Builder
     public SimpleUserInfo(
-            Long userId, String userName, String profileImage, String companyName,
-            Boolean isFollowed
+            Long userId, String userName, String profileImage, String companyName, Boolean isFollowed
     ) {
         this.userId = userId;
         this.userName = userName;

@@ -45,7 +45,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String githubToken = tokenService.getAccessToken(token);
 
             Authentication auth = getAuthentication(serviceUserPkId, githubToken);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            SecurityContextHolder.getContext()
+                                 .setAuthentication(auth);
         }
 
         filterChain.doFilter(request, response);

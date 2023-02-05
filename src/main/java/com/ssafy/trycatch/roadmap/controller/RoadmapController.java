@@ -43,7 +43,8 @@ public class RoadmapController {
     @GetMapping("/list")
     public ResponseEntity<List<RoadmapListResponseDto>> findAllRoadmap() {
         List<Roadmap> allRoadmaps = roadmapService.findAll();
-        List<RoadmapListResponseDto> allDtoList = allRoadmaps.stream().map(RoadmapListResponseDto::from)
+        List<RoadmapListResponseDto> allDtoList = allRoadmaps.stream()
+                                                             .map(RoadmapListResponseDto::from)
                                                              .collect(Collectors.toList());
         return ResponseEntity.ok(allDtoList);
     }
@@ -68,12 +69,14 @@ public class RoadmapController {
 
     @PutMapping("/{userName}")
     public ResponseEntity<String> modifyRoadmap(
-            @PathVariable String userName, @AuthUserElseGuest User requestUser,
+            @PathVariable String userName,
+            @AuthUserElseGuest User requestUser,
             @RequestBody RoadmapRequestDto roadmapRequestDto
     ) {
         final Roadmap roadmap = roadmapRequestDto.toEntity(requestUser);
         roadmapService.modify(requestUser.getId(), roadmap);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 
     @DeleteMapping("/{userName}")
@@ -81,6 +84,7 @@ public class RoadmapController {
             @PathVariable String userName, @AuthUserElseGuest User requestUser
     ) {
         roadmapService.removeById(requestUser.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                             .build();
     }
 }

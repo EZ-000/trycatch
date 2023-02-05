@@ -17,13 +17,19 @@ public class FindUserInQNANotLoginDto implements Serializable {
         if (null == author.getCompany()) {
             companyName = "";
         } else {
-            companyName = companyService.findById(author.getCompany().getId()).orElseThrow().getName();
+            companyName = companyService.findById(author.getCompany()
+                                                        .getId())
+                                        .orElseThrow()
+                                        .getName();
         }
 
-        return FindUserInQNANotLoginDto.builder().userId(author.getId()).userName(author.getUsername())
-                                                 .profileImage(author.getImageSrc()).companyName(companyName)
-                                                 .isFollowed(
-                                                         false).build();
+        return FindUserInQNANotLoginDto.builder()
+                .userId(author.getId())
+                .userName(author.getUsername())
+                .profileImage(author.getImageSrc())
+                .companyName(companyName)
+                .isFollowed(false)
+                .build();
     }
 
     public final Long userId;
