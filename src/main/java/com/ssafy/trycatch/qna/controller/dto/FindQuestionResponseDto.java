@@ -22,7 +22,6 @@ public class FindQuestionResponseDto implements Serializable {
     public static FindQuestionResponseDto from(
             Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked, List<FindAnswerResponseDto> answers
     ) {
-
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())
                 .author(simpleUserDto)

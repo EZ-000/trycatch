@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsUtils;
 
 import com.ssafy.trycatch.common.infra.config.auth.CustomOAuth2UserService;
 import com.ssafy.trycatch.common.infra.config.auth.OAuth2FailureHandler;
@@ -35,6 +36,7 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .antMatchers("/token/**", "/v1/**")
             .permitAll()
             .anyRequest()
