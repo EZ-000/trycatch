@@ -6,6 +6,9 @@ import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Data
 public class RoadmapRequestDto {
     private String title;
@@ -28,6 +31,9 @@ public class RoadmapRequestDto {
                 .tag(tag)
                 .node(nodes)
                 .edge(edges)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(Instant.now())
+                .likes(0)
                 .build();
     }
 }
