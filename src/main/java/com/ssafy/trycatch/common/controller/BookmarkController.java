@@ -38,25 +38,27 @@ public class BookmarkController {
         this.roadmapService = roadmapService;
     }
 
+    /**
+     * @param requestUser 로그인된 유저
+     * @param bookmarkRequestDto 북마크 요청 dto
+     * @return 생성 성공 시 201 Created 응답
+     */
     @PostMapping
     public ResponseEntity<Void> bookmarkTarget(
-            @AuthUserElseGuest User requestUser, @RequestBody BookmarkRequestDto bookmarkRequestDto
+            @AuthUserElseGuest User requestUser,
+            @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
-        if (null == questionService.findQuestionById(bookmarkRequestDto.getId())) {
-            throw new QuestionNotFoundException();
-        }
 
         final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
-        final Bookmark lastBookmark = bookmarkService.getLastBookmark(requestUser.getId(),
-                                                                      bookmarkRequestDto.getId(),
-                                                                      type);
+        final Bookmark lastBookmark = bookmarkService
+                .getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
         if (lastBookmark.getActivated()) {
             throw new InvalidBookmarkRequestException();
         }
 
         final Bookmark newBookmark = bookmarkRequestDto.newBookmark(requestUser);
         bookmarkService.register(newBookmark);
-        return ResponseEntity.ok()
+        return ResponseEntity.status(201)
                              .build();
     }
 

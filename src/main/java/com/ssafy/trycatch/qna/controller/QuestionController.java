@@ -109,8 +109,8 @@ public class QuestionController {
 
     /**
      * {@code Question} 엔티티를 생성 후 데이터베이스에 저장
-     *
      * @param createQuestionRequestDto 질문 생성 요청 DTO
+     * @return 생성 성공 시 201 Created 응답
      */
     @PostMapping
     public ResponseEntity<CreateQuestionResponseDto> createQuestion(
@@ -141,12 +141,13 @@ public class QuestionController {
                 isLiked,
                 isBookmarked);
 
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.status(201).body(responseDto);
     }
 
     /**
-     * PutQuestionRequestDto로 받은 수정 요청을 처리하고,
-     * CreateQuestionResponseDto로 반환
+     * @param requestUser 로그인된 유저
+     * @param putQuestionRequestDto 질문 수정 dto
+     * @return 수정 성공 시 201 Created 응답
      */
     @PutMapping("/{questionId}")
     public ResponseEntity<Void> putQuestion(
@@ -160,29 +161,33 @@ public class QuestionController {
                                        putQuestionRequestDto.getErrorCode(),
                                        putQuestionRequestDto.getTags(),
                                        putQuestionRequestDto.getHidden());
-        return ResponseEntity.ok()
+        return ResponseEntity.status(201)
                              .build();
     }
 
+    /**
+     * @param requestUser 로그인된 유저
+     * @param questionId 질문 id
+     * @return 삭제 성공 시 204 No Content 응답
+     */
     @DeleteMapping("/{questionId}")
     public ResponseEntity<Void> deleteQuestion(
             @AuthUserElseGuest User requestUser, @PathVariable Long questionId
     ) {
         questionService.deleteQuestion(questionId, requestUser.getId());
-        return ResponseEntity.ok()
+        return ResponseEntity.status(204)
                              .build();
     }
 
     /**
      * {@code Question#id}로 {@code Question}을 찾아 {@code QuestionResponseDto}로 반환하여 반환
-     *
      * @param questionId {@code Question}의 id
      */
     @GetMapping("/{questionId}")
     public ResponseEntity<FindQuestionResponseDto> findQuestionById(
             @PathVariable("questionId") Long questionId, @AuthUserElseGuest User requestUser
     ) {
-        final Question question = questionService.findQuestionById(questionId);
+        final Question question = questionService.findQuestionByIdWithViewCount(questionId);
         final User author = question.getUser();
 
         final SimpleUserDto simpleUserDto = SimpleUserDto.builder()
@@ -225,6 +230,12 @@ public class QuestionController {
         return ResponseEntity.ok(responseDto);
     }
 
+    /**
+     * @param questionId 질문 id
+     * @param createAnswerRequestDto 답변 생성 요청 dto
+     * @param requestUser 로그인된 유저
+     * @return 생성 성공 시 201 Created 응답
+     */
     @PostMapping("/{questionId}/answer")
     public ResponseEntity<FindAnswerResponseDto> createAnswers(
             @PathVariable Long questionId,
@@ -243,6 +254,11 @@ public class QuestionController {
 
     }
 
+    /**
+     * @param requestUser 로그인된 유저
+     * @param putAnswerRequestDto 답변 수정 dto
+     * @return 수정 성공 시 201 Created 응답
+     */
     @PutMapping("/{questionId}/answer")
     public ResponseEntity<Void> putAnswer(
             @AuthUserElseGuest User requestUser,
@@ -252,7 +268,7 @@ public class QuestionController {
                                    putAnswerRequestDto.getAnswerId(),
                                    putAnswerRequestDto.getContent(),
                                    putAnswerRequestDto.getHidden());
-        return ResponseEntity.ok()
+        return ResponseEntity.status(201)
                              .build();
     }
 
@@ -263,6 +279,12 @@ public class QuestionController {
                              .build();
     }
 
+    /**
+     * @param questionId 질문 id
+     * @param answerId 답변 id
+     * @param requestUser 로그인된 유저
+     * @return 답변 채택 성공 시 201 Created 응답
+     */
     @PostMapping("/{questionId}/{answerId}")
     public ResponseEntity<AcceptAnswerResponseDto> acceptAnswer(
             @PathVariable Long questionId, @PathVariable Long answerId, @AuthUserElseGuest User requestUser
@@ -299,7 +321,7 @@ public class QuestionController {
                                                                                  isLiked,
                                                                                  isBookmarked);
 
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.status(201).body(responseDto);
     }
 
     // MOCK API: 에러코드 기반 질문 추천

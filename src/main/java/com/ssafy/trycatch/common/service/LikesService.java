@@ -28,15 +28,4 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
     public Boolean isLikedByUserAndTarget(@Nullable Long userId, Long targetId, TargetType targetType) {
         return repository.existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(userId, targetId, targetType);
     }
-
-    public Likes getLastLikes(Long userId, Long targetId, TargetType targetType) {
-        List<Likes> likesList = repository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
-        final Likes lastLikes;
-        if (likesList.size() != 0) {
-            lastLikes = likesList.get(likesList.size() - 1);
-        } else {
-            lastLikes = new Likes(0L, 0L, 0L, TargetType.DEFAULT, false);
-        }
-        return lastLikes;
-    }
 }
