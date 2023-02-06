@@ -6,9 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-    Optional<Bookmark> findByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, TargetType targetType);
+    List<Bookmark> findByUserIdAndTargetTypeAndActivatedIsTrue(Long userId, TargetType targetType);
 
-    List<Bookmark> streamByUserIdAndTargetIdAndTargetType(Long userId, Long targetId, TargetType targetType);
 
     Optional<Bookmark> findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(Long userId, Long targetId, TargetType targetType);
 

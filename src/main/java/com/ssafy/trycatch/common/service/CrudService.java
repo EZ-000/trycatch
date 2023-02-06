@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class CrudService<T, ID, R extends JpaRepository<T, ID>> {
 
-    protected R repository;
+    protected final R repository;
 
     public CrudService(R repository) {
         this.repository = repository;

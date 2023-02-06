@@ -1,6 +1,7 @@
 package com.ssafy.trycatch.qna.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,17 +11,14 @@ import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.AnswerRepository;
 import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
-import com.ssafy.trycatch.user.service.UserService;
 
 @Service
 public class AnswerService {
     private final AnswerRepository answerRepository;
-    private final UserService userService;
 
     @Autowired
-    public AnswerService(AnswerRepository answerRepository, UserService userService) {
+    public AnswerService(AnswerRepository answerRepository) {
         this.answerRepository = answerRepository;
-        this.userService = userService;
     }
 
     public Answer saveAnswer(Answer answer) {
@@ -41,8 +39,8 @@ public class AnswerService {
         final Answer answer = answerRepository.findById(answerId)
                                               .orElseThrow(AnswerNotFoundException::new);
 
-        if (answer.getUser()
-                  .getId() != userId) {throw new RequestUserNotValidException();}
+        if (!Objects.equals(answer.getUser()
+                .getId(), userId)) {throw new RequestUserNotValidException();}
 
         answer.setContent(content);
         answer.setHidden(hidden);
