@@ -2,6 +2,7 @@ package com.ssafy.trycatch.qna.controller;
 
 import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -216,36 +217,21 @@ public class QuestionController {
     }
 
     @PostMapping("/{questionId}/answer")
-    public ResponseEntity<CreateAnswerResponseDto> createAnswers(
+    public ResponseEntity<FindAnswerResponseDto> createAnswers(
             @PathVariable Long questionId,
             @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
             @AuthUserElseGuest User requestUser
     ) {
         // 생성
         final Question question = questionService.findQuestionById(questionId);
-        createAnswerRequestDto.newAnswer(question, requestUser);
-        // 응답
-        final List<Answer> answers = answerService.findByQuestionId(question.getId());
-        final TargetType type = QUESTION;
-        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(
-                                                                        requestUser.getId(),
-                                                                        question.getId(),
-                                                                        type)
-                                                                .getActivated())
-                                        .orElse(false);
+        final Answer answerDto = createAnswerRequestDto.newAnswer(question, requestUser);
+        final Answer answer = answerService.saveAnswer(answerDto);
 
-        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(
-                                                                                requestUser.getId(),
-                                                                                question.getId(),
-                                                                                type)
-                                                                        .getActivated())
-                                             .orElse(false);
-        return ResponseEntity.ok(CreateAnswerResponseDto.from(
-                question,
-                answers,
-                requestUser,
-                isLiked,
-                isBookmarked));
+        // 응답
+        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(answer);
+
+        return ResponseEntity.status(201).body(answerResponseDto);
+
     }
 
     @PutMapping("/{questionId}/answer")
