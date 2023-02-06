@@ -119,7 +119,7 @@ public class QuestionController {
             @AuthUserElseGuest User requestUser, @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
 
-        final Question savedEntity = questionService.saveQuestion(createQuestionRequestDto);
+        final Question savedEntity = questionService.saveQuestion(requestUser, createQuestionRequestDto);
 
         final long targetId = savedEntity.getId();
 
