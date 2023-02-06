@@ -1,0 +1,13 @@
+
+= Bookmark
+
+== 북마크 생성
+include::{snippets}/bookmark-add/http-request.adoc[]
+include::{snippets}/bookmark-add/request-body.adoc[]
+include::{snippets}/bookmark-add/http-response.adoc[]
+
+== 북마크 삭제
+include::{snippets}/bookmark-remove/http-request.adoc[]
+include::{snippets}/bookmark-remove/request-fields.adoc[]
+include::{snippets}/bookmark-remove/http-response.adoc[]
+

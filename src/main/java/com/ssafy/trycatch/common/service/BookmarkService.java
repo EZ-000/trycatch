@@ -23,9 +23,8 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
     }
 
     public Bookmark getLastBookmark(Long userId, Long targetId, TargetType targetType) {
-        List<Bookmark> bookmarkList = repository.streamByUserIdAndTargetIdAndTargetType(userId,
-                                                                                        targetId,
-                                                                                        targetType);
+        List<Bookmark> bookmarkList = repository
+                .streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
         final Bookmark lastBookmark;
         if (bookmarkList.size() != 0) {
             lastBookmark = bookmarkList.get(bookmarkList.size() - 1);

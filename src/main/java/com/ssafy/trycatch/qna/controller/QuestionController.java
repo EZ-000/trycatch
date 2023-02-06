@@ -119,12 +119,7 @@ public class QuestionController {
             @AuthUserElseGuest User requestUser, @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
 
-        if (!createQuestionRequestDto.getAuthorId()
-                                     .equals(requestUser.getId())) {
-            throw new IllegalArgumentException("JWT Token user id not equals author id");
-        }
-
-        final Question savedEntity = questionService.saveQuestion(createQuestionRequestDto);
+        final Question savedEntity = questionService.saveQuestion(requestUser, createQuestionRequestDto);
 
         final long targetId = savedEntity.getId();
 

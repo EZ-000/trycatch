@@ -40,7 +40,8 @@ public class BookmarkController {
 
     @PostMapping
     public ResponseEntity<Void> bookmarkTarget(
-            @AuthUserElseGuest User requestUser, @RequestBody BookmarkRequestDto bookmarkRequestDto
+            @AuthUserElseGuest User requestUser,
+            @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         if (null == questionService.findQuestionById(bookmarkRequestDto.getId())) {
             throw new QuestionNotFoundException();

@@ -1,4 +1,4 @@
-package com.ssafy.trycatch;
+package com.ssafy.trycatch.common.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,11 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ExtendWith(RestDocumentationExtension.class)
 @PropertySource("classpath:application-local.yml")
-class TrycatchApplicationTests {
+class LikesControllerTest {
 
     private MockMvc mockMvc;
 
@@ -39,7 +40,10 @@ class TrycatchApplicationTests {
     }
 
     @Test
-    void contextLoads() {
+    void likeTarget() {
     }
 
+    @Test
+    void unlikeTarget() {
+    }
 }

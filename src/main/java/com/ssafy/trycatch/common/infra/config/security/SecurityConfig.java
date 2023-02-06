@@ -14,6 +14,7 @@ import com.ssafy.trycatch.common.infra.config.jwt.JwtAuthFilter;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsUtils;
 
 @RequiredArgsConstructor
 @Configuration
@@ -34,9 +35,8 @@ public class SecurityConfig {
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .authorizeRequests()
-            .antMatchers("/token/**", "/v1/**")
-            .permitAll()
+            .authorizeRequests().requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+            .antMatchers("/token/**", "/v1/**", "/docs/**").permitAll()
             .anyRequest()
             // 인증이 모두 필요
             .authenticated()
