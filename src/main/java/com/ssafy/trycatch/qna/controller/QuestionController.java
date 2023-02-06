@@ -4,7 +4,6 @@ import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -25,12 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
-import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.LikesService;
 import com.ssafy.trycatch.qna.controller.dto.AcceptAnswerResponseDto;
 import com.ssafy.trycatch.qna.controller.dto.CreateAnswerRequestDto;
-import com.ssafy.trycatch.qna.controller.dto.CreateAnswerResponseDto;
 import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
 import com.ssafy.trycatch.qna.controller.dto.CreateQuestionResponseDto;
 import com.ssafy.trycatch.qna.controller.dto.FindAnswerResponseDto;
@@ -211,43 +208,27 @@ public class QuestionController {
     }
 
     @PostMapping("/{questionId}/answer")
-    public ResponseEntity<CreateAnswerResponseDto> createAnswers(
+    public ResponseEntity<FindAnswerResponseDto> createAnswers(
             @PathVariable Long questionId,
             @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
             @AuthUserElseGuest User requestUser
     ) {
         // 생성
         final Question question = questionService.findQuestionById(questionId);
-        createAnswerRequestDto.newAnswer(question, requestUser);
-        // 응답
-        final List<Answer> answers = answerService.findByQuestionId(question.getId());
-        final TargetType type = QUESTION;
-        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(
-                                                                        requestUser.getId(),
-                                                                        question.getId(),
-                                                                        type)
-                                                                .getActivated())
-                                        .orElse(false);
+        final Answer answerDto = createAnswerRequestDto.newAnswer(question, requestUser);
+        final Answer answer = answerService.saveAnswer(answerDto);
 
-        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(
-                                                                                requestUser.getId(),
-                                                                                question.getId(),
-                                                                                type)
-                                                                        .getActivated())
-                                             .orElse(false);
-        return ResponseEntity.ok(CreateAnswerResponseDto.from(
-                question,
-                answers,
-                requestUser,
-                isLiked,
-                isBookmarked));
+        // 응답
+        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(answer);
+
+        return ResponseEntity.status(201).body(answerResponseDto);
+
     }
 
     @PutMapping("/{questionId}/answer")
     public ResponseEntity<Void> putAnswer(
             @AuthUserElseGuest User requestUser,
-            @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto,
-            @PathVariable String questionId
+            @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto
     ) {
         answerService.updateAnswer(requestUser.getId(),
                                    putAnswerRequestDto.getAnswerId(),
@@ -259,7 +240,7 @@ public class QuestionController {
 
     // MOCK API: 질문 검색
     @GetMapping("/search")
-    public ResponseEntity<List<SearchQuestionResponseDto>> search(@PageableDefault Pageable pageable) {
+    public ResponseEntity<List<SearchQuestionResponseDto>> search() {
         return ResponseEntity.ok()
                              .build();
     }
@@ -298,9 +279,7 @@ public class QuestionController {
 
     // MOCK API: 에러코드 기반 질문 추천
     @GetMapping("/ec")
-    public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions(
-            @PageableDefault Pageable pageable
-    ) {
+    public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions() {
         return ResponseEntity.ok()
                              .build();
     }
