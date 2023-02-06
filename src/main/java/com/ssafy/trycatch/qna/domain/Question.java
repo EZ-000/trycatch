@@ -93,7 +93,7 @@ public class Question {
     @ToString.Exclude
     @Builder.Default
     private Set<Answer> answers = new LinkedHashSet<>();
-    
+
     public void increaseViewCount(Integer view) {
         viewCount += view;
     }
