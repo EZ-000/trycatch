@@ -18,6 +18,37 @@ import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
  */
 @Data
 public class FindQuestionResponseDto implements Serializable {
+
+    public static FindQuestionResponseDto from(
+            Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked, List<FindAnswerResponseDto> answers
+    ) {
+
+        return FindQuestionResponseDto.builder()
+                .questionId(question.getId())
+                .author(simpleUserDto)
+                .category(question.getCategoryName())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .errorCode(question.getErrorCode())
+                .tags(List.of(question.getTags()
+                        .split(",")))
+                .likeCount(question.getLikes())
+                .answerCount(question.getAnswers().size())
+                .viewCount(question.getViewCount())
+                .timestamp(question.getCreatedAt()
+                        .atZone(TZ_SEOUL)
+                        .toInstant()
+                        .toEpochMilli())
+                .updatedAt(question.getUpdatedAt()
+                        .toEpochMilli())
+                .isLiked(isLiked)
+                .isSolved(question.getChosen())
+                .isBookmarked(isBookmarked)
+                .answers(answers)
+                .build();
+    }
+
+
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
      *
@@ -42,6 +73,7 @@ public class FindQuestionResponseDto implements Serializable {
                 .tags(List.of(question.getTags()
                                       .split(",")))
                 .likeCount(question.getLikes())
+                .answerCount(question.getAnswers().size())
                 .viewCount(question.getViewCount())
                 .timestamp(question.getCreatedAt()
                                    .atZone(TZ_SEOUL)

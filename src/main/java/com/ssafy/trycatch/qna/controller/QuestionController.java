@@ -1,10 +1,11 @@
 package com.ssafy.trycatch.qna.controller;
 
+import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
 import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -198,11 +199,25 @@ public class QuestionController {
                 authorId,
                 QUESTION);
 
+        final Set<Answer> answers = question.getAnswers();
+        final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
+        for (Answer answer : answers) {
+            final long answerId = answer.getId();
+            final boolean answerIsLiked = likesService
+                    .isLikedByUserAndTarget(requestUser.getId(), answerId, ANSWER);
+
+            final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
+                    answer, requestUser, answerIsLiked);
+
+            answerResponseDtoList.add(responseDto);
+        }
+
         final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
                 question,
                 simpleUserDto,
                 isLiked,
-                isBookmarked);
+                isBookmarked,
+                answerResponseDtoList);
 
         return ResponseEntity.ok(responseDto);
     }
@@ -251,12 +266,19 @@ public class QuestionController {
     ) {
         // 채택
         final Question question = questionService.acceptAnswer(questionId, answerId);
-        final List<Answer> answers = new ArrayList<>(question.getAnswers());
         final User author = question.getUser();
-        final List<FindAnswerResponseDto> answerDtoList = answers.stream()
-                                                                 .map(ans -> FindAnswerResponseDto.from(ans,
-                                                                                                        requestUser))
-                                                                 .collect(Collectors.toList());
+        final Set<Answer> answers = question.getAnswers();
+        final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
+        for (Answer answer : answers) {
+            final long targetId = answer.getId();
+            final boolean answerIsLiked = likesService
+                    .isLikedByUserAndTarget(requestUser.getId(), targetId, ANSWER);
+
+            final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
+                    answer, requestUser, answerIsLiked);
+
+            answerResponseDtoList.add(responseDto);
+        }
 
         final SimpleUserDto authorDto = SimpleUserDto.builder()
                 .author(author)
@@ -269,7 +291,7 @@ public class QuestionController {
                                                                                author.getId(),
                                                                                QUESTION);
         final AcceptAnswerResponseDto responseDto = AcceptAnswerResponseDto.from(question,
-                                                                                 answerDtoList,
+                                                                                 answerResponseDtoList,
                                                                                  authorDto,
                                                                                  isLiked,
                                                                                  isBookmarked);

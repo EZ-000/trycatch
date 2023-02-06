@@ -32,10 +32,10 @@ public class CreateAnswerResponseDto implements Serializable {
             Question question, List<Answer> answers, User user, Boolean isLiked, Boolean isBookmarked
     ) {
         final User author = question.getUser();
-        final List<FindAnswerResponseDto> answerDtos = answers.stream()
-                                                              .map((Answer answer) -> FindAnswerResponseDto.from(answer,
-                                                                                                                 user))
-                                                              .collect(Collectors.toList());
+        final List<FindAnswerResponseDto> answerDtos = answers
+                .stream()
+                .map(FindAnswerResponseDto::from)
+                .collect(Collectors.toList());
         final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
         return CreateAnswerResponseDto.builder()
