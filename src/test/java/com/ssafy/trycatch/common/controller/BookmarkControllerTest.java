@@ -107,19 +107,19 @@ class BookmarkControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("bookmark-find",
+                .andDo(document("bookmark-question",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰").optional()
                         ),
                         responseFields(
-                                fieldWithPath("questionId"),
-                                fieldWithPath("title"),
-                                fieldWithPath("content"),
-                                fieldWithPath("tags"),
-                                fieldWithPath("viewCount"),
-                                fieldWithPath("likeCount"),
-                                fieldWithPath("answerCount"),
-                                fieldWithPath("createAt")
+                                fieldWithPath("[].questionId").description("질문 고유 아이디").type("number").optional(),
+                                fieldWithPath("[].title").description("질문 타이틀").type("string").optional(),
+                                fieldWithPath("[].content").description("질문 내용").type("string").optional(),
+                                fieldWithPath("[].tags").description("질문 태그 리스트").type("string[]").optional(),
+                                fieldWithPath("[].viewCount").description("조회수").type("number").optional(),
+                                fieldWithPath("[].likeCount").description("좋아요 수").type("number").optional(),
+                                fieldWithPath("[].answerCount").description("답변 수").type("number").optional(),
+                                fieldWithPath("[].createAt").description("timestamp milliseconds").type("number").optional()
                         )
                 ));
 
@@ -133,9 +133,25 @@ class BookmarkControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andDo(document("bookmark-find",
+                .andDo(document("bookmark-roadmap",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("[].roadmapId").description("로드맵 아이디").type("Long").optional(),
+                                fieldWithPath("[].author").description("작성자").type("SimpleUserInfo").optional(),
+                                fieldWithPath("[].author.userId").description("작성자 아이디").type("SimpleUserInfo").optional(),
+                                fieldWithPath("[].author.userName").description("작성자 닉네임").type("SimpleUserInfo").optional(),
+                                fieldWithPath("[].author.profileImage").description("작성자 프로필 이미지").type("SimpleUserInfo").optional(),
+                                fieldWithPath("[].author.companyName").description("작성자 인증 회사 이름").type("SimpleUserInfo").optional(),
+                                fieldWithPath("[].author.isFollowed").description("요청자의 작성자 팔로우 여부").type("SimpleUserInfo").optional(),
+                                fieldWithPath("[].title").description("로드맵 타이틀").type("String").optional(),
+                                fieldWithPath("[].tag").description("로드맵 태그").type("String").optional(),
+                                fieldWithPath("[].nodes").description("로드맵 노드 객체").type("String").optional(),
+                                fieldWithPath("[].edges").description("로드맵 엣지 객체").type("String").optional(),
+                                fieldWithPath("[].likeCount").description("좋아요 수").type("Integer").optional(),
+                                fieldWithPath("[].createdAt").description("생성일, timestamp millisecond").type("Long").optional(),
+                                fieldWithPath("[].updatedAt").description("업데이트 일, timestamp millisecond").type("Long").optional()
                         )
                 ));
     }
