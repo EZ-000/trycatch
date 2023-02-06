@@ -19,7 +19,7 @@ public class FindAnswerResponseDto implements Serializable {
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindAnswerResponseDto from(Answer answer, User user) {
+    public static FindAnswerResponseDto from(Answer answer, User user, Boolean isLiked) {
 
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
@@ -38,7 +38,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .updatedAt(answer.getUpdatedAt()
                                  .toEpochMilli())
                 .likeCount(answer.getLikes())
-                .isLiked(false)
+                .isLiked(isLiked)
                 .accepted(answer.getChosen())
                 .build();
     }
