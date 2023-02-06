@@ -78,10 +78,15 @@ public class QuestionService {
         return question;
     }
 
-    @IncreaseViewCount
     public Question findQuestionById(Long questionId) {
         return questionRepository.findById(questionId)
                                  .orElseThrow(QuestionNotFoundException::new);
+    }
+
+    @IncreaseViewCount
+    public Question findQuestionByIdWithViewCount(Long questionId) {
+        return questionRepository.findById(questionId)
+                .orElseThrow(QuestionNotFoundException::new);
     }
 
     public List<Question> findQuestionsByTitle(String title, Pageable pageable) {
