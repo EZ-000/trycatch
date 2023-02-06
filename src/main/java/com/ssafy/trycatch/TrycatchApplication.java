@@ -11,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 @Slf4j
 @SpringBootApplication
 @EnableJpaAuditing
@@ -34,7 +36,10 @@ public class TrycatchApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(allowOrigins);
+                        .allowedOrigins(allowOrigins)
+                        .allowedMethods(
+                                "GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"
+                        );
             }
         };
     }
