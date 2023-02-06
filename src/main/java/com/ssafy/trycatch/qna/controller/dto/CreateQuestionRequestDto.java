@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateQuestionRequestDto {
     private String category;
-    private Long authorId;
     private String title;
     private String content;
     private String errorCode;
