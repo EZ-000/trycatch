@@ -22,6 +22,7 @@ public class TokenController {
         throw new RuntimeException();
     }
 
+    @SuppressWarnings("SameReturnValue")
     @GetMapping("/token/refresh")
     public String refreshAuth(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(CheckRefreshTokenAttributeKey);

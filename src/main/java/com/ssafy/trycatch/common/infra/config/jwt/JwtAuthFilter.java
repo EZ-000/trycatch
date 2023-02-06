@@ -35,11 +35,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = request.getHeader(CheckAccessTokenAttributeKey);
 
         if (null != token && tokenService.verifyToken(token)) {
-            // Token 확인 시, 문제가 없다면 Token만 갱신하고 다시 인증할 필요가 없다.
+            // Token 확인 시, 문제가 없다면 Token 만 갱신하고 다시 인증할 필요가 없다.
             /*
              * Need Check
-             * Refresh가 살아있다면 , Access만 재 갱신.
-             * Refresh도 죽었다면, OAuth로 가야한다.
+             * Refresh 가 살아있다면 , Access 만 재 갱신.
+             * Refresh 도 죽었다면, OAuth 로 가야한다.
              */
             Long serviceUserPkId = Long.parseLong(tokenService.getUid(token));
             String githubToken = tokenService.getAccessToken(token);

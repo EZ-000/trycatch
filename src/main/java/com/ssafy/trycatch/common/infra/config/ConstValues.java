@@ -4,5 +4,5 @@ import java.time.ZoneId;
 
 public class ConstValues {
 
-    public static ZoneId TZ_SEOUL = ZoneId.of("Asia/Seoul");
+    public static final ZoneId TZ_SEOUL = ZoneId.of("Asia/Seoul");
 }

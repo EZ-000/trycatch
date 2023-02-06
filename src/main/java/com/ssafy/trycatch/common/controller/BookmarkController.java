@@ -40,7 +40,8 @@ public class BookmarkController {
 
     @PostMapping
     public ResponseEntity<Void> bookmarkTarget(
-            @AuthUserElseGuest User requestUser, @RequestBody BookmarkRequestDto bookmarkRequestDto
+            @AuthUserElseGuest User requestUser,
+            @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         if (null == questionService.findQuestionById(bookmarkRequestDto.getId())) {
             throw new QuestionNotFoundException();
@@ -87,7 +88,7 @@ public class BookmarkController {
     public ResponseEntity<List<FindBookmarkedQuestionDto>> findBookmarkedQuestions(
             @AuthUserElseGuest User requestUser
     ) {
-        // 북마크 서비스에서 userId, targetType, activated로 활성화된 질문 List<Bookmark> 반환
+        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
                 .getActivatedBookmarks(requestUser.getId(), TargetType.QUESTION, true);
 
@@ -109,13 +110,13 @@ public class BookmarkController {
 
     /**
      * @param requestUser 요청자
-     * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapResponseDto로 반환
+     * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapResponseDto 로 반환
      */
     @GetMapping("/roadmap")
     public ResponseEntity<List<FindBookmarkedRoadmapDto>> findBookmarkedRoadmaps(
             @AuthUserElseGuest User requestUser
     ) {
-        // 북마크 서비스에서 userId, targetType, activated로 활성화된 로드맵 북마크 리스트 List<Roadmap> 반환
+        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Roadmap> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
                 .getActivatedBookmarks(requestUser.getId(), TargetType.ROADMAP, true);
 

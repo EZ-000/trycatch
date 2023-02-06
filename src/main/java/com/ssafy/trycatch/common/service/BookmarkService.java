@@ -23,9 +23,8 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
     }
 
     public Bookmark getLastBookmark(Long userId, Long targetId, TargetType targetType) {
-        List<Bookmark> bookmarkList = repository.streamByUserIdAndTargetIdAndTargetType(userId,
-                                                                                        targetId,
-                                                                                        targetType);
+        List<Bookmark> bookmarkList = repository
+                .streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
         final Bookmark lastBookmark;
         if (bookmarkList.size() != 0) {
             lastBookmark = bookmarkList.get(bookmarkList.size() - 1);
@@ -41,13 +40,12 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
 
     /**
      * @param userId 유저 아이디
-     * @param targetType 타겟 콘텐츠 타입 (QUESITON, FEED, ROADMAP ...)
+     * @param targetType 타겟 콘텐츠 타입 (QUESTION, FEED, ROADMAP ...)
      * @param activated 활성화 여부
      * @return 타겟 타입에 맞는 활성화된 북마크 인스턴스 리스트 List<Bookmark> 반환
      */
     public List<Bookmark> getActivatedBookmarks(Long userId, TargetType targetType, Boolean activated) {
-        List<Bookmark> activatedBookmarks = repository
+        return repository
                 .streamByUserIdAndTargetTypeAndActivatedOrderByIdDesc(userId, targetType, activated);
-        return activatedBookmarks;
     }
 }
