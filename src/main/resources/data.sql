@@ -49,10 +49,10 @@ VALUES (1, '2023-01-01 12:00:00', 1, false, 1, 1),
     (2, '2023-01-01 12:00:00', 1, true, 2, 2);
 
 INSERT INTO question
-(category_name, user_id, title, content, error_code, created_at, updated_at, chosen, view_count, likes, hidden,
+(id, category_name, user_id, title, content, error_code, created_at, updated_at, chosen, view_count, likes, hidden,
  tags)
-VALUES ('DEV', 1, 'title 1', '2023-01-01', 'error code 1', current_date, current_date, 0, 0, 0, 0, ''),
-    ('DEV', 1, 'title 2', '2023-01-02', 'error code 2', current_date, current_date, 0, 0, 0, 0, '여기는,태그가,있어요');
+VALUES (1, 'DEV', 1, 'title 1', '2023-01-01', 'error code 1', current_date, current_date, 0, 0, 0, 0, ''),
+    (2, 'DEV', 1, 'title 2', '2023-01-02', 'error code 2', current_date, current_date, 0, 0, 0, 0, '여기는,태그가,있어요');
 
 INSERT INTO ranking
 VALUES (1, 'DEV', 1),
@@ -66,7 +66,7 @@ INSERT INTO report
 VALUES (1, 'content 1', '2023-01-01 12:00:00', 1, 1, 'feed'),
     (2, 'content 2', '2023-01-01 12:00:00', 2, 2, 'qna');
 
-INSERT INTO roadmap(id, user_id, node, edge, tag, title)
+INSERT INTO roadmap(id, user_id, node, edge, tag, title, created_at, updated_at, likes)
 VALUES (1, 1, '[{id: ''1'',
         type: ''input'',
         data: { label: ''An input node'' },
@@ -118,7 +118,7 @@ VALUES (1, 1, '[{id: ''1'',
         animated: true,
         style: { stroke: ''#fff'' },
       },
-    ]', 'tag1', 'title1'),
+    ]', 'tag1', 'title1', current_timestamp, current_timestamp, 0),
     (2, 2, '[{id: ''1'',
         type: ''input'',
         data: { label: ''An input node'' },
@@ -170,7 +170,7 @@ VALUES (1, 1, '[{id: ''1'',
         animated: true,
         style: { stroke: ''#fff'' },
       },
-    ]', 'tag2', 'title2');
+    ]', 'tag2', 'title2', current_timestamp, current_timestamp, 0);
 INSERT INTO subscription
 VALUES (1, 1, 1),
     (2, 2, 2);
@@ -187,9 +187,3 @@ INSERT INTO answer
 (id, question_id, user_id, content, created_at, updated_at, chosen, likes, hidden)
 VALUES (1, 1, 1, '1번 답변입니다.', current_timestamp, current_timestamp, false, 0, false),
     (2, 1, 2, '2번 답변입니다.', current_timestamp, current_timestamp, false, 0, false);
-
-INSERT INTO likes
-VALUES (1, 1, 1, 'question', 1);
-
-INSERT INTO bookmark
-VALUES (1, 1, 1, 'question', 1);

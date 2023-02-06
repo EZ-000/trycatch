@@ -50,6 +50,7 @@ public class Challenge {
 
     @OneToMany(mappedBy = "challenge")
     @ToString.Exclude
+    @Builder.Default
     private Set<MyChallenge> myChallenges = new LinkedHashSet<>();
 
 }

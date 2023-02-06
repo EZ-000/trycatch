@@ -1,16 +1,16 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import java.io.Serializable;
-import java.time.ZoneId;
-
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.FindUserInQNANotLoginDto;
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.Builder;
 import lombok.Data;
+
+import java.io.Serializable;
+
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 @Data
 public class FindAnswerResponseNotLoginDto implements Serializable {
@@ -30,7 +30,7 @@ public class FindAnswerResponseNotLoginDto implements Serializable {
                 .author(FindUserInQNANotLoginDto.from(author, companyService))
                 .content(answer.getContent())
                 .timestamp(question.getCreatedAt()
-                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .atZone(TZ_SEOUL)
                                    .toInstant()
                                    .toEpochMilli())
                 .updatedAt(answer.getUpdatedAt()

@@ -97,34 +97,42 @@ public class User {
 
     @OneToMany(mappedBy = "follower")
     @ToString.Exclude
+    @Builder.Default
     private Set<Follow> followers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "followee")
     @ToString.Exclude
+    @Builder.Default
     private Set<Follow> followees = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<Answer> answers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<Subscription> subscriptions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<Question> questions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<MyBadge> myBadges = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<MyChallenge> myChallenges = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "user")
@@ -133,6 +141,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<History> histories = new LinkedHashSet<>();
 
     @Builder

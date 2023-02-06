@@ -19,6 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Builder
 @NoArgsConstructor
 @Getter
@@ -51,13 +54,35 @@ public class Roadmap {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "likes")
+    private Integer likes;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
     @Builder
-    public Roadmap(Long id, String node, String edge, String tag, String title, User user) {
+    public Roadmap(
+            Long id,
+            String node,
+            String edge,
+            String tag,
+            String title,
+            User user,
+            Integer likes,
+            LocalDateTime createdAt,
+            Instant updatedAt
+    ) {
         this.id = id;
         this.node = node;
         this.edge = edge;
         this.tag = tag;
         this.title = title;
         this.user = user;
+        this.likes = likes;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
