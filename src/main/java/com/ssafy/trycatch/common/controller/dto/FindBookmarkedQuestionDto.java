@@ -14,6 +14,7 @@ public class FindBookmarkedQuestionDto implements Serializable {
     private final Long questionId;
     private final String title;
     private final String content;
+    private final String category;
     private final List<String> tags;
     private final Integer viewCount;
     private final Integer likeCount;
@@ -25,7 +26,7 @@ public class FindBookmarkedQuestionDto implements Serializable {
             Long questionId,
             String title,
             String content,
-            List<String> tags,
+            String category, List<String> tags,
             Integer viewCount,
             Integer likeCount,
             Integer answerCount,
@@ -34,6 +35,7 @@ public class FindBookmarkedQuestionDto implements Serializable {
         this.questionId = questionId;
         this.title = title;
         this.content = content;
+        this.category = category;
         this.tags = tags;
         this.viewCount = viewCount;
         this.likeCount = likeCount;
@@ -48,6 +50,7 @@ public class FindBookmarkedQuestionDto implements Serializable {
                 .questionId(question.getId())
                 .title(question.getTitle())
                 .content(question.getContent())
+                .category(question.getCategoryName().toString())
                 .tags(List.of(question.getTags().split(",")))
                 .viewCount(question.getViewCount())
                 .likeCount(question.getLikes())
