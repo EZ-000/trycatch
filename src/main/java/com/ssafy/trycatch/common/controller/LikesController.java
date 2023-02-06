@@ -40,21 +40,28 @@ public class LikesController {
 
     @PostMapping
     public ResponseEntity<Void> likeTarget(
-            @AuthUserElseGuest User requestUser, @RequestBody LikesRequestDto likesRequestDto
+            @AuthUserElseGuest User requestUser,
+            @RequestBody LikesRequestDto likesRequestDto
     ) {
         final TargetType type = TargetType.valueOf(likesRequestDto.getType());
+
         final Likes lastLikes = likesService.getLastLikes(requestUser.getId(), likesRequestDto.getId(), type);
         if (lastLikes.getActivated()) {
             throw new LikesDuplicatedException();
         }
+
         final Likes newLikes = likesRequestDto.newLikes(requestUser);
         likesService.register(newLikes);
+
         if (type == TargetType.QUESTION) {
-            final Question question = questionService.findQuestionById(likesRequestDto.getId());
+            final Question question = questionService
+                    .findQuestionById(likesRequestDto.getId());
             question.setLikes(question.getLikes() + 1);
             questionService.saveQuestion(question);
+
         } else if (type == TargetType.ANSWER) {
-            final Answer answer = answerService.findById(likesRequestDto.getId());
+            final Answer answer = answerService
+                    .findById(likesRequestDto.getId());
             answer.setLikes(answer.getLikes() + 1);
             answerService.saveAnswer(answer);
         }
@@ -70,10 +77,12 @@ public class LikesController {
         final Likes lastLikes = likesService.getLastLikes(requestUser.getId(), likesRequestDto.getId(), type);
         lastLikes.setActivated(!lastLikes.getActivated());
         likesService.register(lastLikes);
+
         if (type == TargetType.QUESTION) {
             final Question question = questionService.findQuestionById(likesRequestDto.getId());
             question.setLikes(question.getLikes() - 1);
             questionService.saveQuestion(question);
+
         } else if (type == TargetType.ANSWER) {
             final Answer answer = answerService.findById(likesRequestDto.getId());
             answer.setLikes(answer.getLikes() - 1);

@@ -45,7 +45,6 @@ public class RoadmapController {
             @AuthUserElseGuest User requestUser
     ) {
         List<Roadmap> allRoadmaps = roadmapService.findAll();
-
         final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
         for (Roadmap roadmap : allRoadmaps) {
             final long roadmapId = roadmap.getId();
@@ -114,7 +113,7 @@ public class RoadmapController {
     ) {
         final Roadmap roadmap = roadmapRequestDto.toEntity(requestUser);
         roadmapService.modify(requestUser.getId(), roadmap);
-        return ResponseEntity.ok()
+        return ResponseEntity.status(201)
                              .build();
     }
 
@@ -123,8 +122,10 @@ public class RoadmapController {
     public ResponseEntity<String> removeRoadmap(
             @PathVariable String userName, @AuthUserElseGuest User requestUser
     ) {
-        roadmapService.removeById(requestUser.getId());
-        return ResponseEntity.ok()
+        Long userId = requestUser.getId();
+        Roadmap roadmap = roadmapService.findRoadmap(userId);
+        roadmapService.removeById(roadmap.getId());
+        return ResponseEntity.status(204)
                              .build();
     }
 }

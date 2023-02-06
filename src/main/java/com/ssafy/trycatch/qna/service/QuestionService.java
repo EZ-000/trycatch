@@ -2,7 +2,6 @@ package com.ssafy.trycatch.qna.service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +48,8 @@ public class QuestionService {
         this.answerRepository = answerRepository;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public Question saveQuestion(Question question) {
         return questionRepository.save(question);
-    }
-
-    public void saveQuestionWithoutReturn(Question question) {
-        questionRepository.save(question);
     }
 
     public Question saveQuestion(User requestUser, CreateQuestionRequestDto requestDto) {
@@ -95,10 +89,11 @@ public class QuestionService {
     }
 
     public List<Question> findAllQuestionsByCategory(QuestionCategory questionCategory, Pageable pageable) {
-
-        return questionRepository.findByCategoryNameOrderByCreatedAtDesc(
+        final List<Question> questions = questionRepository.findByCategoryNameOrderByCreatedAtDesc(
                 questionCategory,
                 pageable);
+
+        return questions;
     }
 
     @Transactional
@@ -115,10 +110,10 @@ public class QuestionService {
         final Question question = questionRepository.findById(questionId)
                                                     .orElseThrow(QuestionNotFoundException::new);
 
-        if (!Objects.equals(question.getUser()
-                .getId(), userId)) {throw new RequestUserNotValidException();}
+        if (question.getUser()
+                    .getId() != userId) {throw new RequestUserNotValidException();}
 
-        final QuestionCategory questionCategory = Optional.of(QuestionCategory.valueOf(category))
+        final QuestionCategory questionCategory = Optional.ofNullable(QuestionCategory.valueOf(category))
                                                           .orElseThrow(QuestionCategoryNotFoundException::new);
 
         question.setCategoryName(questionCategory);
@@ -136,8 +131,8 @@ public class QuestionService {
     public void deleteQuestion(Long questionId, Long userId) {
         final Question question = questionRepository.findById(questionId)
                                                     .orElseThrow(QuestionNotFoundException::new);
-        if (!Objects.equals(question.getUser()
-                .getId(), userId)) {throw new RequestUserNotValidException();}
+        if (question.getUser()
+                    .getId() != userId) {throw new RequestUserNotValidException();}
         questionRepository.deleteById(questionId);
     }
 

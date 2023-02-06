@@ -32,12 +32,11 @@ public class CreateAnswerResponseDto implements Serializable {
             Question question, List<Answer> answers, User user, Boolean isLiked, Boolean isBookmarked
     ) {
         final User author = question.getUser();
-        final List<FindAnswerResponseDto> answerDtos = answers.stream()
-                                                              .map((Answer answer)
-                                                                      -> FindAnswerResponseDto.from(answer, user))
-                                                              .collect(Collectors.toList());
-
-        final List<String> tempTags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours")); // FIXME
+        final List<FindAnswerResponseDto> answerDtos = answers
+                .stream()
+                .map(FindAnswerResponseDto::from)
+                .collect(Collectors.toList());
+        final List<String> temptags = new ArrayList<>(Arrays.asList("42good", "1stprizeisours"));
 
         return CreateAnswerResponseDto.builder()
                 .questionId(question.getId())
@@ -49,7 +48,7 @@ public class CreateAnswerResponseDto implements Serializable {
                 .title(question.getTitle())
                 .content(question.getContent())
                 .errorCode(question.getErrorCode())
-                .tags(tempTags)
+                .tags(temptags)
                 .likeCount(question.getLikes())
                 .answerCount(answerDtos.size())
                 .viewCount(question.getViewCount())

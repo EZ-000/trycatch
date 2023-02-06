@@ -13,14 +13,15 @@ import com.ssafy.trycatch.common.domain.TargetType;
 @Service
 public class LikesService extends CrudService<Likes, Long, LikesRepository> {
 
-
     @Autowired
-    public LikesService(LikesRepository likesRepository) {
+    public LikesService(
+            LikesRepository likesRepository
+    ) {
         super(likesRepository);
     }
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
-        return repository.findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
+        return repository.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(userId, targetId, targetType)
                          .orElseGet(Likes::new);
     }
 
