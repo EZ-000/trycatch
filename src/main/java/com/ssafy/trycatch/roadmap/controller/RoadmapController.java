@@ -45,9 +45,6 @@ public class RoadmapController {
             @AuthUserElseGuest User requestUser
     ) {
         List<Roadmap> allRoadmaps = roadmapService.findAll();
-//        List<RoadmapListResponseDto> allDtoList = allRoadmaps.stream()
-//                                                             .map(RoadmapListResponseDto::from)
-//                                                             .collect(Collectors.toList());
 
         final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
         for (Roadmap roadmap : allRoadmaps) {

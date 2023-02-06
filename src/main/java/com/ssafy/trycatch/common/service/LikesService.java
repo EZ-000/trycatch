@@ -9,19 +9,14 @@ import org.springframework.stereotype.Service;
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
-import com.ssafy.trycatch.feed.domain.ReadRepository;
 
 @Service
 public class LikesService extends CrudService<Likes, Long, LikesRepository> {
 
-    private final ReadRepository readRepository;
 
     @Autowired
-    public LikesService(
-            LikesRepository likesRepository, ReadRepository readRepository
-    ) {
+    public LikesService(LikesRepository likesRepository) {
         super(likesRepository);
-        this.readRepository = readRepository;
     }
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {

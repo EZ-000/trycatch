@@ -27,7 +27,7 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
-import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
+import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.VerifyDto;
 import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
 import com.ssafy.trycatch.user.domain.User;
@@ -88,7 +88,7 @@ public class UserController {
     ) {
         try {
             final User saved = userService.getDetailUserInfo(targetId);
-            // tag List를 들고오는 코드가 필요하다. 추가 하고 주석 삭제하자.
+            // tag List 를 들고오는 코드가 필요하다. 추가 하고 주석 삭제하자.
             final UserDto result = UserDto.from(requestUser, Collections.emptyList());
 
             return ResponseEntity.ok(result);
@@ -100,7 +100,7 @@ public class UserController {
 
     @PatchMapping("/detail")
     public ResponseEntity<String> patchUser(
-            @RequestBody UserModifytDto modifyDto, @AuthUserElseGuest User requestUser
+            @RequestBody UserModifyDto modifyDto, @AuthUserElseGuest User requestUser
     ) {
         try {
             userService.modifyUser(requestUser.getId(), modifyDto);
@@ -133,7 +133,7 @@ public class UserController {
         try {
             final List<SimpleUserInfo> resultList = userService.findFollowList(uid, type)
                                                                .stream()
-                                                               .map(e -> SimpleUserInfo.from(e))
+                                                               .map(SimpleUserInfo::from)
                                                                .collect(Collectors.toList());
             return ResponseEntity.ok(resultList);
         } catch (UserNotFoundException | TypeNotPresentException u) {
@@ -147,7 +147,7 @@ public class UserController {
             @PathVariable Long uid, @AuthUserElseGuest User requestUser
     ) {
         try {
-            // follow userId가 uid를 팔로우 한다.
+            // follow userId가 uid 를 팔로우 한다.
             userService.follow(requestUser.getId(), uid);
             return ResponseEntity.ok()
                                  .build();
@@ -162,7 +162,7 @@ public class UserController {
             @PathVariable Long uid, @AuthUserElseGuest User requestUser
     ) {
         try {
-            // unfollow userId가 uid를 팔로우 취소한다.
+            // unfollow userId가 uid 를 팔로우 취소한다.
             userService.unfollow(requestUser.getId(), uid);
             return ResponseEntity.ok()
                                  .build();
@@ -206,7 +206,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{userName}/tag/{tagId}")
-    public ResponseEntity<String> removeTag(@PathVariable String userName) {
+    public ResponseEntity<String> removeTag(
+            @PathVariable String userName,
+            @PathVariable Long tagId
+    ) {
         return ResponseEntity.ok("사용자가 관심태그를 삭제합니다.");
     }
 

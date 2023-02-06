@@ -19,25 +19,21 @@ import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
 
 @RestController
 @RequestMapping("/${apiPrefix}/like")
 public class LikesController {
     private final LikesService likesService;
-    private final UserService userService;
     private final QuestionService questionService;
     private final AnswerService answerService;
 
     @Autowired
     public LikesController(
             LikesService likesService,
-            UserService userService,
             QuestionService questionService,
             AnswerService answerService
     ) {
         this.likesService = likesService;
-        this.userService = userService;
         this.questionService = questionService;
         this.answerService = answerService;
     }

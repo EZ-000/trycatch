@@ -1,19 +1,16 @@
 package com.ssafy.trycatch.user.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.ssafy.trycatch.qna.domain.Answer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.service.CrudService;
-import com.ssafy.trycatch.feed.domain.ReadRepository;
-import com.ssafy.trycatch.user.controller.dto.UserModifytDto;
+import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.FollowRepository;
 import com.ssafy.trycatch.user.domain.User;
@@ -21,7 +18,6 @@ import com.ssafy.trycatch.user.domain.UserRepository;
 import com.ssafy.trycatch.user.domain.Withdrawal;
 import com.ssafy.trycatch.user.domain.WithdrawalRepository;
 import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
-import com.ssafy.trycatch.user.service.exceptions.TypeNotFoundException;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,18 +48,15 @@ public class UserService extends CrudService<User, Long, UserRepository> {
         return GUEST;
     }
 
-    private final ReadRepository readRepository;
     private final WithdrawalRepository withdrawalRepository;
     private final FollowRepository followRepository;
 
     public UserService(
             UserRepository repository,
-            ReadRepository readRepository,
             WithdrawalRepository withdrawalRepository,
             FollowRepository followRepository
     ) {
         super(repository);
-        this.readRepository = readRepository;
         this.withdrawalRepository = withdrawalRepository;
         this.followRepository = followRepository;
     }
@@ -99,14 +92,14 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     @Transactional
-    public void modifyUser(Long userId, UserModifytDto modifytDto) {
+    public void modifyUser(Long userId, UserModifyDto modifyDto) {
         User targetUser = repository.findById(userId)
                                     .orElseThrow(UserNotFoundException::new);
-        if (null != modifytDto.introduction) {
-            targetUser.setIntroduction(modifytDto.getIntroduction());
+        if (null != modifyDto.introduction) {
+            targetUser.setIntroduction(modifyDto.getIntroduction());
         }
-        if (null != modifytDto.profileImage) {
-            targetUser.setImageSrc(modifytDto.getProfileImage());
+        if (null != modifyDto.profileImage) {
+            targetUser.setImageSrc(modifyDto.getProfileImage());
         }
         repository.save(targetUser);
     }
@@ -115,20 +108,20 @@ public class UserService extends CrudService<User, Long, UserRepository> {
         User user = repository.findById(uid)
                               .orElseThrow(UserNotFoundException::new);
 
-        return getFollowset(user, type).orElseThrow(TypeNotFoundException::new)
-                                       .stream()
-                                       .map(e -> repository.findById(e.getId())
-                                                           .orElseThrow(UserNotFoundException::new))
-                                       .collect(Collectors.toList());
+        return Objects.requireNonNull(getFollowers(user, type))
+                      .stream()
+                      .map(e -> repository.findById(e.getId())
+                                          .orElseThrow(UserNotFoundException::new))
+                      .collect(Collectors.toList());
     }
 
-    private Optional<Set<Follow>> getFollowset(User user, String type) {
+    private Set<Follow> getFollowers(User user, String type) {
         if (type.equals("follower")) {
-            return Optional.of(user.getFollowers());
+            return user.getFollowers();
         } else if (type.equals("followee")) {
-            return Optional.of(user.getFollowees());
+            return user.getFollowees();
         } else {
-            return null;
+            return Collections.emptySet();
         }
     }
 
@@ -141,11 +134,11 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     /**
      * ID: src 인 유저가 ID: des 인 유저를 Follow
      *
-     * @param src
-     * @param des
+     * @param src 기준 유저
+     * @param des 타겟 유저
      */
     public void follow(Long src, Long des) {
-        if (src == des) {
+        if (Objects.equals(src, des)) {
             throw new AlreadyExistException();
         }
         final User srcUser = repository.findById(src)
@@ -164,7 +157,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
     }
 
     public void unfollow(Long src, Long des) {
-        if (src == des) {
+        if (Objects.equals(src, des)) {
             throw new AlreadyExistException();
         }
 
@@ -179,10 +172,10 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
     public List<Long> getAnswerIdListByUserId(Long uid) {
         return repository.findById(uid)
-                         .get()
+                         .orElseThrow(UserNotFoundException::new)
                          .getAnswers()
                          .stream()
-                         .map(e -> e.getId())
+                         .map(Answer::getId)
                          .collect(Collectors.toList());
     }
 }

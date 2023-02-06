@@ -223,7 +223,7 @@ public class QuestionController {
     ) {
         // 생성
         final Question question = questionService.findQuestionById(questionId);
-        createAnswerRequestDto.newAnswer(question, requestUser);
+        final Answer answer = createAnswerRequestDto.newAnswer(question, requestUser);
         // 응답
         final List<Answer> answers = answerService.findByQuestionId(question.getId());
         final TargetType type = QUESTION;
