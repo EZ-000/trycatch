@@ -1,4 +1,4 @@
-package com.ssafy.trycatch;
+package com.ssafy.trycatch.roadmap.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,11 +15,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 @ExtendWith(RestDocumentationExtension.class)
 @PropertySource("classpath:application-local.yml")
-class TrycatchApplicationTests {
+class RoadmapControllerTest {
 
     private MockMvc mockMvc;
 
@@ -39,7 +41,22 @@ class TrycatchApplicationTests {
     }
 
     @Test
-    void contextLoads() {
+    void findAllRoadmap() {
     }
 
+    @Test
+    void findRoadmap() {
+    }
+
+    @Test
+    void registerRoadmap() {
+    }
+
+    @Test
+    void modifyRoadmap() {
+    }
+
+    @Test
+    void removeRoadmap() {
+    }
 }

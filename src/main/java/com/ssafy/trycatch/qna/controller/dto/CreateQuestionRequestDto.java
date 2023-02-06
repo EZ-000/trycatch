@@ -21,12 +21,11 @@ public class CreateQuestionRequestDto {
     private List<String> tags;
 
     public Question newQuestion(User user) {
-        final User author = user;
         final QuestionCategory categoryName = QuestionCategory.valueOf(category);
 
         return Question.builder()
                 .categoryName(categoryName)
-                .user(author)
+                .user(user)
                 .title(title)
                 .content(content)
                 .errorCode(errorCode)

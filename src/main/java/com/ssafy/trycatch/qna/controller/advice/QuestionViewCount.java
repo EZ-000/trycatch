@@ -14,6 +14,7 @@ import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.domain.QuestionRepository;
 
+@SuppressWarnings("EmptyMethod")
 @Aspect
 @Component
 public class QuestionViewCount {
