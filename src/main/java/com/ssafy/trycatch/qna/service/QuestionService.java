@@ -52,11 +52,9 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
-    public Question saveQuestion(CreateQuestionRequestDto requestDto) {
-        final User author = userRepository.findById(requestDto.getAuthorId())
-                                          .orElseThrow(UserNotFoundException::new);
+    public Question saveQuestion(User requestUser, CreateQuestionRequestDto requestDto) {
 
-        final Question question = requestDto.newQuestion(author);
+        final Question question = requestDto.newQuestion(requestUser);
         questionRepository.save(question);
 
         final ESQuestion esQuestion = ESQuestion.of(requestDto);
