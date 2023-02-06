@@ -1,30 +1,22 @@
 package com.ssafy.trycatch.common.controller;
 
-import com.ssafy.trycatch.common.controller.dto.FindBookmarkedQuestionDto;
-import com.ssafy.trycatch.common.controller.dto.FindBookmarkedRoadmapDto;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
-import com.ssafy.trycatch.roadmap.domain.Roadmap;
-import com.ssafy.trycatch.roadmap.service.RoadmapService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
+import com.ssafy.trycatch.common.controller.dto.FindBookmarkedQuestionDto;
+import com.ssafy.trycatch.common.controller.dto.FindBookmarkedRoadmapDto;
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.exceptions.InvalidBookmarkRequestException;
-import com.ssafy.trycatch.qna.service.AnswerService;
+import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
+import com.ssafy.trycatch.roadmap.domain.Roadmap;
+import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,22 +25,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/${apiPrefix}/bookmark")
 public class BookmarkController {
     private final BookmarkService bookmarkService;
-    private final UserService userService;
     private final QuestionService questionService;
-    private final AnswerService answerService;
     private final RoadmapService roadmapService;
 
     @Autowired
     public BookmarkController(
             BookmarkService bookmarkService,
-            UserService userService,
             QuestionService questionService,
-            AnswerService answerService,
             RoadmapService roadmapService) {
         this.bookmarkService = bookmarkService;
-        this.userService = userService;
         this.questionService = questionService;
-        this.answerService = answerService;
         this.roadmapService = roadmapService;
     }
 
@@ -74,6 +60,7 @@ public class BookmarkController {
                              .build();
     }
 
+    @SuppressWarnings("ConstantConditions") // FIXME : !lastBookmark.getActivated()
     @PutMapping
     public ResponseEntity<Void> removeBookmark(
             @AuthUserElseGuest User requestUser, @RequestBody BookmarkRequestDto bookmarkRequestDto
@@ -93,7 +80,7 @@ public class BookmarkController {
     }
 
     /**
-     * @param requestUser
+     * @param requestUser 요청자
      * @return 유저가 북마크한 질문 리스트를 FindBookmarkedQuestionResponseDto로 반환
      */
     @GetMapping("/question")
@@ -107,20 +94,21 @@ public class BookmarkController {
         // List<Bookmark>을 List<Question>으로 변환
         List<Question> bookmarkedQuestions = activatedBookmarks
                 .stream()
-                .map(bookmarkedQuestion -> { return questionService.findQuestionById(bookmarkedQuestion.getTargetId()); })
+                .map(Bookmark::getTargetId)
+                .map(questionService::findQuestionById)
                 .collect(Collectors.toList());
 
         // List<Question>을 List<FindBookmarkedQuestionDto>로 변환
         List<FindBookmarkedQuestionDto> bookmarkedQuestionsResponse = bookmarkedQuestions
                 .stream()
-                .map(question -> { return FindBookmarkedQuestionDto.from(question); })
+                .map(FindBookmarkedQuestionDto::from)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(bookmarkedQuestionsResponse);
     }
 
     /**
-     * @param requestUser
+     * @param requestUser 요청자
      * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapResponseDto로 반환
      */
     @GetMapping("/roadmap")
@@ -134,13 +122,14 @@ public class BookmarkController {
         // List<Bookmark>을 List<Roadmap>으로 변환
         List<Roadmap> bookmarkedRoadmaps = activatedBookmarks
                 .stream()
-                .map(bookmarkedRoadmap -> { return roadmapService.findByRoadmapId(bookmarkedRoadmap.getTargetId()); })
+                .map(Bookmark::getTargetId)
+                .map(roadmapService::findByRoadmapId)
                 .collect(Collectors.toList());
 
         // List<Roadmap>을 List<FindBookmarkedRoadmapDto>로 변환
         List<FindBookmarkedRoadmapDto> bookmarkedRoadmapsResponse = bookmarkedRoadmaps
                 .stream()
-                .map(roadmap -> { return FindBookmarkedRoadmapDto.from(roadmap); })
+                .map(FindBookmarkedRoadmapDto::from)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(bookmarkedRoadmapsResponse);
