@@ -1,7 +1,5 @@
 package com.ssafy.trycatch.common.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,7 @@ public class LikesService extends CrudService<Likes, Long, LikesRepository> {
 
     public Likes getLikes(Long userId, Long targetId, TargetType targetType) {
         return repository.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(userId, targetId, targetType)
-                         .orElseGet(Likes::new);
+                         .orElse(new Likes(0L, 0L, 0L, TargetType.DEFAULT, false));
     }
 
     public Boolean isLikedByUserAndTarget(@Nullable Long userId, Long targetId, TargetType targetType) {
