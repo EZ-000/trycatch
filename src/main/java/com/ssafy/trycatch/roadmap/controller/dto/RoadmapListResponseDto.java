@@ -6,10 +6,11 @@ import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.ZoneId;
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 @Data
 public class RoadmapListResponseDto {
+
     public static RoadmapListResponseDto from(
             Roadmap roadmap,
             Boolean isBookmarked,
@@ -24,7 +25,7 @@ public class RoadmapListResponseDto {
                 .isLiked(isLiked)
                 .likeCount(roadmap.getLikes())
                 .createdAt(roadmap.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .atZone(TZ_SEOUL)
                         .toInstant()
                         .toEpochMilli())
                 .updatedAt(roadmap.getUpdatedAt().toEpochMilli())

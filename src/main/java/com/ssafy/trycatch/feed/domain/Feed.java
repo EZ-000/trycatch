@@ -66,6 +66,7 @@ public class Feed {
 
     @OneToMany(mappedBy = "feed")
     @ToString.Exclude
+    @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
 
 }

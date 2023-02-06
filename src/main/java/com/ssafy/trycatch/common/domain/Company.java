@@ -29,7 +29,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "company")
 public class Company {
@@ -44,14 +43,17 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     @ToString.Exclude
+    @Builder.Default
     private Set<Subscription> subscriptions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "company")
     @ToString.Exclude
+    @Builder.Default
     private Set<Conference> conferences = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "company")
     @ToString.Exclude
+    @Builder.Default
     private Set<Feed> feeds = new LinkedHashSet<>();
 
     @Size(max = 50)
@@ -91,6 +93,7 @@ public class Company {
     private String rssType;
 
     @OneToMany(mappedBy = "company")
+    @Builder.Default
     private Set<User> users = new LinkedHashSet<>();
 
 }

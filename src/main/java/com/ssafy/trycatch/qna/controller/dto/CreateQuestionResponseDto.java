@@ -1,18 +1,17 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import java.io.Serializable;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.Size;
-
 import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
-
 import lombok.Builder;
 import lombok.Data;
+
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 /**
  * A DTO for the {@link Question} entity
@@ -42,7 +41,7 @@ public class CreateQuestionResponseDto implements Serializable {
                 .answerCount(0)
                 .viewCount(question.getViewCount())
                 .timestamp(question.getCreatedAt()
-                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .atZone(TZ_SEOUL)
                                    .toInstant()
                                    .toEpochMilli())
                 .updatedAt(question.getUpdatedAt()

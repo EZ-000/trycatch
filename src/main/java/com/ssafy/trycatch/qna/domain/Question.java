@@ -91,12 +91,9 @@ public class Question {
 
     @OneToMany(mappedBy = "question")
     @ToString.Exclude
+    @Builder.Default
     private Set<Answer> answers = new LinkedHashSet<>();
-
-    public void increaseViewCount() {
-        viewCount++;
-    }
-
+    
     public void increaseViewCount(Integer view) {
         viewCount += view;
     }

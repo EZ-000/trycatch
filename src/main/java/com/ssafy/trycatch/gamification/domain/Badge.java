@@ -45,6 +45,7 @@ public class Badge {
 
     @OneToMany(mappedBy = "badge")
     @ToString.Exclude
+    @Builder.Default
     private Set<MyBadge> myBadges = new LinkedHashSet<>();
 
 }

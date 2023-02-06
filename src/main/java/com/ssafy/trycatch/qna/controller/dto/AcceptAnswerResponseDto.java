@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import java.io.Serializable;
-import java.time.ZoneId;
 import java.util.List;
 
 import javax.validation.constraints.Size;
@@ -13,6 +12,8 @@ import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import lombok.Builder;
 import lombok.Data;
 
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
+
 @Data
 public class AcceptAnswerResponseDto implements Serializable {
     public static AcceptAnswerResponseDto from(
@@ -23,7 +24,7 @@ public class AcceptAnswerResponseDto implements Serializable {
             Boolean isBookmarked
     ) {
         final Long timestamp = question.getCreatedAt()
-                                       .atZone(ZoneId.of("Asia/Seoul"))
+                                       .atZone(TZ_SEOUL)
                                        .toInstant()
                                        .toEpochMilli();
 

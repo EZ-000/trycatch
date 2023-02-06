@@ -1,15 +1,15 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import java.io.Serializable;
-import java.time.ZoneId;
-
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.Builder;
 import lombok.Data;
+
+import java.io.Serializable;
+
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 @Data
 public class FindAnswerResponseDto implements Serializable {
@@ -32,7 +32,7 @@ public class FindAnswerResponseDto implements Serializable {
                                 .build())
                 .content(answer.getContent())
                 .timestamp(question.getCreatedAt()
-                                   .atZone(ZoneId.of("Asia/Seoul"))
+                                   .atZone(TZ_SEOUL)
                                    .toInstant()
                                    .toEpochMilli())
                 .updatedAt(answer.getUpdatedAt()
@@ -47,7 +47,7 @@ public class FindAnswerResponseDto implements Serializable {
         final Question question = answer.getQuestion();
         final User author = answer.getUser();
         final long timestamp = question.getCreatedAt()
-                                       .atZone(ZoneId.of("Asia/Seoul"))
+                                       .atZone(TZ_SEOUL)
                                        .toInstant()
                                        .toEpochMilli();
 

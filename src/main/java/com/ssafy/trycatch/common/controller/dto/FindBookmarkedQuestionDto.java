@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.ZoneId;
 import java.util.List;
+
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 @Data
 public class FindBookmarkedQuestionDto implements Serializable {
@@ -52,7 +53,7 @@ public class FindBookmarkedQuestionDto implements Serializable {
                 .likeCount(question.getLikes())
                 .answerCount(question.getAnswers().size())
                 .createdAt(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
+                        .atZone(TZ_SEOUL)
                         .toInstant().toEpochMilli())
                 .build();
     }
