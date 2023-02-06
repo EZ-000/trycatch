@@ -190,13 +190,16 @@ public class QuestionController {
                 .requestUser(requestUser)
                 .build();
 
-        final long authorId = author.getId();
+        final long targetId = question.getId();
 
-        final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(), authorId, QUESTION);
+        final boolean isLiked = likesService.isLikedByUserAndTarget(
+                requestUser.getId(),
+                targetId,
+                QUESTION);
 
         final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
                 requestUser.getId(),
-                authorId,
+                targetId,
                 QUESTION);
 
         final Set<Answer> answers = question.getAnswers();
