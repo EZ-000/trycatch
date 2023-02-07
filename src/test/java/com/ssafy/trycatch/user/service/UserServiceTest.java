@@ -3,15 +3,17 @@ package com.ssafy.trycatch.user.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
-
+import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
+import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class UserServiceTest {

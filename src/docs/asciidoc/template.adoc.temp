@@ -1,0 +1,22 @@
+==
+:toc: left
+:toclevels: 4
+
+===
+include::{snippets}
+
+.Request
+[%collapsible]
+====
+.Params
+include::{snippets}
+.Headers
+include::{snippets}
+====
+
+.Response
+[%collapsible]
+====
+include::{snippets}
+include::{snippets}
+====

@@ -1,15 +1,5 @@
 package com.ssafy.trycatch.common.controller;
 
-import com.ssafy.trycatch.roadmap.domain.Roadmap;
-import com.ssafy.trycatch.roadmap.service.RoadmapService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
@@ -20,7 +10,13 @@ import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.roadmap.domain.Roadmap;
+import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/${apiPrefix}/like")
@@ -49,7 +45,7 @@ public class LikesController {
      */
     @PostMapping
     public ResponseEntity<Void> likeTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
         // 마지막 좋아요의 활성화 여부 확인 (중복 방지)
@@ -101,7 +97,7 @@ public class LikesController {
      */
     @PutMapping
     public ResponseEntity<Void> unlikeTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
         final TargetType type = TargetType

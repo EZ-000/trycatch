@@ -1,12 +1,11 @@
 package com.ssafy.trycatch.common.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
-
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 
 @Service
 public class LikesService extends CrudService<Likes, Long, LikesRepository> {

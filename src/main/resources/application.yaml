@@ -21,6 +21,20 @@ elasticsearch:
 apiPrefix:
   v1
 
+springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  api-docs:
+    path: /docs
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui
+    disable-swagger-default-url: true
+    display-query-params-without-oauth2: true
+
+  packages-to-scan: com.ssafy.trycatch
+
 ---
 
 spring:

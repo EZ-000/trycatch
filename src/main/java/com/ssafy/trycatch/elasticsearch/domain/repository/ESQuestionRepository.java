@@ -1,11 +1,10 @@
 package com.ssafy.trycatch.elasticsearch.domain.repository;
 
-import java.util.List;
-
+import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
+import java.util.List;
 
 @Repository
 public interface ESQuestionRepository extends ElasticsearchRepository<ESQuestion, String> {

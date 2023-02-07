@@ -1,5 +1,11 @@
 package com.ssafy.trycatch.feed.domain;
 
+import com.ssafy.trycatch.common.domain.Company;
+import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
