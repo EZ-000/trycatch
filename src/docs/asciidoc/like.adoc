@@ -1,0 +1,39 @@
+== Likes
+:toc: left
+:toclevels: 4
+
+=== 좋아요
+include::{snippets}/like-target/http-request.adoc[]
+
+.Request
+[%collapsible]
+====
+.Fields
+include::{snippets}/like-target/request-fields.adoc[]
+.Headers
+include::{snippets}/like-target/request-headers.adoc[]
+====
+
+.Response
+[%collapsible]
+====
+include::{snippets}/like-target/http-response.adoc[]
+====
+
+=== 좋아요 취소
+include::{snippets}/unlike-target/http-request.adoc[]
+
+.Request
+[%collapsible]
+====
+.Fields
+include::{snippets}/unlike-target/request-fields.adoc[]
+.Headers
+include::{snippets}/unlike-target/request-headers.adoc[]
+====
+
+.Response
+[%collapsible]
+====
+include::{snippets}/unlike-target/http-response.adoc[]
+====

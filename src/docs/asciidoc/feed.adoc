@@ -1,0 +1,22 @@
+== Feed
+:toc: left
+:toclevels: 4
+
+=== 피드 검색
+include::{snippets}/feed/http-request.adoc[]
+
+.Request
+[%collapsible]
+====
+.Params
+include::{snippets}/feed/request-parameters.adoc[]
+.Headers
+include::{snippets}/feed/request-headers.adoc[]
+====
+
+.Response
+[%collapsible]
+====
+include::{snippets}/feed/http-response.adoc[]
+include::{snippets}/feed/response-fields.adoc[]
+====
