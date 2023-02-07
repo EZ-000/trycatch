@@ -37,16 +37,13 @@ import com.ssafy.trycatch.user.domain.WithdrawalRepository;
 
 import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -315,5 +312,15 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Param1 유저를 Param2 유저가 Follow 중인가?
+	 * @param targetId
+	 * @param id
+	 * @return
+	 */
+	public Boolean getIsFollowed(Long targetId, Long id) {
+		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent() ? true : false;
 	}
 }

@@ -94,8 +94,9 @@ public class UserController {
 
         try {
             final User saved = userService.getDetailUserInfo(targetId);
+            final Boolean flag = userService.getIsFollowed(targetId, requestUser.getId());
             // tag List 를 들고오는 코드가 필요하다. 추가 하고 주석 삭제하자.
-            final UserDto result = UserDto.from(saved, Collections.emptyList());
+            final UserDto result = UserDto.from(saved, flag, Collections.emptyList());
 
             return ResponseEntity.ok(result);
         } catch (UserNotFoundException u) {
@@ -134,13 +135,16 @@ public class UserController {
 
     @GetMapping("/{uid}/list")
     public ResponseEntity<List<SimpleUserInfo>> findFollows(
-        @PathVariable Long uid, @RequestParam("type") String type
+        @PathVariable Long uid,
+        @RequestParam("type") String type,
+        @AuthUserElseGuest User requestUser
     ) {
         try {
             final List<SimpleUserInfo> resultList = userService.findFollowList(uid, type)
                 .stream()
-                .map(SimpleUserInfo::from)
+                .map(e->SimpleUserInfo.from(e,userService.getIsFollowed(e.getId(),requestUser.getId())))
                 .collect(Collectors.toList());
+
             return ResponseEntity.ok(resultList);
         } catch (UserNotFoundException | TypeNotPresentException u) {
             return ResponseEntity.badRequest()
