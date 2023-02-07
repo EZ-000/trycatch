@@ -8,6 +8,7 @@ import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.exceptions.BookmarkDuplicatedException;
+import com.ssafy.trycatch.common.service.exceptions.LikesDuplicatedException;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
@@ -47,17 +48,25 @@ public class BookmarkController {
             @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
-        // 마지막 북마크의 활성화 여부 확인 (중복 방지)
-        final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
+        final TargetType type = TargetType
+                .valueOf(bookmarkRequestDto.getType());
+
         final Bookmark lastBookmark = bookmarkService
-                .getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
+                .getLastBookmarkOrFalse(userId, bookmarkRequestDto.getId(), type);
+
         if (lastBookmark.getActivated()) {
             throw new BookmarkDuplicatedException();
         }
 
-        // 좋아요 생성과 저장
+        // 북마크 생성과 저장
         final Bookmark newBookmark = bookmarkRequestDto.newBookmark(requestUser);
         bookmarkService.register(newBookmark);
+
         return ResponseEntity.status(201)
                              .build();
     }
@@ -72,13 +81,23 @@ public class BookmarkController {
             @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
         final TargetType type = TargetType
                 .valueOf(bookmarkRequestDto.getType());
 
-        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
         final Bookmark lastBookmark = bookmarkService
-                .getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
-        lastBookmark.setActivated(!lastBookmark.getActivated());
+                .getLastBookmarkOrThrow(userId, bookmarkRequestDto.getId(), type);
+
+        if (!lastBookmark.getActivated()) {
+            throw new LikesDuplicatedException();
+        }
+
+        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
+        lastBookmark.setActivated(false);
         bookmarkService.register(lastBookmark);
 
         return ResponseEntity.status(204)
@@ -93,9 +112,13 @@ public class BookmarkController {
     public ResponseEntity<List<FindBookmarkedQuestionDto>> findBookmarkedQuestions(
             @AuthUserElseGuest User requestUser
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(requestUser.getId(), TargetType.QUESTION);
+                .getActivatedBookmarks(userId, TargetType.QUESTION);
 
         // List<Bookmark>을 List<Question>으로 변환
         List<Question> bookmarkedQuestions = activatedBookmarks
@@ -121,9 +144,13 @@ public class BookmarkController {
     public ResponseEntity<List<FindBookmarkedRoadmapDto>> findBookmarkedRoadmaps(
             @AuthUserElseGuest User requestUser
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Roadmap> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(requestUser.getId(), TargetType.ROADMAP);
+                .getActivatedBookmarks(userId, TargetType.ROADMAP);
 
         // List<Bookmark>을 List<Roadmap>으로 변환
         List<Roadmap> bookmarkedRoadmaps = activatedBookmarks
