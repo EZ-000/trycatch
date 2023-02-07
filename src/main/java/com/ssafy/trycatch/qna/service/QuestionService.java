@@ -1,10 +1,10 @@
 package com.ssafy.trycatch.qna.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +22,6 @@ import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
-
-import com.ssafy.trycatch.user.domain.UserRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -62,7 +51,7 @@ public class QuestionService {
         final Question question = requestDto.newQuestion(requestUser);
         questionRepository.save(question);
 
-        final ESQuestion esQuestion = ESQuestion.of(requestDto);
+        final ESQuestion esQuestion = ESQuestion.of(question.getId(), requestDto);
         esQuestionRepository.save(esQuestion);
 
         return question;
@@ -148,5 +137,9 @@ public class QuestionService {
             throw new RequestUserNotValidException();
         }
         questionRepository.deleteById(questionId);
+    }
+
+    public Page<ESQuestion> search(String query, Pageable pageable) {
+        return esQuestionRepository.searchByTitleOrContent(query, pageable);
     }
 }
