@@ -10,6 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.function.Supplier;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -25,54 +30,85 @@ class QuestionControllerTest {
     @Value("${apiPrefix}")
     private String apiVersion;
 
-    @Test
-    void findAllQuestions() {
+    private final Supplier<String> createPath = () -> "/" + apiVersion;
 
+    @Test
+    void findAllQuestions() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get())
+        ).andDo(document("question-find-all"));
     }
 
     @Test
-    void createQuestion() {
+    void createQuestion() throws Exception {
 
+        this.mockMvc.perform(
+                post(createPath.get())
+        ).andDo(document("question-create"));
     }
 
     @Test
-    void putQuestion() {
+    void putQuestion() throws Exception {
 
+        this.mockMvc.perform(
+                put(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-edit"));
     }
 
     @Test
-    void deleteQuestion() {
+    void deleteQuestion() throws Exception {
 
+        this.mockMvc.perform(
+                delete(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-delete"));
     }
 
     @Test
-    void findQuestionById() {
+    void findQuestionById() throws Exception {
 
+        this.mockMvc.perform(
+                get(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-detail"));
     }
 
     @Test
-    void createAnswers() {
+    void createAnswers() throws Exception {
 
+        this.mockMvc.perform(
+                post(createPath.get() + "/{id}/answer", 1)
+        ).andDo(document("answer-create"));
     }
 
     @Test
-    void putAnswer() {
-
+    void putAnswer() throws Exception {
+        this.mockMvc.perform(
+                put(createPath.get() + "/{id}/answer", 1)
+        ).andDo(document("answer-edit"));
     }
 
     @Test
-    void search() {
+    void search() throws Exception {
 
+        this.mockMvc.perform(
+                get(createPath.get() + "/search")
+        ).andDo(document("question-search"));
     }
 
     @Test
-    void acceptAnswer() {
+    void acceptAnswer() throws Exception {
 
+        this.mockMvc.perform(
+                post(createPath.get() + "/{questionId}/{answerId}", 1, 1)
+        ).andDo(document("answer-accept"));
     }
 
     @Test
-    void suggestQuestions() {
+    void suggestQuestions() throws Exception {
 
+        this.mockMvc.perform(
+                get(createPath.get() + "/ec")
+        ).andDo(document("question-recommend"));
     }
 
 //    @Test
