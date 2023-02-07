@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Set;
 import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
 import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
 
+@Slf4j
 @SuppressWarnings("DuplicatedCode")
 @RestController
 @RequestMapping("/${apiPrefix}/question")
