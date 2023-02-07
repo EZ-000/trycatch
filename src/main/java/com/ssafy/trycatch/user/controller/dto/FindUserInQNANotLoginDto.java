@@ -1,12 +1,11 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import java.io.Serializable;
-
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.Builder;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class FindUserInQNANotLoginDto implements Serializable {

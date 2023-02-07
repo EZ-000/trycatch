@@ -14,6 +14,7 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class BookmarkController {
      */
     @PostMapping
     public ResponseEntity<Void> bookmarkTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         // 게스트 요청 방지
@@ -78,7 +79,7 @@ public class BookmarkController {
      */
     @PutMapping
     public ResponseEntity<Void> removeBookmark(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         // 게스트 요청 방지
@@ -110,7 +111,7 @@ public class BookmarkController {
      */
     @GetMapping("/question")
     public ResponseEntity<List<FindBookmarkedQuestionDto>> findBookmarkedQuestions(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
@@ -142,7 +143,7 @@ public class BookmarkController {
      */
     @GetMapping("/roadmap")
     public ResponseEntity<List<FindBookmarkedRoadmapDto>> findBookmarkedRoadmaps(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();

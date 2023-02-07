@@ -1,14 +1,9 @@
-== Bookmark
-:toc: left
-:toclevels: 4
-
 === 북마크 생성
-include::{snippets}/bookmark-add/curl-request.adoc[]
+include::{snippets}/bookmark-add/http-request.adoc[]
 
 .Request
 [%collapsible]
 ====
-include::{snippets}/bookmark-add/http-request.adoc[]
 .Headers
 include::{snippets}/bookmark-add/request-headers.adoc[]
 ====
@@ -20,12 +15,11 @@ include::{snippets}/bookmark-add/http-response.adoc[]
 ====
 
 === 북마크 삭제
-include::{snippets}/bookmark-remove/curl-request.adoc[]
+include::{snippets}/bookmark-remove/http-request.adoc[]
 
 .Request
 [%collapsible]
 ====
-include::{snippets}/bookmark-remove/http-request.adoc[]
 .Headers
 include::{snippets}/bookmark-remove/request-headers.adoc[]
 .Fields
@@ -39,12 +33,11 @@ include::{snippets}/bookmark-remove/http-response.adoc[]
 ====
 
 === 북마크한 질문 조회
-include::{snippets}/bookmark-question/curl-request.adoc[]
+include::{snippets}/bookmark-question/http-request.adoc[]
 
 .Request
 [%collapsible]
 ====
-include::{snippets}/bookmark-question/http-request.adoc[]
 .Headers
 include::{snippets}/bookmark-question/request-headers.adoc[]
 ====
@@ -58,12 +51,11 @@ include::{snippets}/bookmark-question/response-fields.adoc[]
 ====
 
 === 북마크한 로드맵 조회
-include::{snippets}/bookmark-roadmap/curl-request.adoc[]
+include::{snippets}/bookmark-roadmap/http-request.adoc[]
 
 .Request
 [%collapsible]
 ====
-include::{snippets}/bookmark-roadmap/http-request.adoc[]
 .Headers
 include::{snippets}/bookmark-roadmap/request-headers.adoc[]
 ====

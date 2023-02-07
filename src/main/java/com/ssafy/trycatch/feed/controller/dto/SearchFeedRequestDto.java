@@ -1,36 +1,45 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.lang.Nullable;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
-import lombok.Data;
-
+@Getter
+@Setter
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
 public class SearchFeedRequestDto {
 
-    @Nullable
+    @Builder.Default
     private String query = null;
 
+    @Builder.Default
     private FeedSortOption sort = FeedSortOption.date;
 
+    @Builder.Default
     private boolean subscribe = false;
 
+    @Builder.Default
     private boolean advanced = false;
 
-    @Nullable
+    @Builder.Default
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate publishDateStart = null;
 
-    @Nullable
+    @Builder.Default
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate publishDateEnd = null;
 
+    @Builder.Default
     private Integer page = 0;
 
+    @Builder.Default
     private Integer size = 10;
 
     @JsonSetter("publishDateStart")
