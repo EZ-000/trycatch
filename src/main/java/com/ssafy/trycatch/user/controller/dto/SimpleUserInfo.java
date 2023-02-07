@@ -9,31 +9,33 @@ import lombok.Data;
 
 @Data
 public class SimpleUserInfo {
-	private Long userId;
-	private String userName;
-	private String profileImage;
-	private String companyName;
-	private Boolean isFollowed;
+    public static SimpleUserInfo from(User user) {
+        if (null == user.getCompany()) {throw new ValidateException("Null Company");}
 
-	@Builder
-	public SimpleUserInfo(Long userId, String userName, String profileImage, String companyName, Boolean isFollowed) {
-		this.userId = userId;
-		this.userName = userName;
-		this.profileImage = profileImage;
-		this.companyName = companyName;
-		this.isFollowed = isFollowed;
-	}
+        return SimpleUserInfo.builder()
+                .userId(user.getId())
+                .userName(user.getUsername())
+                .profileImage(user.getImageSrc())
+                .companyName(user.getCompany()
+                                 .getName())
+                .isFollowed(false)
+                .build();
+    }
 
-	public static SimpleUserInfo from(User user) {
-		if(null == user.getCompany())
-			throw new ValidateException("Null Company");
+    private Long userId;
+    private String userName;
+    private String profileImage;
+    private String companyName;
+    private Boolean isFollowed;
 
-		return SimpleUserInfo.builder()
-			.userId(user.getId())
-			.userName(user.getUsername())
-			.profileImage(user.getImageSrc())
-			.companyName(user.getCompany().getName())
-			.isFollowed(false)
-			.build();
-	}
+    @Builder
+    public SimpleUserInfo(
+            Long userId, String userName, String profileImage, String companyName, Boolean isFollowed
+    ) {
+        this.userId = userId;
+        this.userName = userName;
+        this.profileImage = profileImage;
+        this.companyName = companyName;
+        this.isFollowed = isFollowed;
+    }
 }

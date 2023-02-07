@@ -1,50 +1,85 @@
 package com.ssafy.trycatch.feed.controller;
 
-import com.ssafy.trycatch.feed.controller.dto.FindFeedResponseDto;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
 
 @SpringBootTest
-@ExtendWith(RestDocumentationExtension.class)
-@PropertySource("classpath:application.yaml")
+@AutoConfigureMockMvc
+@AutoConfigureRestDocs
+@PropertySource("classpath:application-local.yml")
 class FeedControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Value("${apiPrefix}")
     private String apiVersion;
 
-    @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider documentationContextProvider) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
-                .build();
-    }
-
     @Test
     void findFeeds() throws Exception {
+
         this.mockMvc.perform(
                 get("/" + apiVersion + "/feed/search")
-        )
-                .andExpect(status().isOk())
-                .andDo(document("feed"));
+                        .queryParam("page", "0")
+                        .queryParam("size", "2")
+                        .queryParam("sort", "date")
+                        .queryParam("subscribe", "false")
+                        .queryParam("advanced", "false")
+                        .queryParam("publishDateStart", LocalDate.of(2020, 1, 1).toString())
+                        .queryParam("publishDateEnd", LocalDate.now().toString())
+                        .queryParam("query", "react")
+            )
+                    .andExpect(status().isOk())
+                    .andDo(document(
+                            "feed",
+                            requestHeaders(headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰")
+                                                                                    .optional()),
+                            requestParameters(
+                                    parameterWithName("query").description("검색어"),
+                                    parameterWithName("page").description("페이지"),
+                                    parameterWithName("size").description("페이지 사이즈"),
+                                    parameterWithName("sort").description("정렬"),
+                                    parameterWithName("subscribe").description("구독자 피드"),
+                                    parameterWithName("advanced").description("고급 검색"),
+                                    parameterWithName("publishDateStart").description("게시일 시작"),
+                                    parameterWithName("publishDateEnd").description("게시일 끝")
+                            ),
+                            responseFields(
+                                    fieldWithPath("feedList.[].feedId").description("피드 아이디"),
+                                    fieldWithPath("feedList.[].title").description("피드 제목"),
+                                    fieldWithPath("feedList.[].summary").description("피드 요약"),
+                                    fieldWithPath("feedList.[].companyName").description("피드 회사"),
+                                    fieldWithPath("feedList.[].logoSrc").description("피드 로고"),
+                                    fieldWithPath("feedList.[].createAt").description("피드 생성일"),
+                                    fieldWithPath("feedList.[].url").description("피드 링크"),
+                                    fieldWithPath("feedList.[].tags").description("피드 태그").optional(),
+                                    fieldWithPath("feedList.[].keywords").description("피드 키워드"),
+                                    fieldWithPath("feedList.[].isBookmarked").description("북마크 여부"),
+                                    fieldWithPath("feedList.[].thumbnailImage").description("썸네일 이미지")
+                            )
+                    ));
     }
 }

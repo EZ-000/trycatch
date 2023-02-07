@@ -2,7 +2,6 @@ package com.ssafy.trycatch.feed.controller.dto;
 
 import lombok.Data;
 
-
 @Data
 public class FeedCompanyRequestDto {
 

@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class WithdrawalService extends CrudService<Withdrawal, Long, WithdrawalRepository> {
-	public WithdrawalService(WithdrawalRepository withdrawalRepository) {
-		super(withdrawalRepository);
-	}
+    public WithdrawalService(WithdrawalRepository withdrawalRepository) {
+        super(withdrawalRepository);
+    }
 }
 

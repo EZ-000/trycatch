@@ -18,12 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class OAuth2FailureHandler implements AuthenticationFailureHandler {
 
-	@Value("${settings.login.on_fail.redirect_uri}")
-	private String redirectUri;
+    @Value("${settings.login.on_fail.redirect_uri}")
+    private String redirectUri;
 
-	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException exception) throws IOException {
-		response.sendRedirect(redirectUri);
-	}
+    @Override
+    public void onAuthenticationFailure(
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException exception
+    ) throws IOException {
+        response.sendRedirect(redirectUri);
+    }
 }

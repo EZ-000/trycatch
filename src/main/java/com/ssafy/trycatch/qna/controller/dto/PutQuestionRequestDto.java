@@ -1,10 +1,9 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
-import com.ssafy.trycatch.qna.domain.Question;
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

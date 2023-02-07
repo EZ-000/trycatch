@@ -10,15 +10,40 @@ import lombok.Data;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 /**
  * A DTO for the {@link Question} entity
  */
 @Data
 public class PutQuestionResponseDto implements Serializable {
+    public static PutQuestionResponseDto from(Question question) {
+        final User author = question.getUser();
+        final Set<Long> answerIds = question.getAnswers()
+                                            .stream()
+                                            .map(Answer::getId)
+                                            .collect(Collectors.toSet());
+
+        return PutQuestionResponseDto.builder()
+                .categoryName(question.getCategoryName())
+                .authorUsername(author.getUsername())
+                .title(question.getTitle())
+                .content(question.getTitle())
+                .timestamp(question.getCreatedAt()
+                                   .atZone(TZ_SEOUL)
+                                   .toInstant()
+                                   .toEpochMilli())
+                .updatedAt(question.getUpdatedAt())
+                .viewCount(question.getViewCount())
+                .likes(question.getLikes())
+                .hidden(question.getHidden())
+                .answerIds(answerIds)
+                .build();
+    }
+
     @Size(max = 30)
     private final QuestionCategory categoryName;
     @Size(max = 50)
@@ -31,11 +56,21 @@ public class PutQuestionResponseDto implements Serializable {
     private final Integer viewCount;
     private final Integer likes;
     private final Boolean hidden;
-
     private final Set<Long> answerIds;
 
     @Builder
-    public PutQuestionResponseDto(QuestionCategory categoryName, String authorUsername, String title, String content, Long timestamp, Instant updatedAt, Integer viewCount, Integer likes, Boolean hidden, Set<Long> answerIds) {
+    public PutQuestionResponseDto(
+            QuestionCategory categoryName,
+            String authorUsername,
+            String title,
+            String content,
+            Long timestamp,
+            Instant updatedAt,
+            Integer viewCount,
+            Integer likes,
+            Boolean hidden,
+            Set<Long> answerIds
+    ) {
         this.categoryName = categoryName;
         this.authorUsername = authorUsername;
         this.title = title;
@@ -46,28 +81,5 @@ public class PutQuestionResponseDto implements Serializable {
         this.likes = likes;
         this.hidden = hidden;
         this.answerIds = answerIds;
-    }
-
-    public static PutQuestionResponseDto from(Question question) {
-        final User author = question.getUser();
-        final Set<Long> answerIds = question.getAnswers()
-                .stream()
-                .map(Answer::getId)
-                .collect(Collectors.toSet());
-
-        return PutQuestionResponseDto.builder()
-                .categoryName(question.getCategoryName())
-                .authorUsername(author.getUsername())
-                .title(question.getTitle())
-                .content(question.getTitle())
-                .timestamp(question.getCreatedAt()
-                        .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant().toEpochMilli())
-                .updatedAt(question.getUpdatedAt())
-                .viewCount(question.getViewCount())
-                .likes(question.getLikes())
-                .hidden(question.getHidden())
-                .answerIds(answerIds)
-                .build();
     }
 }

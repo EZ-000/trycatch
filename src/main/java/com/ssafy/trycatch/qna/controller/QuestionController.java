@@ -1,250 +1,333 @@
 package com.ssafy.trycatch.qna.controller;
 
-import com.ssafy.trycatch.common.domain.QuestionCategory;
-import com.ssafy.trycatch.common.domain.TargetType;
-import com.ssafy.trycatch.common.service.BookmarkService;
-import com.ssafy.trycatch.common.service.CompanyService;
-import com.ssafy.trycatch.common.service.LikesService;
-import com.ssafy.trycatch.qna.controller.dto.*;
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.service.AnswerService;
-import com.ssafy.trycatch.qna.service.QuestionService;
-import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
-import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
+import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
+import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
+import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.service.BookmarkService;
+import com.ssafy.trycatch.common.service.LikesService;
+import com.ssafy.trycatch.qna.controller.dto.AcceptAnswerResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.CreateAnswerRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.FindAnswerResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.FindQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.PutAnswerRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.PutQuestionRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.SearchQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.SuggestQuestionResponseDto;
+import com.ssafy.trycatch.qna.domain.Answer;
+import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.qna.service.AnswerService;
+import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
+import com.ssafy.trycatch.user.domain.User;
 
-
+@SuppressWarnings("DuplicatedCode")
 @RestController
 @RequestMapping("/${apiPrefix}/question")
 public class QuestionController {
     private final QuestionService questionService;
     private final AnswerService answerService;
-    private final UserService userService;
-    private final CompanyService companyService;
     private final LikesService likesService;
     private final BookmarkService bookmarkService;
 
     @Autowired
     public QuestionController(
-            QuestionService questionService, AnswerService answerService, UserService userService, CompanyService companyService, LikesService likesService, BookmarkService bookmarkService) {
+            QuestionService questionService,
+            AnswerService answerService,
+            LikesService likesService,
+            BookmarkService bookmarkService
+    ) {
         this.questionService = questionService;
         this.answerService = answerService;
-        this.userService = userService;
-        this.companyService = companyService;
         this.likesService = likesService;
         this.bookmarkService = bookmarkService;
     }
 
     @GetMapping
-    public ResponseEntity<List<?>> findAllQuestions(
-            @PageableDefault Pageable pageable,
-            @Nullable @AuthenticationPrincipal Long userId,
-            @RequestParam String category
+    public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
+            @AuthUserElseGuest User requestUser,
+            @RequestParam String category,
+            @PageableDefault Pageable pageable
     ) {
-        final QuestionCategory questionCategory = QuestionCategory.valueOf(category);
-        List<Question> entities = questionService.findAllQuestionsByCategory(questionCategory, pageable);
-        if (userId == null) {
-            List<FindQuestionResponseNotLoginDto> questions = entities
-                    .stream()
-                    .map(question -> {
-                        List<Answer> answers = answerService.findByQuestionId(question.getId());
-                        return FindQuestionResponseNotLoginDto.from(question, answers, companyService);
-                    })
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(questions);
-        } else {
-            List<FindQuestionResponseDto> questions = entities.stream()
-                    .map(question -> {
-                        final User user = userService.findUserById(userId);
-                        final List<Answer> answers = answerService.findByQuestionId(question.getId());
-                        final TargetType type = TargetType.QUESTION;
-                        final Boolean isLiked = Optional
-                                .ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
-                                .orElse(false);
+        final QuestionCategory enumCategory = QuestionCategory.of(category);
+        final List<Question> questions = questionService.findAllQuestionsByCategory(enumCategory, pageable);
+        final List<FindQuestionResponseDto> responseDtoList = new ArrayList<>();
 
-                        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
-                                .orElse(false);
+        for (Question question : questions) {
 
-                        return FindQuestionResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked);
-                    })
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(questions);
+            final long targetId = question.getId();
+            final boolean isLiked = likesService.isLikedByUserAndTarget(
+                    requestUser.getId(),
+                    targetId,
+                    QUESTION);
+
+            final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
+                    requestUser.getId(),
+                    targetId,
+                    QUESTION);
+
+            final User author = question.getUser();
+            final SimpleUserDto userInQNADto = SimpleUserDto.builder()
+                    .author(author)
+                    .requestUser(requestUser)
+                    .build();
+
+            final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
+                    question,
+                    userInQNADto,
+                    isLiked,
+                    isBookmarked);
+
+            responseDtoList.add(responseDto);
         }
+
+        return ResponseEntity.ok(responseDtoList);
     }
 
     /**
      * {@code Question} 엔티티를 생성 후 데이터베이스에 저장
-     *
      * @param createQuestionRequestDto 질문 생성 요청 DTO
+     * @return 생성 성공 시 201 Created 응답
      */
     @PostMapping
     public ResponseEntity<CreateQuestionResponseDto> createQuestion(
-            @Nullable @AuthenticationPrincipal Long userId,
-            @RequestBody CreateQuestionRequestDto createQuestionRequestDto
+            @AuthUserElseGuest User requestUser, @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
-        final User user = userService.findUserById(userId);
-        final Question newEntity = createQuestionRequestDto.newQuestion(user);
-        final Question savedEntity = questionService.saveQuestion(newEntity);
 
-        final TargetType type = TargetType.QUESTION;
-        final Boolean isLiked = Optional
-                .ofNullable(likesService.getLikes(user.getId(), savedEntity.getId(), type).getActivated())
-                .orElse(false);
+        final Question savedEntity = questionService.saveQuestion(requestUser, createQuestionRequestDto);
 
-        final Boolean isBookmarked = Optional
-                .ofNullable(bookmarkService.getBookmark(user.getId(), savedEntity.getId(), type).getActivated())
-                .orElse(false);
+        final long targetId = savedEntity.getId();
 
-        return ResponseEntity.ok(CreateQuestionResponseDto.from(savedEntity, companyService, isLiked, isBookmarked));
+        final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(), targetId, QUESTION);
+
+        final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
+                requestUser.getId(),
+                targetId,
+                QUESTION);
+
+        final User user = savedEntity.getUser();
+
+        final SimpleUserDto userInQNADto = SimpleUserDto.builder()
+                .author(user)
+                .requestUser(requestUser)
+                .build();
+
+        final CreateQuestionResponseDto responseDto = CreateQuestionResponseDto.from(
+                savedEntity,
+                userInQNADto,
+                isLiked,
+                isBookmarked);
+
+        return ResponseEntity.status(201).body(responseDto);
     }
 
     /**
-     * PutQuestionRequestDto로 받은 수정 요청을 처리하고,
-     * CreateQuestionResponseDto로 반환
+     * @param requestUser 로그인된 유저
+     * @param putQuestionRequestDto 질문 수정 dto
+     * @return 수정 성공 시 201 Created 응답
      */
     @PutMapping("/{questionId}")
-    public ResponseEntity putQuestion(
-            @Nullable @AuthenticationPrincipal Long userId,
-            @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
+    public ResponseEntity<Void> putQuestion(
+            @AuthUserElseGuest User requestUser, @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
-        questionService.updateQuestion(
-                userId,
-                putQuestionRequestDto.getQuestionId(),
-                putQuestionRequestDto.getCategory(),
-                putQuestionRequestDto.getTitle(),
-                putQuestionRequestDto.getContent(),
-                putQuestionRequestDto.getErrorCode(),
-                putQuestionRequestDto.getTags(),
-                putQuestionRequestDto.getHidden()
-        );
-        return ResponseEntity.ok().build();
+        questionService.updateQuestion(requestUser.getId(),
+                                       putQuestionRequestDto.getQuestionId(),
+                                       putQuestionRequestDto.getCategory(),
+                                       putQuestionRequestDto.getTitle(),
+                                       putQuestionRequestDto.getContent(),
+                                       putQuestionRequestDto.getErrorCode(),
+                                       putQuestionRequestDto.getTags(),
+                                       putQuestionRequestDto.getHidden());
+        return ResponseEntity.status(201)
+                             .build();
     }
 
+    /**
+     * @param requestUser 로그인된 유저
+     * @param questionId 질문 id
+     * @return 삭제 성공 시 204 No Content 응답
+     */
     @DeleteMapping("/{questionId}")
-    public ResponseEntity deleteQuestion(
-            @Nullable @AuthenticationPrincipal Long userId,
-            @PathVariable Long questionId
+    public ResponseEntity<Void> deleteQuestion(
+            @AuthUserElseGuest User requestUser, @PathVariable Long questionId
     ) {
-        questionService.deleteQuestion(questionId, userId);
-        return ResponseEntity.ok().build();
+        questionService.deleteQuestion(questionId, requestUser.getId());
+        return ResponseEntity.status(204)
+                             .build();
     }
 
     /**
      * {@code Question#id}로 {@code Question}을 찾아 {@code QuestionResponseDto}로 반환하여 반환
-     *
      * @param questionId {@code Question}의 id
      */
     @GetMapping("/{questionId}")
-    public ResponseEntity<?> findQuestionById(
-            @PathVariable("questionId") Long questionId,
-            @Nullable @AuthenticationPrincipal Long userId
+    public ResponseEntity<FindQuestionResponseDto> findQuestionById(
+            @PathVariable("questionId") Long questionId, @AuthUserElseGuest User requestUser
     ) {
-        final Question before = questionService.findQuestionById(questionId);
-        final List<Answer> answers = answerService.findByQuestionId(before.getId());
-        // 조회수
-        before.setViewCount(before.getViewCount() + 1);
-        questionService.saveQuestion(before);
-        if (userId == null) {
-            final FindQuestionResponseNotLoginDto question = FindQuestionResponseNotLoginDto.from(before, answers, companyService);
-            return ResponseEntity.ok(question);
-        } else {
-            final User user = userService.findUserById(userId);
-            final TargetType type = TargetType.QUESTION;
-            final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), before.getId(), type).getActivated())
-                    .orElse(false);
-            final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), before.getId(), type).getActivated())
-                    .orElse(false);
-            final FindQuestionResponseDto question = FindQuestionResponseDto.from(before, answers, user, companyService, isLiked, isBookmarked);
-            return ResponseEntity.ok(question);
+        final Question question = questionService.findQuestionByIdWithViewCount(questionId);
+        final User author = question.getUser();
+
+        final SimpleUserDto simpleUserDto = SimpleUserDto.builder()
+                .author(author)
+                .requestUser(requestUser)
+                .build();
+
+        final long targetId = question.getId();
+
+        final boolean isLiked = likesService.isLikedByUserAndTarget(
+                requestUser.getId(),
+                targetId,
+                QUESTION);
+
+        final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
+                requestUser.getId(),
+                targetId,
+                QUESTION);
+
+        final Set<Answer> answers = question.getAnswers();
+        final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
+        for (Answer answer : answers) {
+            final long answerId = answer.getId();
+            final boolean answerIsLiked = likesService
+                    .isLikedByUserAndTarget(requestUser.getId(), answerId, ANSWER);
+
+            final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
+                    answer, requestUser, answerIsLiked);
+
+            answerResponseDtoList.add(responseDto);
         }
+
+        final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
+                question,
+                simpleUserDto,
+                isLiked,
+                isBookmarked,
+                answerResponseDtoList);
+
+        return ResponseEntity.ok(responseDto);
     }
 
+    /**
+     * @param questionId 질문 id
+     * @param createAnswerRequestDto 답변 생성 요청 dto
+     * @param requestUser 로그인된 유저
+     * @return 생성 성공 시 201 Created 응답
+     */
     @PostMapping("/{questionId}/answer")
-    public ResponseEntity<CreateAnswerResponseDto> createAnswers(
+    public ResponseEntity<FindAnswerResponseDto> createAnswers(
             @PathVariable Long questionId,
             @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
-            @Nullable @AuthenticationPrincipal Long userId
+            @AuthUserElseGuest User requestUser
     ) {
         // 생성
         final Question question = questionService.findQuestionById(questionId);
-        final User user = userService.findUserById(userId);
-        final Answer newAnswer = createAnswerRequestDto.newAnswer(question, user);
-        final Answer savedAnswer = answerService.saveAnswer(newAnswer);
+        final Answer answerDto = createAnswerRequestDto.newAnswer(question, requestUser);
+        final Answer answer = answerService.saveAnswer(answerDto);
+
         // 응답
-        final List<Answer> answers = answerService.findByQuestionId(question.getId());
-        final TargetType type = TargetType.QUESTION;
-        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
-                .orElse(false);
-        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
-                .orElse(false);
-        return ResponseEntity.ok(CreateAnswerResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked));
+        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(answer);
+
+        return ResponseEntity.status(201).body(answerResponseDto);
+
     }
 
-
+    /**
+     * @param requestUser 로그인된 유저
+     * @param putAnswerRequestDto 답변 수정 dto
+     * @return 수정 성공 시 201 Created 응답
+     */
     @PutMapping("/{questionId}/answer")
-    public ResponseEntity putAnswer(
-            @Nullable @AuthenticationPrincipal Long userId,
+    public ResponseEntity<Void> putAnswer(
+            @AuthUserElseGuest User requestUser,
             @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto
     ) {
-        answerService.updateAnswer(
-                userId,
-                putAnswerRequestDto.getAnswerId(),
-                putAnswerRequestDto.getContent(),
-                putAnswerRequestDto.getHidden()
-        );
-        return ResponseEntity.ok().build();
+        answerService.updateAnswer(requestUser.getId(),
+                                   putAnswerRequestDto.getAnswerId(),
+                                   putAnswerRequestDto.getContent(),
+                                   putAnswerRequestDto.getHidden());
+        return ResponseEntity.status(201)
+                             .build();
     }
 
     // MOCK API: 질문 검색
     @GetMapping("/search")
-    public ResponseEntity<List<SearchQuestionResponseDto>> search(
-            @PageableDefault Pageable pageable
-    ) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<SearchQuestionResponseDto>> search() {
+        return ResponseEntity.ok()
+                             .build();
     }
 
+    /**
+     * @param questionId 질문 id
+     * @param answerId 답변 id
+     * @param requestUser 로그인된 유저
+     * @return 답변 채택 성공 시 201 Created 응답
+     */
     @PostMapping("/{questionId}/{answerId}")
     public ResponseEntity<AcceptAnswerResponseDto> acceptAnswer(
-            @PathVariable Long questionId, @PathVariable Long answerId, @Nullable @AuthenticationPrincipal Long userId
+            @PathVariable Long questionId, @PathVariable Long answerId, @AuthUserElseGuest User requestUser
     ) {
         // 채택
-        final Question question = questionService.findQuestionById(questionId);
-        if (question.getUser().getId() != userId) throw new RequestUserNotValidException();
-        final Answer answer = answerService.findById(answerId);
-        question.setChosen(true);
-        questionService.saveQuestion(question);
-        answer.setChosen(true);
-        answerService.saveAnswer(answer);
-        // 응답
-        final List<Answer> answers = answerService.findByQuestionId(question.getId());
-        final User user = userService.findUserById(userId);
-        final TargetType type = TargetType.QUESTION;
-        final Boolean isLiked = Optional.ofNullable(likesService.getLikes(user.getId(), question.getId(), type).getActivated())
-                .orElse(false);
-        final Boolean isBookmarked = Optional.ofNullable(bookmarkService.getBookmark(user.getId(), question.getId(), type).getActivated())
-                .orElse(false);
-        return ResponseEntity.ok(AcceptAnswerResponseDto.from(question, answers, user, companyService, isLiked, isBookmarked));
+        final Question question = questionService.acceptAnswer(questionId, answerId);
+        final User author = question.getUser();
+        final Set<Answer> answers = question.getAnswers();
+        final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
+        for (Answer answer : answers) {
+            final long targetId = answer.getId();
+            final boolean answerIsLiked = likesService
+                    .isLikedByUserAndTarget(requestUser.getId(), targetId, ANSWER);
+
+            final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
+                    answer, requestUser, answerIsLiked);
+
+            answerResponseDtoList.add(responseDto);
+        }
+
+        final SimpleUserDto authorDto = SimpleUserDto.builder()
+                .author(author)
+                .requestUser(requestUser)
+                .build();
+        final boolean isLiked = likesService.isLikedByUserAndTarget(requestUser.getId(),
+                                                                    author.getId(),
+                                                                    QUESTION);
+        final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(requestUser.getId(),
+                                                                               author.getId(),
+                                                                               QUESTION);
+        final AcceptAnswerResponseDto responseDto = AcceptAnswerResponseDto.from(question,
+                                                                                 answerResponseDtoList,
+                                                                                 authorDto,
+                                                                                 isLiked,
+                                                                                 isBookmarked);
+
+        return ResponseEntity.status(201).body(responseDto);
     }
 
     // MOCK API: 에러코드 기반 질문 추천
     @GetMapping("/ec")
-    public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions(
-            @PageableDefault Pageable pageable
-    ) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions() {
+        return ResponseEntity.ok()
+                             .build();
     }
 }

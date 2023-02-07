@@ -1,42 +1,114 @@
 package com.ssafy.trycatch.qna.controller;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+
+import java.util.function.Supplier;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 @SpringBootTest
-@ExtendWith(RestDocumentationExtension.class)
-@PropertySource("classpath:application.yaml")
+@AutoConfigureMockMvc
+@AutoConfigureRestDocs
+@PropertySource("classpath:application-local.yml")
 class QuestionControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${apiPrefix}")
     private String apiVersion;
 
-    @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider documentationContextProvider) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(documentationContextProvider))
-                .build();
+    private final Supplier<String> createPath = () -> "/" + apiVersion;
+
+    @Test
+    void findAllQuestions() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get())
+        ).andDo(document("question-find-all"));
+    }
+
+    @Test
+    void createQuestion() throws Exception {
+
+        this.mockMvc.perform(
+                post(createPath.get())
+        ).andDo(document("question-create"));
+    }
+
+    @Test
+    void putQuestion() throws Exception {
+
+        this.mockMvc.perform(
+                put(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-edit"));
+    }
+
+    @Test
+    void deleteQuestion() throws Exception {
+
+        this.mockMvc.perform(
+                delete(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-delete"));
+    }
+
+    @Test
+    void findQuestionById() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-detail"));
+    }
+
+    @Test
+    void createAnswers() throws Exception {
+
+        this.mockMvc.perform(
+                post(createPath.get() + "/{id}/answer", 1)
+        ).andDo(document("answer-create"));
+    }
+
+    @Test
+    void putAnswer() throws Exception {
+        this.mockMvc.perform(
+                put(createPath.get() + "/{id}/answer", 1)
+        ).andDo(document("answer-edit"));
+    }
+
+    @Test
+    void search() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get() + "/search")
+        ).andDo(document("question-search"));
+    }
+
+    @Test
+    void acceptAnswer() throws Exception {
+
+        this.mockMvc.perform(
+                post(createPath.get() + "/{questionId}/{answerId}", 1, 1)
+        ).andDo(document("answer-accept"));
+    }
+
+    @Test
+    void suggestQuestions() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get() + "/ec")
+        ).andDo(document("question-recommend"));
     }
 
 //    @Test

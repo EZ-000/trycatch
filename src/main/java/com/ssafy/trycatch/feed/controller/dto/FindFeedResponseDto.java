@@ -1,19 +1,28 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import lombok.Builder;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+
+import lombok.Builder;
+import lombok.Data;
+
 @Data
 public class FindFeedResponseDto {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public static FindFeedResponseDto newDummy(Integer amount) {
+        final List<Feed> feeds = LongStream.range(1, amount + 1)
+                                           .mapToObj(Feed::newDummy)
+                                           .collect(Collectors.toList());
+        return new FindFeedResponseDto(feeds);
+    }
+
     List<Feed> feedList;
 
     @Builder
@@ -25,28 +34,8 @@ public class FindFeedResponseDto {
     @Builder
     public static class Feed {
 
-        private String feedId;
-
-        private String title;
-
-        private String summary;
-
-        private String companyName;
-
-        private String createdAt;
-
-        private String url;
-
-        private String thumbnailImage;
-
-        private List<String> tags;
-
-        private List<String> keywords;
-
-        private Boolean isBookmarked;
-
         public static Feed newDummy(Long id) {
-            List<String> tags = List.of("" +id);
+            List<String> tags = List.of("" + id);
             LocalDateTime now = LocalDateTime.now();
             return Feed.builder()
                     .feedId("" + id)
@@ -67,7 +56,8 @@ public class FindFeedResponseDto {
                     .title(esFeed.getTitle())
                     .summary(esFeed.getSummary())
                     .companyName(esFeed.getName())
-                    .createdAt(esFeed.getPublishDate().format(dateFormat))
+                    .createdAt(esFeed.getPublishDate()
+                                     .format(dateFormat))
                     .url(esFeed.getUrl())
                     .thumbnailImage(esFeed.getThumbnailUrl())
                     .tags(esFeed.getTags())
@@ -75,12 +65,16 @@ public class FindFeedResponseDto {
                     .isBookmarked(false) // FIXME
                     .build();
         }
-    }
 
-    public static FindFeedResponseDto newDummy(Integer amount) {
-        final List<Feed> feeds = LongStream.range(1, amount + 1)
-                .mapToObj(Feed::newDummy)
-                .collect(Collectors.toList());
-        return new FindFeedResponseDto(feeds);
+        private String feedId;
+        private String title;
+        private String summary;
+        private String companyName;
+        private String createdAt;
+        private String url;
+        private String thumbnailImage;
+        private List<String> tags;
+        private List<String> keywords;
+        private Boolean isBookmarked;
     }
 }

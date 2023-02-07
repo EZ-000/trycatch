@@ -1,14 +1,13 @@
 package com.ssafy.trycatch.common.service;
 
-import com.ssafy.trycatch.common.domain.Bookmark;
-import com.ssafy.trycatch.common.domain.BookmarkRepository;
-import com.ssafy.trycatch.common.domain.Likes;
-import com.ssafy.trycatch.common.domain.TargetType;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.annotation.Target;
-import java.util.List;
+import com.ssafy.trycatch.common.domain.Bookmark;
+import com.ssafy.trycatch.common.domain.BookmarkRepository;
+import com.ssafy.trycatch.common.domain.TargetType;
 
 @Service
 public class BookmarkService extends CrudService<Bookmark, Long, BookmarkRepository> {
@@ -18,21 +17,22 @@ public class BookmarkService extends CrudService<Bookmark, Long, BookmarkReposit
         super(bookmarkRepository);
     }
 
-    public Bookmark getBookmark(Long userId, Long targetId, TargetType targetType) {
+    public Bookmark getLastBookmark(Long userId, Long targetId, TargetType targetType) {
         return repository
-                .findByUserIdAndTargetIdAndTargetType(userId, targetId, targetType)
-                .orElseGet(Bookmark::new);
+                .findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(userId, targetId, targetType)
+                .orElse(new Bookmark(0L, 0L, 0L, TargetType.DEFAULT, false));
     }
 
-    public Bookmark getLastBookmark(Long userId, Long targetId, TargetType targetType) {
-        List<Bookmark> bookmarkList = repository.streamByUserIdAndTargetIdAndTargetType(userId, targetId, targetType);
-        final Bookmark lastBookmark;
-        if (bookmarkList.size() != 0) {
-            lastBookmark = bookmarkList.get(bookmarkList.size() - 1);
-        }
-        else {
-            lastBookmark = new Bookmark(0L, 0L, 0L, TargetType.DEFAULT, false);
-        }
-        return lastBookmark;
+    public Boolean isBookmarkByUserAndTarget(Long userId, Long targetId, TargetType targetType) {
+        return repository.existsByUserIdAndTargetIdAndTargetTypeAndActivatedTrue(userId, targetId, targetType);
+    }
+
+    /**
+     * @param userId 유저 아이디
+     * @param targetType 타겟 콘텐츠 타입 (QUESTION, FEED, ROADMAP ...)
+     * @return 타겟 타입에 맞는 활성화된 북마크 인스턴스 리스트 List<Bookmark> 반환
+     */
+    public List<Bookmark> getActivatedBookmarks(Long userId, TargetType targetType) {
+        return repository.findByUserIdAndTargetTypeAndActivatedIsTrue(userId, targetType);
     }
 }

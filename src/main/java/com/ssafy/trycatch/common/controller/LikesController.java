@@ -1,5 +1,16 @@
 package com.ssafy.trycatch.common.controller;
 
+import com.ssafy.trycatch.roadmap.domain.Roadmap;
+import com.ssafy.trycatch.roadmap.service.RoadmapService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
 import com.ssafy.trycatch.common.domain.TargetType;
@@ -10,72 +21,121 @@ import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Nullable;
 
 @RestController
 @RequestMapping("/${apiPrefix}/like")
 public class LikesController {
     private final LikesService likesService;
-    private final UserService userService;
     private final QuestionService questionService;
     private final AnswerService answerService;
+    private final RoadmapService roadmapService;
 
     @Autowired
-    public LikesController(LikesService likesService, UserService userService, QuestionService questionService, AnswerService answerService) {
+    public LikesController(
+            LikesService likesService,
+            QuestionService questionService,
+            AnswerService answerService,
+            RoadmapService roadmapService) {
         this.likesService = likesService;
-        this.userService = userService;
         this.questionService = questionService;
         this.answerService = answerService;
+        this.roadmapService = roadmapService;
     }
 
+    /**
+     * @param requestUser 로그인된 유저
+     * @param likesRequestDto 좋아요 요청 dto
+     * @return 생성 성공 시 201 Created 반환
+     */
     @PostMapping
-    public ResponseEntity likeTarget(
-            @Nullable @AuthenticationPrincipal Long userId,
+    public ResponseEntity<Void> likeTarget(
+            @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
-        final User user = userService.findUserById(userId);
-        final TargetType type = TargetType.valueOf(likesRequestDto.getType());
-        final Likes lastLikes = likesService.getLastLikes(user.getId(), likesRequestDto.getId(), type);
-        if (lastLikes.getActivated()) throw new LikesDuplicatedException();
-        final Likes newLikes = likesRequestDto.newLikes(user);
+        // 마지막 좋아요의 활성화 여부 확인 (중복 방지)
+        final TargetType type = TargetType
+                .valueOf(likesRequestDto.getType());
+
+        final Likes lastLikes = likesService
+                .getLikes(requestUser.getId(), likesRequestDto.getId(), type);
+
+        if (lastLikes.getActivated()) {
+            throw new LikesDuplicatedException();
+        }
+
+        // 좋아요 생성과 저장
+        final Likes newLikes = likesRequestDto.newLikes(requestUser);
         likesService.register(newLikes);
+
+        // TargetType에 따라 좋아요 수 증가
         if (type == TargetType.QUESTION) {
-            final Question question = questionService.findQuestionById(likesRequestDto.getId());
+            final Question question = questionService
+                    .findQuestionById(likesRequestDto.getId());
+
             question.setLikes(question.getLikes() + 1);
             questionService.saveQuestion(question);
+
         } else if (type == TargetType.ANSWER) {
-            final Answer answer = answerService.findById(likesRequestDto.getId());
+            final Answer answer = answerService
+                    .findById(likesRequestDto.getId());
+
             answer.setLikes(answer.getLikes() + 1);
             answerService.saveAnswer(answer);
+
+        } else if (type == TargetType.ROADMAP) {
+            final Roadmap roadmap = roadmapService
+                    .findByRoadmapId(likesRequestDto.getId());
+
+            roadmap.setLikes(roadmap.getLikes() + 1);
+            roadmapService.register(roadmap);
         }
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.status(201)
+                             .build();
     }
 
+    /**
+     * @param requestUser 로그인된 유저
+     * @param likesRequestDto 좋아요 요청 dto
+     * @return 수정 성공 시 204 No Content 응답
+     */
     @PutMapping
-    public ResponseEntity unlikeTarget(
-            @Nullable @AuthenticationPrincipal Long userId,
+    public ResponseEntity<Void> unlikeTarget(
+            @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
-        final User user = userService.findUserById(userId);
-        final TargetType type = TargetType.valueOf(likesRequestDto.getType());
-        final Likes lastLikes = likesService.getLastLikes(user.getId(), likesRequestDto.getId(), type);
+        final TargetType type = TargetType
+                .valueOf(likesRequestDto.getType());
+
+        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
+        final Likes lastLikes = likesService
+                .getLikes(requestUser.getId(), likesRequestDto.getId(), type);
         lastLikes.setActivated(!lastLikes.getActivated());
         likesService.register(lastLikes);
+
+        // TargetType에 따라 좋아요 수 감소
         if (type == TargetType.QUESTION) {
-            final Question question = questionService.findQuestionById(likesRequestDto.getId());
+            final Question question = questionService
+                    .findQuestionById(likesRequestDto.getId());
+
             question.setLikes(question.getLikes() - 1);
             questionService.saveQuestion(question);
+
         } else if (type == TargetType.ANSWER) {
-            final Answer answer = answerService.findById(likesRequestDto.getId());
+            final Answer answer = answerService
+                    .findById(likesRequestDto.getId());
+
             answer.setLikes(answer.getLikes() - 1);
             answerService.saveAnswer(answer);
+        } else if (type == TargetType.ROADMAP) {
+            final Roadmap roadmap = roadmapService
+                    .findByRoadmapId(likesRequestDto.getId());
+
+            roadmap.setLikes(roadmap.getLikes() - 1);
+            roadmapService.register(roadmap);
         }
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.status(204)
+                             .build();
     }
 }

@@ -1,0 +1,1424 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "title" : "trycatch API",
+    "description" : "trycatch API",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://trycatch"
+  } ],
+  "paths" : {
+    "/<unknown>/like" : {
+      "put" : {
+        "summary" : "PUT /v1/like",
+        "operationId" : "unlikeTarget",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LikesRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/like",
+        "operationId" : "likeTarget",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LikesRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/question" : {
+      "get" : {
+        "summary" : "GET /v1/question",
+        "operationId" : "findAllQuestions",
+        "parameters" : [ {
+          "name" : "category",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/question",
+        "operationId" : "createQuestion",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateQuestionRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/question/ec" : {
+      "get" : {
+        "summary" : "GET /v1/question/ec",
+        "operationId" : "suggestQuestions",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/question/search" : {
+      "get" : {
+        "summary" : "GET /v1/question/search",
+        "operationId" : "search",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/question/{questionId}" : {
+      "get" : {
+        "summary" : "GET /v1/question/{questionId}",
+        "operationId" : "findQuestionById",
+        "parameters" : [ {
+          "name" : "questionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "PUT /v1/question/{questionId}",
+        "operationId" : "putQuestion",
+        "parameters" : [ {
+          "name" : "questionId",
+          "in" : "path",
+          "required" : false
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PutQuestionRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "DELETE /v1/question/{questionId}",
+        "operationId" : "deleteQuestion",
+        "parameters" : [ {
+          "name" : "questionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/question/{questionId}/answer" : {
+      "put" : {
+        "summary" : "PUT /v1/question/{questionId}/answer",
+        "operationId" : "putAnswer",
+        "parameters" : [ {
+          "name" : "questionId",
+          "in" : "path",
+          "required" : false
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PutAnswerRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/question/{questionId}/answer",
+        "operationId" : "createAnswers",
+        "parameters" : [ {
+          "name" : "questionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateAnswerRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/question/{questionId}/{answerId}" : {
+      "post" : {
+        "summary" : "POST /v1/question/{questionId}/{answerId}",
+        "operationId" : "acceptAnswer",
+        "parameters" : [ {
+          "name" : "questionId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "answerId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/bookmark" : {
+      "put" : {
+        "summary" : "PUT /v1/bookmark",
+        "operationId" : "removeBookmark",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BookmarkRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/bookmark",
+        "operationId" : "bookmarkTarget",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BookmarkRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/bookmark/question" : {
+      "get" : {
+        "summary" : "GET /v1/bookmark/question",
+        "operationId" : "findBookmarkedQuestions",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/bookmark/roadmap" : {
+      "get" : {
+        "summary" : "GET /v1/bookmark/roadmap",
+        "operationId" : "findBookmarkedRoadmaps",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/feed/search" : {
+      "get" : {
+        "summary" : "GET /v1/feed/search",
+        "operationId" : "search",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/ck" : {
+      "put" : {
+        "summary" : "PUT /v1/user/ck",
+        "operationId" : "exceptCK",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/detail" : {
+      "patch" : {
+        "summary" : "PATCH /v1/user/detail",
+        "operationId" : "patchUser",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserModifyDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/detail/{targetId}" : {
+      "get" : {
+        "summary" : "GET /v1/user/detail/{targetId}",
+        "operationId" : "findUser",
+        "parameters" : [ {
+          "name" : "targetId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "DELETE /v1/user/detail/{targetId}",
+        "operationId" : "removeUser",
+        "parameters" : [ {
+          "name" : "targetId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WithdrawalRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/follow/{uid}" : {
+      "put" : {
+        "summary" : "PUT /v1/user/follow/{uid}",
+        "operationId" : "unfollowUser",
+        "parameters" : [ {
+          "name" : "uid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/user/follow/{uid}",
+        "operationId" : "followUser",
+        "parameters" : [ {
+          "name" : "uid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/id/{userName}" : {
+      "get" : {
+        "summary" : "GET /v1/user/id/{userName}",
+        "operationId" : "findUserId",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/image/{userId}" : {
+      "get" : {
+        "summary" : "GET /v1/user/image/{userId}",
+        "operationId" : "findUserImage",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/login" : {
+      "get" : {
+        "summary" : "GET /v1/user/login",
+        "operationId" : "login",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/name" : {
+      "get" : {
+        "summary" : "GET /v1/user/name",
+        "operationId" : "findNameById",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/news" : {
+      "put" : {
+        "summary" : "PUT /v1/user/news",
+        "operationId" : "unsubscribeNewsletter",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/user/news",
+        "operationId" : "subscribeNewsletter",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/qna/rank" : {
+      "get" : {
+        "summary" : "GET /v1/user/qna/rank",
+        "operationId" : "findRanks",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/report" : {
+      "post" : {
+        "summary" : "POST /v1/user/report",
+        "operationId" : "report",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/verification/{uid}" : {
+      "get" : {
+        "summary" : "GET /v1/user/verification/{uid}",
+        "operationId" : "isConfirmed",
+        "parameters" : [ {
+          "name" : "uid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "POST /v1/user/verification/{uid}",
+        "operationId" : "verifyCompany",
+        "parameters" : [ {
+          "name" : "uid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{uid}/answer/list" : {
+      "get" : {
+        "summary" : "GET /v1/user/{uid}/answer/list",
+        "operationId" : "findUserAnswers",
+        "parameters" : [ {
+          "name" : "uid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{uid}/list" : {
+      "get" : {
+        "summary" : "GET /v1/user/{uid}/list",
+        "operationId" : "findFollows",
+        "parameters" : [ {
+          "name" : "uid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userId}/badge/list" : {
+      "get" : {
+        "summary" : "GET /v1/user/{userId}/badge/list",
+        "operationId" : "findBadge",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userId}/history" : {
+      "get" : {
+        "summary" : "GET /v1/user/{userId}/history",
+        "operationId" : "findHistory",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userId}/question/list" : {
+      "get" : {
+        "summary" : "GET /v1/user/{userId}/question/list",
+        "operationId" : "findUserQuestions",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userId}/recent/list" : {
+      "get" : {
+        "summary" : "GET /v1/user/{userId}/recent/list",
+        "operationId" : "findRecentFeed",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userId}/subscription/list" : {
+      "get" : {
+        "summary" : "GET /v1/user/{userId}/subscription/list",
+        "operationId" : "findSubscriptionList",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userName}/github/fetch" : {
+      "get" : {
+        "summary" : "GET /v1/user/{userName}/github/fetch",
+        "operationId" : "fetchGitHub",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userName}/tag" : {
+      "post" : {
+        "summary" : "POST /v1/user/{userName}/tag",
+        "operationId" : "addTag",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/user/{userName}/tag/{tagId}" : {
+      "delete" : {
+        "summary" : "DELETE /v1/user/{userName}/tag/{tagId}",
+        "operationId" : "removeTag",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "tagId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token/expired" : {
+      "get" : {
+        "summary" : "GET token/expired",
+        "operationId" : "auth",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token/refresh" : {
+      "get" : {
+        "summary" : "GET token/refresh",
+        "operationId" : "refreshAuth",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/roadmap/" : {
+      "post" : {
+        "summary" : "POST /v1/roadmap/",
+        "operationId" : "registerRoadmap",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RoadmapRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/roadmap/list" : {
+      "get" : {
+        "summary" : "GET /v1/roadmap/list",
+        "operationId" : "findAllRoadmap",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/<unknown>/roadmap/{userName}" : {
+      "get" : {
+        "summary" : "GET /v1/roadmap/{userName}",
+        "operationId" : "findRoadmap",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "PUT /v1/roadmap/{userName}",
+        "operationId" : "modifyRoadmap",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RoadmapRequestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "DELETE /v1/roadmap/{userName}",
+        "operationId" : "removeRoadmap",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "LikesRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
+      "HttpHeaders" : {
+        "type" : "object",
+        "properties" : { }
+      },
+      "ResponseEntity" : {
+        "type" : "object",
+        "properties" : {
+          "headers" : {
+            "$ref" : "#/components/schemas/HttpHeaders"
+          }
+        }
+      },
+      "CreateQuestionRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "content" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "string"
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PutQuestionRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "questionId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "content" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "string"
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "hidden" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PutAnswerRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "answerId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "content" : {
+            "type" : "string"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "CreateAnswerRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "string"
+          }
+        }
+      },
+      "BookmarkRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UserModifyDto" : {
+        "type" : "object",
+        "properties" : {
+          "introduction" : {
+            "type" : "string"
+          },
+          "profileImage" : {
+            "type" : "string"
+          }
+        }
+      },
+      "WithdrawalRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "userId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "content" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RoadmapRequestDto" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string"
+          },
+          "tag" : {
+            "type" : "string"
+          },
+          "nodes" : {
+            "type" : "string"
+          },
+          "edges" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}

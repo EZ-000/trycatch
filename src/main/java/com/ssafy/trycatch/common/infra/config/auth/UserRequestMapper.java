@@ -10,20 +10,20 @@ import com.ssafy.trycatch.user.domain.User;
 
 @Component
 public class UserRequestMapper {
-	public User newEntity(OAuth2User oAuth2User) {
-		Map<String, Object> attributes = oAuth2User.getAttributes();
-		return User.builder()
-			.githubNodeId((String)attributes.get("nodeId"))
-			.username((String)attributes.get("name"))
-			.gitAddress((String)attributes.get("gitHubAddress"))
-			.activated(true)
-			.email((String)attributes.get("email"))
-			.calendarMail(null)
-			.confirmationCode(0)
-			.company(null)
-			.createdAt(LocalDate.now())
-			.points(0)
-			.imageSrc((String)attributes.get("imageSrc"))
-			.build();
-	}
+    public User newEntity(OAuth2User oAuth2User) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+        return User.builder()
+                .githubNodeId((String) attributes.get("nodeId"))
+                .username((String) attributes.get("name"))
+                .gitAddress((String) attributes.get("gitHubAddress"))
+                .activated(true)
+                .email((String) attributes.get("email"))
+                .calendarMail(null)
+                .confirmationCode(0)
+                .company(null)
+                .createdAt(LocalDate.now())
+                .points(0)
+                .imageSrc((String) attributes.get("imageSrc"))
+                .build();
+    }
 }
