@@ -45,8 +45,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'jakarta.json:jakarta.json-api:2.1.1'
+    implementation 'io.github.classgraph:classgraph:4.8.154'
 
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.9'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -71,13 +74,13 @@ asciidoctor {
 }
 
 bootJar {
-    dependsOn asciidoctor
+//    dependsOn asciidoctor
 //    println("${asciidoctor.outputDir}")
-    copy {
-        from asciidoctor.outputDir
-        into "src/main/resources/static/docs"
-    }
-    from ("${asciidoctor.outputDir}") {
-        into 'static/docs'
-    }
+//    copy {
+//        from asciidoctor.outputDir
+//        into "src/main/resources/static/docs"
+//    }
+//    from ("${asciidoctor.outputDir}") {
+//        into 'static/docs'
+//    }
 }
