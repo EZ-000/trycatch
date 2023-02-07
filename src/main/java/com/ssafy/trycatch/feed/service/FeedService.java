@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.feed.service;
 
+import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +14,15 @@ import org.springframework.stereotype.Service;
 public class FeedService {
 
     private final ESFeedRepository esFeedRepository;
+    private final CompanyRepository companyRepository;
 
     @Autowired
     public FeedService(
-            ESFeedRepository esFeedRepository
+            ESFeedRepository esFeedRepository,
+            CompanyRepository companyRepository
     ) {
         this.esFeedRepository = esFeedRepository;
+        this.companyRepository = companyRepository;
     }
 
     public Page<ESFeed> findAll(Pageable pageable) {
@@ -32,5 +36,11 @@ public class FeedService {
 
     public Page<ESFeed> advanceSearch(String queryString, Pageable pageable) {
         return esFeedRepository.searchByQueryString(queryString, pageable);
+    }
+
+    public String findLogoByCompany(Long companyId) {
+        return this.companyRepository.findById(companyId)
+                                     .orElseThrow()
+                                     .getLogo();
     }
 }
