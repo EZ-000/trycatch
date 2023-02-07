@@ -48,7 +48,7 @@ class LikesControllerTest {
         this.mockMvc.perform(post("/" + apiVersion + "/like")
                                      .contentType(MediaType.APPLICATION_JSON)
                                      .content(objectMapper.writeValueAsString(requestDto)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andDo(MockMvcRestDocumentation.document(
                             "like-target",
                             requestFields(
@@ -69,7 +69,7 @@ class LikesControllerTest {
 
         this.mockMvc.perform(put("/" + apiVersion + "/like").contentType(MediaType.APPLICATION_JSON)
                                                              .content(objectMapper.writeValueAsString(requestDto)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isNoContent())
                     .andDo(MockMvcRestDocumentation.document(
                             "unlike-target",
                             requestFields(
