@@ -20,7 +20,7 @@ spring:
 
 logging:
   level:
-    root: TRACE
+    root: info
 
 settings:
   login:
