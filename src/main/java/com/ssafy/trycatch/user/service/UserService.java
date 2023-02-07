@@ -152,9 +152,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	private Set<Follow> getFollowers(User user, String type) {
 		if (type.equals("follower")) {
-			return user.getFollowers();
-		} else if (type.equals("followee")) {
 			return user.getFollowees();
+		} else if (type.equals("followee")) {
+			return user.getFollowers();
 		} else {
 			return Collections.emptySet();
 		}
