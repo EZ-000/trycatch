@@ -18,6 +18,10 @@ spring:
               - read:user
               - public_repo
 
+logging:
+  level:
+    root: info
+
 settings:
   login:
     on_success:
