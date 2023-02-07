@@ -48,12 +48,16 @@ public class LikesController {
             @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
-        // 마지막 좋아요의 활성화 여부 확인 (중복 방지)
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        likesService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
         final TargetType type = TargetType
                 .valueOf(likesRequestDto.getType());
 
         final Likes lastLikes = likesService
-                .getLikes(requestUser.getId(), likesRequestDto.getId(), type);
+                .getLastLikesOrFalse(userId, likesRequestDto.getId(), type);
 
         if (lastLikes.getActivated()) {
             throw new LikesDuplicatedException();
@@ -100,13 +104,23 @@ public class LikesController {
             @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        likesService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
         final TargetType type = TargetType
                 .valueOf(likesRequestDto.getType());
 
-        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
         final Likes lastLikes = likesService
-                .getLikes(requestUser.getId(), likesRequestDto.getId(), type);
-        lastLikes.setActivated(!lastLikes.getActivated());
+                .getLastLikesOrThrow(userId, likesRequestDto.getId(), type);
+
+        if (!lastLikes.getActivated()) {
+            throw new LikesDuplicatedException();
+        }
+
+        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
+        lastLikes.setActivated(false);
         likesService.register(lastLikes);
 
         // TargetType에 따라 좋아요 수 감소
@@ -123,6 +137,7 @@ public class LikesController {
 
             answer.setLikes(answer.getLikes() - 1);
             answerService.saveAnswer(answer);
+
         } else if (type == TargetType.ROADMAP) {
             final Roadmap roadmap = roadmapService
                     .findByRoadmapId(likesRequestDto.getId());

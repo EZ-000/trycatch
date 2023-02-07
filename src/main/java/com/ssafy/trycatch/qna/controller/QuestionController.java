@@ -269,10 +269,12 @@ public class QuestionController {
      */
     @PostMapping("/{questionId}/{answerId}")
     public ResponseEntity<AcceptAnswerResponseDto> acceptAnswer(
-            @PathVariable Long questionId, @PathVariable Long answerId, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
+            @PathVariable Long questionId,
+            @PathVariable Long answerId,
+            @AuthUserElseGuest User requestUser
     ) {
         // 채택
-        final Question question = questionService.acceptAnswer(questionId, answerId);
+        final Question question = questionService.acceptAnswer(questionId, answerId, requestUser);
         final User author = question.getUser();
         final Set<Answer> answers = question.getAnswers();
         final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
