@@ -56,7 +56,7 @@ public class SearchFeedResponseDto {
                     .title(entity.getTitle())
                     .summary(entity.getSummary())
                     .companyName(entity.getName())
-                    .logoSrc(feedService.findLogoByCompany(entity.getPk()))
+                    .logoSrc(feedService.findIconByCompany(entity.getPk()))
                     .createAt(entity.getPublishDate()
                                     .format(DateTimeFormatter.ISO_DATE))
                     .url(entity.getUrl())
