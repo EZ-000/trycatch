@@ -10,6 +10,7 @@ import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class RoadmapController {
 
     @GetMapping("/list")
     public ResponseEntity<List<RoadmapListResponseDto>> findAllRoadmap(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         List<Roadmap> allRoadmaps = roadmapService.findAll();
         final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
@@ -72,7 +73,7 @@ public class RoadmapController {
 
     @GetMapping("/{userName}")
     public ResponseEntity<RoadmapResponseDto> findRoadmap(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @PathVariable String userName
     ) {
         final Long userId = userService.findNameToId(userName);
@@ -95,7 +96,7 @@ public class RoadmapController {
 
     @PostMapping("")
     public ResponseEntity<RoadmapResponseDto> registerRoadmap(
-            @RequestBody RoadmapRequestDto roadmapRequestDto, @AuthUserElseGuest User requestUser
+            @RequestBody RoadmapRequestDto roadmapRequestDto, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         Roadmap roadmap = roadmapRequestDto.toEntity(requestUser);
         Roadmap registeredRoadmap = roadmapService.register(roadmap);
@@ -108,7 +109,7 @@ public class RoadmapController {
     @PutMapping("/{userName}")
     public ResponseEntity<String> modifyRoadmap(
             @PathVariable String userName,
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody RoadmapRequestDto roadmapRequestDto
     ) {
         final Roadmap roadmap = roadmapRequestDto.toEntity(requestUser);
@@ -120,7 +121,7 @@ public class RoadmapController {
     @SuppressWarnings("UnusedDeclaration")
     @DeleteMapping("/{userName}")
     public ResponseEntity<String> removeRoadmap(
-            @PathVariable String userName, @AuthUserElseGuest User requestUser
+            @PathVariable String userName, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         Long userId = requestUser.getId();
         Roadmap roadmap = roadmapService.findRoadmap(userId);

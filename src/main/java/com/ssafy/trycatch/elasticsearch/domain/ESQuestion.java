@@ -1,20 +1,13 @@
 package com.ssafy.trycatch.elasticsearch.domain;
 
-import java.util.List;
-
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.List;
 
 @Getter
 @Setter

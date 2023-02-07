@@ -1,25 +1,27 @@
 package com.ssafy.trycatch.qna.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+
+import java.util.function.Supplier;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 @SpringBootTest
-@ExtendWith(RestDocumentationExtension.class)
+@AutoConfigureMockMvc
+@AutoConfigureRestDocs
 @PropertySource("classpath:application-local.yml")
 class QuestionControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -28,53 +30,85 @@ class QuestionControllerTest {
     @Value("${apiPrefix}")
     private String apiVersion;
 
-    @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext,
-               RestDocumentationContextProvider documentationContextProvider) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                                      .apply(MockMvcRestDocumentation.documentationConfiguration(
-                                              documentationContextProvider))
-                                      .build();
+    private final Supplier<String> createPath = () -> "/" + apiVersion;
+
+    @Test
+    void findAllQuestions() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get())
+        ).andDo(document("question-find-all"));
     }
 
     @Test
-    void findAllQuestions() {
+    void createQuestion() throws Exception {
+
+        this.mockMvc.perform(
+                post(createPath.get())
+        ).andDo(document("question-create"));
     }
 
     @Test
-    void createQuestion() {
+    void putQuestion() throws Exception {
+
+        this.mockMvc.perform(
+                put(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-edit"));
     }
 
     @Test
-    void putQuestion() {
+    void deleteQuestion() throws Exception {
+
+        this.mockMvc.perform(
+                delete(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-delete"));
     }
 
     @Test
-    void deleteQuestion() {
+    void findQuestionById() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get() + "/{id}", 1)
+        ).andDo(document("question-detail"));
     }
 
     @Test
-    void findQuestionById() {
+    void createAnswers() throws Exception {
+
+        this.mockMvc.perform(
+                post(createPath.get() + "/{id}/answer", 1)
+        ).andDo(document("answer-create"));
     }
 
     @Test
-    void createAnswers() {
+    void putAnswer() throws Exception {
+        this.mockMvc.perform(
+                put(createPath.get() + "/{id}/answer", 1)
+        ).andDo(document("answer-edit"));
     }
 
     @Test
-    void putAnswer() {
+    void search() throws Exception {
+
+        this.mockMvc.perform(
+                get(createPath.get() + "/search")
+        ).andDo(document("question-search"));
     }
 
     @Test
-    void search() {
+    void acceptAnswer() throws Exception {
+
+        this.mockMvc.perform(
+                post(createPath.get() + "/{questionId}/{answerId}", 1, 1)
+        ).andDo(document("answer-accept"));
     }
 
     @Test
-    void acceptAnswer() {
-    }
+    void suggestQuestions() throws Exception {
 
-    @Test
-    void suggestQuestions() {
+        this.mockMvc.perform(
+                get(createPath.get() + "/ec")
+        ).andDo(document("question-recommend"));
     }
 
 //    @Test

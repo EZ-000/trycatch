@@ -6,10 +6,13 @@ import com.ssafy.trycatch.common.service.exceptions.BookmarkNotFoundException;
 import com.ssafy.trycatch.common.service.exceptions.GuestNotAllowedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BookmarkService extends CrudService<Bookmark, Long, BookmarkRepository> {

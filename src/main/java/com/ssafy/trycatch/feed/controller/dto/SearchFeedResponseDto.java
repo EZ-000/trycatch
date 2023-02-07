@@ -1,15 +1,13 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.data.domain.Page;
+
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Page;
-
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-
-import lombok.Builder;
-import lombok.Data;
 
 @Data
 public class SearchFeedResponseDto {

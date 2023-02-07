@@ -1,41 +1,25 @@
 package com.ssafy.trycatch.user.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
-import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
-import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
-import com.ssafy.trycatch.user.controller.dto.UserDto;
-import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
-import com.ssafy.trycatch.user.controller.dto.VerifyDto;
-import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
+import com.ssafy.trycatch.user.controller.dto.*;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -54,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/name")
-    public ResponseEntity<String> findNameById(@AuthUserElseGuest User requestUser) {
+    public ResponseEntity<String> findNameById(@ApiParam(hidden = true) @AuthUserElseGuest User requestUser) {
         return ResponseEntity.ok(requestUser.getUsername());
     }
 
@@ -84,7 +68,7 @@ public class UserController {
 
     @GetMapping("/detail/{targetId}")
     public ResponseEntity<UserDto> findUser(
-            @PathVariable Long targetId, @AuthUserElseGuest User requestUser
+            @PathVariable Long targetId, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         try {
             final User saved = userService.getDetailUserInfo(targetId);
@@ -100,7 +84,7 @@ public class UserController {
 
     @PatchMapping("/detail")
     public ResponseEntity<String> patchUser(
-            @RequestBody UserModifyDto modifyDto, @AuthUserElseGuest User requestUser
+            @RequestBody UserModifyDto modifyDto, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         try {
             userService.modifyUser(requestUser.getId(), modifyDto);
@@ -114,7 +98,7 @@ public class UserController {
     @DeleteMapping("/detail/{targetId}")
     public ResponseEntity<String> removeUser(
             @PathVariable Long targetId,
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody WithdrawalRequestDto reason
     ) {
         try {
@@ -144,7 +128,7 @@ public class UserController {
 
     @PostMapping("/follow/{uid}")
     public ResponseEntity<String> followUser(
-            @PathVariable Long uid, @AuthUserElseGuest User requestUser
+            @PathVariable Long uid, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         try {
             // follow userId가 uid 를 팔로우 한다.
@@ -159,7 +143,7 @@ public class UserController {
 
     @PutMapping("/follow/{uid}")
     public ResponseEntity<String> unfollowUser(
-            @PathVariable Long uid, @AuthUserElseGuest User requestUser
+            @PathVariable Long uid, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         try {
             // unfollow userId가 uid 를 팔로우 취소한다.
@@ -185,7 +169,7 @@ public class UserController {
 
     @PostMapping("/verification/{uid}")
     public ResponseEntity<String> verifyCompany(
-            @PathVariable Long uid, @AuthUserElseGuest User requestUser
+            @PathVariable Long uid, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         return ResponseEntity.ok("회사 인증 이메일을 전송합니다.");
     }
@@ -229,7 +213,7 @@ public class UserController {
 
     @GetMapping("/{uid}/answer/list")
     public ResponseEntity<UserAnswerDto> findUserAnswers(
-            @PathVariable Long uid, @AuthUserElseGuest User requestUser
+            @PathVariable Long uid, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // Common Logic
         if (!userService.isExist(uid)) {
