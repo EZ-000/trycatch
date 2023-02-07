@@ -24,11 +24,11 @@ public class ESFeed {
     @Field(type = FieldType.Keyword)
     private String url;
 
-    @Field(type = FieldType.Keyword, name = "default_name")
+    @Field(type = FieldType.Keyword, name = "name")
     private String name;
 
-    @Field(type = FieldType.Text, name = "names")
-    private List<String> names;
+    @Field(type = FieldType.Long, name = "pk")
+    private Long pk;
 
     @Field(type = FieldType.Text, name = "title")
     private String title;
