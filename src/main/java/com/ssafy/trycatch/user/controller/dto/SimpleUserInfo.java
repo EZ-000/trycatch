@@ -36,4 +36,17 @@ public class SimpleUserInfo {
         this.companyName = companyName;
         this.isFollowed = isFollowed;
     }
+
+    public static SimpleUserInfo from(User user, Boolean flag) {
+        if (null == user.getCompany()) {throw new ValidateException("Null Company");}
+
+        return SimpleUserInfo.builder()
+            .userId(user.getId())
+            .userName(user.getUsername())
+            .profileImage(user.getImageSrc())
+            .companyName(user.getCompany()
+                .getName())
+            .isFollowed(flag)
+            .build();
+    }
 }
