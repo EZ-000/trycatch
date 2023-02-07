@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -68,5 +69,26 @@ public class Feed {
     @ToString.Exclude
     @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
+
+    @Lob
+    @Column(name = "summary")
+    private String summary;
+
+    @Lob
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
+    @Lob
+    @Column(name = "tags")
+    private String tags;
+
+    @Lob
+    @Column(name = "keywords")
+    private String keywords;
+
+    @Size(max = 25)
+    @NotNull
+    @Column(name = "es_id", nullable = false, length = 25)
+    private String esId;
 
 }

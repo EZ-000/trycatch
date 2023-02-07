@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.qna.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
 
 @Service
 public class QuestionService {
@@ -139,10 +137,5 @@ public class QuestionService {
         if (question.getUser()
                     .getId() != userId) {throw new RequestUserNotValidException();}
         questionRepository.deleteById(questionId);
-    }
-
-    public List<Question> findQuestionListByAnswerId(List<Long> answerIdList) {
-        // answerIdList.stream().map(e->questionRepository)
-        return Collections.emptyList();
     }
 }
