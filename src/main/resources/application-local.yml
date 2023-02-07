@@ -32,6 +32,10 @@ spring:
               - read:user
               - public_repo
 
+elasticsearch:
+  question:
+    index: question-beta
+
 logging:
   level:
     root: info
