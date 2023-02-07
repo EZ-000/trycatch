@@ -6,6 +6,7 @@ import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
 import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AbstractPageRequest;

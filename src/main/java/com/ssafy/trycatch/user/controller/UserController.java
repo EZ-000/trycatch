@@ -8,6 +8,7 @@ import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
 import com.ssafy.trycatch.user.service.exceptions.AlreadyExistException;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
