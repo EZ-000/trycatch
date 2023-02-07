@@ -1,7 +1,3 @@
-== Likes
-:toc: left
-:toclevels: 4
-
 === 좋아요
 include::{snippets}/like-target/http-request.adoc[]
 

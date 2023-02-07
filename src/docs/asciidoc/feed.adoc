@@ -1,7 +1,3 @@
-== Feed
-:toc: left
-:toclevels: 4
-
 === 피드 검색
 include::{snippets}/feed/http-request.adoc[]
 
