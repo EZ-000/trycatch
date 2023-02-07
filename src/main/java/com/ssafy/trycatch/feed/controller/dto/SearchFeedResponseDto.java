@@ -1,6 +1,7 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.feed.service.FeedService;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
@@ -12,9 +13,9 @@ import java.util.stream.Collectors;
 @Data
 public class SearchFeedResponseDto {
 
-    public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage) {
+    public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage, FeedService feedService) {
         return new SearchFeedResponseDto(esFeedPage.stream()
-                                                   .map(Item::of)
+                                                   .map(entity -> Item.of(entity, feedService))
                                                    .collect(Collectors.toList()));
     }
 
@@ -49,13 +50,13 @@ public class SearchFeedResponseDto {
 
         private String thumbnailImage;
 
-        static Item of(ESFeed entity) {
+        static Item of(ESFeed entity, FeedService feedService) {
             return Item.builder()
                     .feedId(entity.getId())
                     .title(entity.getTitle())
                     .summary(entity.getSummary())
                     .companyName(entity.getName())
-                    .logoSrc(entity.getName())  // FIXME
+                    .logoSrc(feedService.findIconByCompany(entity.getPk()))
                     .createAt(entity.getPublishDate()
                                     .format(DateTimeFormatter.ISO_DATE))
                     .url(entity.getUrl())

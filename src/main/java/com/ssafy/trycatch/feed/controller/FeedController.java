@@ -92,6 +92,6 @@ public class FeedController {
             feedPage = feedService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage));
+        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage, feedService));
     }
 }
