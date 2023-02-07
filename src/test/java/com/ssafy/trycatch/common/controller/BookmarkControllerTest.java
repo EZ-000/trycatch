@@ -53,7 +53,7 @@ class BookmarkControllerTest {
                                 .content(objectMapper.writeValueAsString(requestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(document("bookmark-add",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰").optional()
@@ -73,7 +73,7 @@ class BookmarkControllerTest {
                                 .content(objectMapper.writeValueAsString(requestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andDo(document("bookmark-remove",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("인증 토큰").optional()
