@@ -26,9 +26,10 @@ INSERT INTO conference
 VALUES (1, 'summary 1', 'title 1', 'url 1', 1),
     (2, 'summary 2', 'title 2', 'url 2', 2);
 
-INSERT INTO feed
-VALUES (1, '2023-01-01', 'title 1', '2023-01-01 12:00:00', 'url 1', 0, 1),
-    (2, '2023-01-02', 'title 2', '2023-01-01 12:00:00', 'url 2', 0, 2);
+INSERT INTO feed(id, company_id, title, url, created_at, view_count, updated_at, es_id, summary, thumbnail, tags, keywords)
+VALUES
+    (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', '1', 'summary1', 'thumbnailImg1','','spring'),
+    (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', '2', 'summary2', 'thumbnailImg2','1,2,3','spring');
 
 INSERT INTO follow
 VALUES (1, 1, 2),

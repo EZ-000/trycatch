@@ -11,6 +11,29 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.ssafy.trycatch.common.domain.Company;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -52,5 +75,26 @@ public class Feed {
     @ToString.Exclude
     @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
+
+    @Lob
+    @Column(name = "summary")
+    private String summary;
+
+    @Lob
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
+    @Lob
+    @Column(name = "tags")
+    private String tags;
+
+    @Lob
+    @Column(name = "keywords")
+    private String keywords;
+
+    @Size(max = 25)
+    @NotNull
+    @Column(name = "es_id", nullable = false, length = 25)
+    private String esId;
 
 }
