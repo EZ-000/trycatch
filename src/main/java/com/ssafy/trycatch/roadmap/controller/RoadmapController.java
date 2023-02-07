@@ -42,7 +42,7 @@ public class RoadmapController {
 
     @GetMapping("/list")
     public ResponseEntity<List<RoadmapListResponseDto>> findAllRoadmap(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         List<Roadmap> allRoadmaps = roadmapService.findAll();
         final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
@@ -72,7 +72,7 @@ public class RoadmapController {
 
     @GetMapping("/{userName}")
     public ResponseEntity<RoadmapResponseDto> findRoadmap(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @PathVariable String userName
     ) {
         final Long userId = userService.findNameToId(userName);
@@ -95,7 +95,7 @@ public class RoadmapController {
 
     @PostMapping("")
     public ResponseEntity<RoadmapResponseDto> registerRoadmap(
-            @RequestBody RoadmapRequestDto roadmapRequestDto, @AuthUserElseGuest User requestUser
+            @RequestBody RoadmapRequestDto roadmapRequestDto, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         Roadmap roadmap = roadmapRequestDto.toEntity(requestUser);
         Roadmap registeredRoadmap = roadmapService.register(roadmap);
@@ -108,7 +108,7 @@ public class RoadmapController {
     @PutMapping("/{userName}")
     public ResponseEntity<String> modifyRoadmap(
             @PathVariable String userName,
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody RoadmapRequestDto roadmapRequestDto
     ) {
         final Roadmap roadmap = roadmapRequestDto.toEntity(requestUser);
@@ -120,7 +120,7 @@ public class RoadmapController {
     @SuppressWarnings("UnusedDeclaration")
     @DeleteMapping("/{userName}")
     public ResponseEntity<String> removeRoadmap(
-            @PathVariable String userName, @AuthUserElseGuest User requestUser
+            @PathVariable String userName, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         Long userId = requestUser.getId();
         Roadmap roadmap = roadmapService.findRoadmap(userId);

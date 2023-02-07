@@ -1,12 +1,11 @@
 package com.ssafy.trycatch.qna.domain;
 
-import java.util.List;
-
+import com.ssafy.trycatch.common.domain.QuestionCategory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.trycatch.common.domain.QuestionCategory;
+import java.util.List;
 
 @Repository
 public interface QuestionRepository extends PagingAndSortingRepository<Question, Long> {

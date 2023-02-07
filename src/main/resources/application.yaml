@@ -32,6 +32,7 @@ springdoc:
     path: /swagger-ui
     disable-swagger-default-url: true
     display-query-params-without-oauth2: true
+
   packages-to-scan: com.ssafy.trycatch
 
 ---

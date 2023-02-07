@@ -1,13 +1,12 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Set;
 
 @Data
 public class SimpleUserDto implements Serializable {

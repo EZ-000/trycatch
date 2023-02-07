@@ -1,48 +1,29 @@
 package com.ssafy.trycatch.qna.controller;
 
-import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
-import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.LikesService;
-import com.ssafy.trycatch.qna.controller.dto.AcceptAnswerResponseDto;
-import com.ssafy.trycatch.qna.controller.dto.CreateAnswerRequestDto;
-import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
-import com.ssafy.trycatch.qna.controller.dto.CreateQuestionResponseDto;
-import com.ssafy.trycatch.qna.controller.dto.FindAnswerResponseDto;
-import com.ssafy.trycatch.qna.controller.dto.FindQuestionResponseDto;
-import com.ssafy.trycatch.qna.controller.dto.PutAnswerRequestDto;
-import com.ssafy.trycatch.qna.controller.dto.PutQuestionRequestDto;
-import com.ssafy.trycatch.qna.controller.dto.SearchQuestionResponseDto;
-import com.ssafy.trycatch.qna.controller.dto.SuggestQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.*;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
+import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
 
 @SuppressWarnings("DuplicatedCode")
 @RestController
@@ -68,7 +49,7 @@ public class QuestionController {
 
     @GetMapping
     public ResponseEntity<List<FindQuestionResponseDto>> findAllQuestions(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestParam String category,
             @PageableDefault Pageable pageable
     ) {
@@ -114,7 +95,7 @@ public class QuestionController {
      */
     @PostMapping
     public ResponseEntity<CreateQuestionResponseDto> createQuestion(
-            @AuthUserElseGuest User requestUser, @RequestBody CreateQuestionRequestDto createQuestionRequestDto
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser, @RequestBody CreateQuestionRequestDto createQuestionRequestDto
     ) {
 
         final Question savedEntity = questionService.saveQuestion(requestUser, createQuestionRequestDto);
@@ -151,7 +132,7 @@ public class QuestionController {
      */
     @PutMapping("/{questionId}")
     public ResponseEntity<Void> putQuestion(
-            @AuthUserElseGuest User requestUser, @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser, @RequestBody @Valid PutQuestionRequestDto putQuestionRequestDto
     ) {
         questionService.updateQuestion(requestUser.getId(),
                                        putQuestionRequestDto.getQuestionId(),
@@ -172,7 +153,7 @@ public class QuestionController {
      */
     @DeleteMapping("/{questionId}")
     public ResponseEntity<Void> deleteQuestion(
-            @AuthUserElseGuest User requestUser, @PathVariable Long questionId
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser, @PathVariable Long questionId
     ) {
         questionService.deleteQuestion(questionId, requestUser.getId());
         return ResponseEntity.status(204)
@@ -185,7 +166,7 @@ public class QuestionController {
      */
     @GetMapping("/{questionId}")
     public ResponseEntity<FindQuestionResponseDto> findQuestionById(
-            @PathVariable("questionId") Long questionId, @AuthUserElseGuest User requestUser
+            @PathVariable("questionId") Long questionId, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         final Question question = questionService.findQuestionByIdWithViewCount(questionId);
         final User author = question.getUser();
@@ -240,7 +221,7 @@ public class QuestionController {
     public ResponseEntity<FindAnswerResponseDto> createAnswers(
             @PathVariable Long questionId,
             @RequestBody CreateAnswerRequestDto createAnswerRequestDto,
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // 생성
         final Question question = questionService.findQuestionById(questionId);
@@ -261,7 +242,7 @@ public class QuestionController {
      */
     @PutMapping("/{questionId}/answer")
     public ResponseEntity<Void> putAnswer(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody @Valid PutAnswerRequestDto putAnswerRequestDto
     ) {
         answerService.updateAnswer(requestUser.getId(),
@@ -287,7 +268,7 @@ public class QuestionController {
      */
     @PostMapping("/{questionId}/{answerId}")
     public ResponseEntity<AcceptAnswerResponseDto> acceptAnswer(
-            @PathVariable Long questionId, @PathVariable Long answerId, @AuthUserElseGuest User requestUser
+            @PathVariable Long questionId, @PathVariable Long answerId, @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // 채택
         final Question question = questionService.acceptAnswer(questionId, answerId);

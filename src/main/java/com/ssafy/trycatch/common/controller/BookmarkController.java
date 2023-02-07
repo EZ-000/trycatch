@@ -13,6 +13,7 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class BookmarkController {
      */
     @PostMapping
     public ResponseEntity<Void> bookmarkTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         // 마지막 북마크의 활성화 여부 확인 (중복 방지)
@@ -69,7 +70,7 @@ public class BookmarkController {
      */
     @PutMapping
     public ResponseEntity<Void> removeBookmark(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
         final TargetType type = TargetType
@@ -91,7 +92,7 @@ public class BookmarkController {
      */
     @GetMapping("/question")
     public ResponseEntity<List<FindBookmarkedQuestionDto>> findBookmarkedQuestions(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
@@ -119,7 +120,7 @@ public class BookmarkController {
      */
     @GetMapping("/roadmap")
     public ResponseEntity<List<FindBookmarkedRoadmapDto>> findBookmarkedRoadmaps(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Roadmap> 반환
         List<Bookmark> activatedBookmarks = bookmarkService

@@ -1,11 +1,9 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
-
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.Builder;
 import lombok.Data;
+import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
 
 @Data
 public class SimpleUserInfo {
