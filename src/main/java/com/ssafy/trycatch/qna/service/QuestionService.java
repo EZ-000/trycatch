@@ -2,6 +2,7 @@ package com.ssafy.trycatch.qna.service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
+
 
 
 @Service
@@ -141,5 +143,18 @@ public class QuestionService {
 
     public Page<ESQuestion> search(String query, Pageable pageable) {
         return esQuestionRepository.searchByTitleOrContent(query, pageable);
+    }
+
+    public List<Question> findPopularQuestions(Optional<String> category, Pageable pageable) {
+        final List<Question> popularQuestions;
+        final QuestionCategory questionCategory = QuestionCategory.valueOf(category.orElse("DEFAULT"));
+        if (QuestionCategory.DEFAULT == questionCategory) {
+            popularQuestions = questionRepository.findAllByOrderByLikesDesc(pageable);
+        } else {
+            popularQuestions = questionRepository
+                    .findByCategoryNameOrderByLikesDesc(questionCategory, pageable);
+        }
+
+        return popularQuestions;
     }
 }
