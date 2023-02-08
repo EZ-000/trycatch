@@ -44,6 +44,9 @@ public class SseController {
 		try {
 			notificationService.send(sseEmitter, "connect", "dummy");
 			// db에 쌓인것이 있다면 쭉 send
+			//notificationService.prevSend
+
+
 			// 없다면 nothing
 		} catch (IOException e) {
 			e.printStackTrace();

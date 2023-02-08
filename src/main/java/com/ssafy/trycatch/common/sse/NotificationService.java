@@ -3,6 +3,8 @@ package com.ssafy.trycatch.common.sse;
 import static com.ssafy.trycatch.common.sse.SseController.*;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.ssafy.trycatch.common.domain.Notification;
 import com.ssafy.trycatch.common.domain.NotificationRepository;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
+import com.ssafy.trycatch.user.domain.FollowRepository;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
 
@@ -51,7 +54,8 @@ public class NotificationService {
 				.userId(targetId)
 				.message(sb.toString())
 				.build();
-			//notificationRepository.save(notification);
+
+			notificationRepository.save(notification);
 		}
 	}
 
@@ -76,5 +80,9 @@ public class NotificationService {
 		sseEmitter.send(SseEmitter.event()
 			.name(eventName)
 			.data(message));
+	}
+
+	public List<Notification> findList(Long userId) {
+		return notificationRepository.findByUserIdOrderByIdAsc(userId);
 	}
 }
