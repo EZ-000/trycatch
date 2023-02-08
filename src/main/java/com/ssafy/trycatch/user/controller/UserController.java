@@ -88,10 +88,6 @@ public class UserController {
     public ResponseEntity<UserDto> findUser(
         @PathVariable Long targetId, @AuthUserElseGuest User requestUser
     ) {
-        if (UN_LOGINED_USER == requestUser.getId()) {
-            return ResponseEntity.badRequest().build();
-        }
-
         try {
             final User saved = userService.getDetailUserInfo(targetId);
             final Boolean flag = userService.getIsFollowed(targetId, requestUser.getId());
@@ -271,7 +267,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{userId}/recent/list")
+    @GetMapping("/{uid}/recent/list")
     public ResponseEntity<List<UserRecentFeedDto>> findRecentFeed(
         @PathVariable Long uid, @AuthUserElseGuest User requestUser) {
         if (UN_LOGINED_USER == requestUser.getId()) {
