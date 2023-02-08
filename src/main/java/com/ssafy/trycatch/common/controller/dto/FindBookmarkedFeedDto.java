@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 public class FindBookmarkedFeedDto implements Serializable {
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final Long id;
     private final String feedId;
     private final String title;
     private final String content;
@@ -23,7 +24,7 @@ public class FindBookmarkedFeedDto implements Serializable {
 
     @Builder
     public FindBookmarkedFeedDto(
-            String feedId,
+            Long id, String feedId,
             String title,
             String content,
             String createdAt,
@@ -32,6 +33,7 @@ public class FindBookmarkedFeedDto implements Serializable {
             String url,
             List<String> keywords
     ) {
+        this.id = id;
         this.feedId = feedId;
         this.title = title;
         this.content = content;
@@ -47,6 +49,7 @@ public class FindBookmarkedFeedDto implements Serializable {
             ESFeed esFeed
     ) {
         return FindBookmarkedFeedDto.builder()
+                .id(feed.getId())
                 .feedId(esFeed.getId())
                 .title(feed.getTitle())
                 .content(esFeed.getContent())
