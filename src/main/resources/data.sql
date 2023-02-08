@@ -59,9 +59,9 @@ INSERT INTO ranking
 VALUES (1, 'DEV', 1),
     (2, 'DEV', 2);
 
-INSERT INTO "read"
-VALUES (1, false, 1, 1),
-    (2, true, 2, 2);
+INSERT INTO "read"(id,feed_id,user_id,read_at)
+VALUES (1, 1, 1, current_date),
+    (2, 2, 2, current_date);
 
 INSERT INTO report
 VALUES (1, 'content 1', '2023-01-01 12:00:00', 1, 1, 'feed'),
