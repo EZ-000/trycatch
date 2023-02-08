@@ -1,5 +1,21 @@
 package com.ssafy.trycatch.roadmap.controller;
 
+import static com.ssafy.trycatch.common.domain.TargetType.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.LikesService;
@@ -10,15 +26,8 @@ import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.UserService;
+
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.ssafy.trycatch.common.domain.TargetType.ROADMAP;
 
 @RestController
 @RequestMapping("/${apiPrefix}/roadmap")
@@ -128,5 +137,35 @@ public class RoadmapController {
         roadmapService.removeById(roadmap.getId());
         return ResponseEntity.status(204)
                              .build();
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<RoadmapListResponseDto>> findPopularRoadmap(
+        @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
+    ) {
+        List<Roadmap> allRoadmaps = roadmapService.findTopList();
+        final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
+        for (Roadmap roadmap : allRoadmaps) {
+            final long roadmapId = roadmap.getId();
+
+            final boolean isLiked = likesService.isLikedByUserAndTarget(
+                requestUser.getId(),
+                roadmapId,
+                ROADMAP);
+
+            final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
+                requestUser.getId(),
+                roadmapId,
+                ROADMAP);
+
+            final RoadmapListResponseDto responseDto = RoadmapListResponseDto.from(
+                roadmap,
+                isBookmarked,
+                isLiked);
+
+            allDtoList.add(responseDto);
+        }
+
+        return ResponseEntity.ok(allDtoList);
     }
 }
