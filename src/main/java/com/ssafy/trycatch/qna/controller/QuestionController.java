@@ -85,8 +85,10 @@ public class QuestionController {
             final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
                     question,
                     userInQNADto,
+                    requestUser,
                     isLiked,
-                    isBookmarked);
+                    isBookmarked,
+                    likesService);
 
             responseDtoList.add(responseDto);
         }
@@ -214,9 +216,10 @@ public class QuestionController {
         final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
                 question,
                 simpleUserDto,
+                requestUser,
                 isLiked,
                 isBookmarked,
-                answerResponseDtoList);
+                likesService);
 
         return ResponseEntity.ok(responseDto);
     }
@@ -265,7 +268,6 @@ public class QuestionController {
                              .build();
     }
 
-    // MOCK API: 질문 검색
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
             @RequestParam String query,
