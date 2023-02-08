@@ -23,10 +23,10 @@ public class SearchFeedRequestDto {
     private FeedSortOption sort = FeedSortOption.date;
 
     @Builder.Default
-    private boolean subscribe = false;
+    private Boolean subscribe = false;
 
     @Builder.Default
-    private boolean advanced = false;
+    private Boolean advanced = false;
 
     @Builder.Default
     @DateTimeFormat(pattern = "yyyy-MM-dd")

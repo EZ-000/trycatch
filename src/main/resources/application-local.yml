@@ -33,12 +33,12 @@ spring:
               - public_repo
 
 elasticsearch:
-  question:
-    index: question-beta
+  index:
+    prefix: local
 
 logging:
   level:
-    root: info
+    root: trace
 
 settings:
   cross-origin: "*"

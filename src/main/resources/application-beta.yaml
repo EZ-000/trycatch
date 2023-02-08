@@ -23,8 +23,8 @@ logging:
     root: info
 
 elasticsearch:
-  question:
-    index: question-beta
+  index:
+    prefix: beta
 
 settings:
   login:

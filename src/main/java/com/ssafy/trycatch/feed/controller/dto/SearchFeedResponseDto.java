@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.data.domain.Page;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ public class SearchFeedResponseDto {
 
     public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage, FeedService feedService) {
         return new SearchFeedResponseDto(esFeedPage.stream()
+                .peek(feed -> System.out.println(feed.getVector().toString()))
                                                    .map(entity -> Item.of(entity, feedService))
                                                    .collect(Collectors.toList()));
     }
