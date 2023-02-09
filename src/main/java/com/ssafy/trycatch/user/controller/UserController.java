@@ -28,7 +28,7 @@ import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.UserQuestionDto;
-import com.ssafy.trycatch.user.controller.dto.UserRecentFeedDto;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
 import com.ssafy.trycatch.user.controller.dto.VerifyDto;
 import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
@@ -269,13 +269,13 @@ public class UserController {
     }
 
     @GetMapping("/{uid}/recent/list")
-    public ResponseEntity<List<UserRecentFeedDto>> findRecentFeed(
+    public ResponseEntity<List<UserFeedDto>> findRecentFeed(
         @PathVariable Long uid, @AuthUserElseGuest User requestUser) {
         if (UN_LOGINED_USER == requestUser.getId()) {
             return ResponseEntity.badRequest().build();
         }
 
-        List<UserRecentFeedDto> result = userService.findRecentFeedList(requestUser.getId());
+        List<UserFeedDto> result = userService.findRecentFeedList(requestUser.getId());
         return ResponseEntity.ok(result);
     }
 

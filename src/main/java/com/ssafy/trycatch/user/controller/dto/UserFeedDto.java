@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class UserRecentFeedDto {
+public class UserFeedDto {
 	public final Long feedId;
 	public final String title;
 	public final String summary;
@@ -24,7 +24,7 @@ public class UserRecentFeedDto {
 	public final List<String> keywords;
 
 	@Builder
-	public UserRecentFeedDto(Long feedId, String title, String summary, String companyName, Long createdAt,
+	public UserFeedDto(Long feedId, String title, String summary, String companyName, Long createdAt,
 		List<String> tags, Boolean isBookmarked, String url, String thumbnailImage, List<String> keywords) {
 		this.feedId = feedId;
 		this.title = title;
@@ -38,8 +38,8 @@ public class UserRecentFeedDto {
 		this.keywords = keywords;
 	}
 
-	public static UserRecentFeedDto from(Feed feed, ESFeed esFeed) {
-		return UserRecentFeedDto.builder()
+	public static UserFeedDto from(Feed feed, ESFeed esFeed, boolean isBookmarked) {
+		return UserFeedDto.builder()
 			.feedId(feed.getId())
 			.title(feed.getTitle())
 			.summary(esFeed.getSummary())
@@ -51,6 +51,7 @@ public class UserRecentFeedDto {
 				.toEpochMilli())
 			.tags(esFeed.getTags())
 			.url(esFeed.getUrl())
+			.isBookmarked(isBookmarked)
 			.thumbnailImage(esFeed.getThumbnailUrl())
 			.keywords(esFeed.getKeywords())
 			.build();

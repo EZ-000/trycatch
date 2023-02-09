@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.UserQuestionDto;
-import com.ssafy.trycatch.user.controller.dto.UserRecentFeedDto;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.FollowRepository;
@@ -218,12 +217,13 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			.orElseThrow(UserNotFoundException::new)
 			.getAnswers();
 
+
 		List<UserAnswerDto> result = new ArrayList<>();
 		for (Answer iterAnswer : answerList) {
 			Question question = iterAnswer.getQuestion();
 			boolean flag = likesRepository.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(
 				id, iterAnswer.getId(),
-				TargetType.ANSWER).isPresent();
+				TargetType.ANSWER).isPresent() ? true : false;
 
 			UserAnswerDto userAnswerDto = UserAnswerDto.builder()
 				.answerId(iterAnswer.getId())
@@ -293,18 +293,23 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			.collect(Collectors.toList());
 	}
 
-	public List<UserRecentFeedDto> findRecentFeedList(Long id) {
+	public List<UserFeedDto> findRecentFeedList(Long id) {
 		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
 
-		List<UserRecentFeedDto> result = new ArrayList<>();
+		List<UserFeedDto> result = new ArrayList<>();
 		for(Read read : recentReadList){
 			final String esId = read.getFeed().getEsId();
 			final ESFeed esFeed = eSFeedRepository.findById(esId).orElse(new ESFeed());
-			result.add(UserRecentFeedDto.from(read.getFeed(), esFeed));
+
+			boolean isBookmarked = bookmarkRepository
+				.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(read.getUser().getId(), read.getFeed().getId(),
+					TargetType.FEED).isPresent();
+
+			result.add(UserFeedDto.from(read.getFeed(), esFeed, isBookmarked));
 		}
 
 		return result.stream()
-			.sorted(Comparator.comparing(UserRecentFeedDto::getFeedId))
+			.sorted(Comparator.comparing(UserFeedDto::getFeedId))
 			.collect(Collectors.toList());
 	}
 
