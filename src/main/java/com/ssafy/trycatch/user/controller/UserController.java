@@ -143,6 +143,7 @@ public class UserController {
 
             return ResponseEntity.ok(resultList);
         } catch (UserNotFoundException | TypeNotPresentException u) {
+            u.printStackTrace();
             return ResponseEntity.badRequest()
                 .build();
         }

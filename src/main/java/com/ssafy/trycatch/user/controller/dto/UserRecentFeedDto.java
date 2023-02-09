@@ -1,12 +1,11 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import static com.ssafy.trycatch.common.infra.config.ConstValues.*;
 
+import java.util.List;
+
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.domain.Feed;
-import com.ssafy.trycatch.feed.domain.Read;
 
 import lombok.Builder;
 import lombok.Data;
@@ -39,30 +38,21 @@ public class UserRecentFeedDto {
 		this.keywords = keywords;
 	}
 
-	public static UserRecentFeedDto from(Read e) {
-		Feed feed = e.getFeed();
-		String tag = feed.getTags();
-		List<String> tags = Collections.emptyList();
-		if(false == tag.isEmpty()){
-			tags = Arrays.stream(tag.split(",")).collect(Collectors.toList());
-		}
-
-		String keyword = feed.getTags();
-		List<String> keywords = Collections.emptyList();
-		if(false == tag.isEmpty()){
-			keywords = Arrays.stream(keyword.split(",")).collect(Collectors.toList());
-		}
-
+	public static UserRecentFeedDto from(Feed feed, ESFeed esFeed) {
 		return UserRecentFeedDto.builder()
 			.feedId(feed.getId())
 			.title(feed.getTitle())
-			.summary(feed.getSummary())
+			.summary(esFeed.getSummary())
 			.companyName(feed.getCompany().getName())
-			.createdAt(0L)
-			.tags(tags)
-			.url(feed.getUrl())
-			.thumbnailImage(feed.getThumbnail())
-			.keywords(keywords)
+			.createdAt(esFeed.getPublishDate()
+				.atStartOfDay()
+				.atZone(TZ_SEOUL)
+				.toInstant()
+				.toEpochMilli())
+			.tags(esFeed.getTags())
+			.url(esFeed.getUrl())
+			.thumbnailImage(esFeed.getThumbnailUrl())
+			.keywords(esFeed.getKeywords())
 			.build();
 	}
 }
