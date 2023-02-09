@@ -58,8 +58,8 @@ public class Feed {
     @Column(name = "title", length = 80)
     private String title;
 
-    @Size(max = 100)
-    @Column(name = "url", length = 100)
+    @Lob
+    @Column(name = "url")
     private String url;
 
     @Column(name = "created_at")
