@@ -43,10 +43,10 @@ class FeedControllerTest {
                         .queryParam("size", "2")
                         .queryParam("sort", "date")
                         .queryParam("subscribe", "false")
-                        .queryParam("advanced", "false")
-                        .queryParam("publishDateStart", LocalDate.of(2020, 1, 1).toString())
+                        .queryParam("advanced", "true")
+                        .queryParam("publishDateStart", LocalDate.of(2000, 1, 1).toString())
                         .queryParam("publishDateEnd", LocalDate.now().toString())
-                        .queryParam("query", "react")
+                        .queryParam("query", "( _id : 4GLbL4YB5tqxoIWWuVAu ) OR ( _id : 6GLbL4YB5tqxoIWWuVD2 )")
             )
                     .andExpect(status().isOk())
                     .andDo(document(
@@ -64,6 +64,7 @@ class FeedControllerTest {
                                     parameterWithName("publishDateEnd").description("게시일 끝")
                             ),
                             responseFields(
+                                    fieldWithPath("feedList.[].id").description("피드 RDB 아이디"),
                                     fieldWithPath("feedList.[].feedId").description("피드 아이디"),
                                     fieldWithPath("feedList.[].title").description("피드 제목"),
                                     fieldWithPath("feedList.[].summary").description("피드 요약"),
@@ -72,7 +73,7 @@ class FeedControllerTest {
                                     fieldWithPath("feedList.[].createAt").description("피드 생성일"),
                                     fieldWithPath("feedList.[].url").description("피드 링크"),
                                     fieldWithPath("feedList.[].tags").description("피드 태그").optional(),
-                                    fieldWithPath("feedList.[].keywords").description("피드 키워드"),
+                                    fieldWithPath("feedList.[].keywords").description("피드 키워드").optional(),
                                     fieldWithPath("feedList.[].isBookmarked").description("북마크 여부"),
                                     fieldWithPath("feedList.[].thumbnailImage").description("썸네일 이미지")
                             )
