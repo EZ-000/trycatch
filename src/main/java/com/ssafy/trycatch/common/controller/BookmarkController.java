@@ -35,7 +35,6 @@ public class BookmarkController {
     private final QuestionService questionService;
     private final RoadmapService roadmapService;
     private final FeedService feedService;
-
     private final ESFeedService esFeedService;
 
     @Autowired
@@ -204,9 +203,10 @@ public class BookmarkController {
         for (Feed bookmarkedFeed : bookmarkedFeeds) {
             final String stringId = bookmarkedFeed.getEsId();
             final ESFeed esFeed = esFeedService.findById(stringId);
+            final String logoSrc = feedService.findIconByCompany(esFeed.getPk());
 
             final FindBookmarkedFeedDto responseDto = FindBookmarkedFeedDto
-                    .from(bookmarkedFeed, esFeed);
+                    .from(bookmarkedFeed, esFeed, logoSrc);
 
             responseDtoList.add(responseDto);
         }
