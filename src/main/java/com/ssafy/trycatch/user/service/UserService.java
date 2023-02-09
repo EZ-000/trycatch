@@ -146,14 +146,19 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			.orElseThrow(UserNotFoundException::new);
 
 		Set<Follow> followSet = getFollowers(user, type);
-		if (followSet.isEmpty()) {
-			return Collections.emptyList();
-		} else {
-			return Objects.requireNonNull(followSet)
-				.stream()
-				.map(e -> repository.findById(e.getId())
-					.orElseThrow(UserNotFoundException::new))
+
+		if (type.equals("follower")) {
+			return followSet.stream()
+				.map(Follow::getFollower)
+				.sorted(Comparator.comparing(User::getId))
 				.collect(Collectors.toList());
+		} else if (type.equals("followee")) {
+			return followSet.stream()
+				.map(Follow::getFollowee)
+				.sorted(Comparator.comparing(User::getId))
+				.collect(Collectors.toList());
+		} else {
+			return Collections.emptyList();
 		}
 	}
 
@@ -216,7 +221,6 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		Set<Answer> answerList = repository.findById(uid)
 			.orElseThrow(UserNotFoundException::new)
 			.getAnswers();
-
 
 		List<UserAnswerDto> result = new ArrayList<>();
 		for (Answer iterAnswer : answerList) {
@@ -297,7 +301,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
 
 		List<UserFeedDto> result = new ArrayList<>();
-		for(Read read : recentReadList){
+		for (Read read : recentReadList) {
 			final String esId = read.getFeed().getEsId();
 			final ESFeed esFeed = eSFeedRepository.findById(esId).orElse(new ESFeed());
 
@@ -346,6 +350,6 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	 * @return
 	 */
 	public Boolean getIsFollowed(Long targetId, Long id) {
-		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent() ? true : false;
+		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent();
 	}
 }
