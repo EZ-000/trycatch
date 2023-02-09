@@ -45,8 +45,8 @@ public class CompanyService extends CrudService<Company, Long, CompanyRepository
 	}
 
 	public Long findCompanyIdByCompanyName(String companyName) {
-		return repository.findCompanyIdByName(companyName)
-			.orElseThrow(CompanyNotFoundException::new);
+		return repository.findByNameEn(companyName)
+			.orElseThrow(CompanyNotFoundException::new).getId();
 	}
 
 	public List<UserFeedDto> findFeedList(Company company, User requestUser) {
