@@ -6,7 +6,6 @@ import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 import com.ssafy.trycatch.feed.domain.Feed;
 import com.ssafy.trycatch.feed.domain.FeedRepository;
-import com.ssafy.trycatch.feed.service.exception.ESFeedNotFoundException;
 import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,13 +57,8 @@ public class FeedService {
 			.orElseThrow(FeedNotFoundException::new);
 	}
 
-	public Feed findByESId(String feedId) {
-		return feedRepository.findByEsId(feedId)
-			.orElseThrow(FeedNotFoundException::new);
-	}
-
-	public ESFeed findESFeedByESId(String feedId) {
-		return esFeedRepository.findById(feedId)
-			.orElseThrow(ESFeedNotFoundException::new);
-	}
+    public Feed findByESId(String esId) {
+        return feedRepository.findByEsId(esId)
+                .orElseThrow(FeedNotFoundException::new);
+    }
 }
