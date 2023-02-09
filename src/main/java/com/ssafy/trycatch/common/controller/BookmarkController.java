@@ -203,7 +203,7 @@ public class BookmarkController {
 
         for (Feed bookmarkedFeed : bookmarkedFeeds) {
             final String stringId = bookmarkedFeed.getEsId();
-            final ESFeed esFeed = feedService.findByESId(stringId);
+            final ESFeed esFeed = feedService.findESFeedByESId(stringId);
 
             final FindBookmarkedFeedDto responseDto = FindBookmarkedFeedDto
                     .from(bookmarkedFeed, esFeed);
