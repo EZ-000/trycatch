@@ -58,8 +58,8 @@ public class Feed {
     @Column(name = "title", length = 80)
     private String title;
 
-    @Size(max = 100)
-    @Column(name = "url", length = 100)
+    @Lob
+    @Column(name = "url")
     private String url;
 
     @Column(name = "created_at")
@@ -75,22 +75,6 @@ public class Feed {
     @ToString.Exclude
     @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
-
-    @Lob
-    @Column(name = "summary")
-    private String summary;
-
-    @Lob
-    @Column(name = "thumbnail")
-    private String thumbnail;
-
-    @Lob
-    @Column(name = "tags")
-    private String tags;
-
-    @Lob
-    @Column(name = "keywords")
-    private String keywords;
 
     @Size(max = 25)
     @NotNull

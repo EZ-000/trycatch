@@ -2,6 +2,7 @@ package com.ssafy.trycatch.common.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
+import com.ssafy.trycatch.common.controller.dto.FindBookmarkedFeedDto;
 import com.ssafy.trycatch.common.controller.dto.FindBookmarkedQuestionDto;
 import com.ssafy.trycatch.common.controller.dto.FindBookmarkedRoadmapDto;
 import com.ssafy.trycatch.common.domain.Bookmark;
@@ -9,6 +10,10 @@ import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.exceptions.BookmarkDuplicatedException;
 import com.ssafy.trycatch.common.service.exceptions.LikesDuplicatedException;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.feed.domain.Feed;
+import com.ssafy.trycatch.feed.service.ESFeedService;
+import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
@@ -19,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,16 +34,18 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
     private final QuestionService questionService;
     private final RoadmapService roadmapService;
+    private final FeedService feedService;
+    private final ESFeedService esFeedService;
 
     @Autowired
-    public BookmarkController(
-            BookmarkService bookmarkService,
-            QuestionService questionService,
-            RoadmapService roadmapService) {
+    public BookmarkController(BookmarkService bookmarkService, QuestionService questionService, RoadmapService roadmapService, FeedService feedService, ESFeedService esFeedService) {
         this.bookmarkService = bookmarkService;
         this.questionService = questionService;
         this.roadmapService = roadmapService;
+        this.feedService = feedService;
+        this.esFeedService = esFeedService;
     }
+
 
     /**
      * @param requestUser 로그인된 유저
@@ -107,7 +115,7 @@ public class BookmarkController {
 
     /**
      * @param requestUser 요청자
-     * @return 유저가 북마크한 질문 리스트를 FindBookmarkedQuestionResponseDto로 반환
+     * @return 유저가 북마크한 질문 리스트를 FindBookmarkedQuestionDto로 반환
      */
     @GetMapping("/question")
     public ResponseEntity<List<FindBookmarkedQuestionDto>> findBookmarkedQuestions(
@@ -139,7 +147,7 @@ public class BookmarkController {
 
     /**
      * @param requestUser 요청자
-     * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapResponseDto 로 반환
+     * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapDto 로 반환
      */
     @GetMapping("/roadmap")
     public ResponseEntity<List<FindBookmarkedRoadmapDto>> findBookmarkedRoadmaps(
@@ -149,7 +157,7 @@ public class BookmarkController {
         final Long userId = requestUser.getId();
         bookmarkService.checkUserOrThrow(userId);
 
-        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Roadmap> 반환
+        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
                 .getActivatedBookmarks(userId, TargetType.ROADMAP);
 
@@ -167,5 +175,42 @@ public class BookmarkController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(bookmarkedRoadmapsResponse);
+    }
+
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<FindBookmarkedFeedDto>> findBookmarkedFeeds(
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
+    ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 피드 리스트 List<Bookmark> 반환
+        List<Bookmark> activatedBookmarks = bookmarkService
+                .getActivatedBookmarks(userId, TargetType.FEED);
+
+        // List<Bookmark>을 List<Feed>으로 변환
+        List<Feed> bookmarkedFeeds = activatedBookmarks
+                .stream()
+                .map(Bookmark::getTargetId)
+                .map(feedService::findById)
+                .collect(Collectors.toList());
+
+        // List<Feed>를 List<FindBookmarkedFeedDto>로 변환
+        final List<FindBookmarkedFeedDto> responseDtoList = new ArrayList<>();
+
+        for (Feed bookmarkedFeed : bookmarkedFeeds) {
+            final String stringId = bookmarkedFeed.getEsId();
+            final ESFeed esFeed = esFeedService.findById(stringId);
+            final String logoSrc = feedService.findIconByCompany(esFeed.getPk());
+
+            final FindBookmarkedFeedDto responseDto = FindBookmarkedFeedDto
+                    .from(bookmarkedFeed, esFeed, logoSrc);
+
+            responseDtoList.add(responseDto);
+        }
+
+        return ResponseEntity.ok(responseDtoList);
     }
 }
