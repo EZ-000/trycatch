@@ -1,4 +1,4 @@
-package com.ssafy.trycatch.common.sse;
+package com.ssafy.trycatch.common.notification;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,14 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping("/${apiPrefix}")
-public class SseController {
+public class NotificationController {
 
 	public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 	private final TokenService tokenService;
 	private final NotificationService notificationService;
 
 	@Autowired
-	public SseController(
+	public NotificationController(
 		TokenService tokenService,
 		NotificationService notificationService) {
 		this.tokenService = tokenService;

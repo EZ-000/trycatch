@@ -22,14 +22,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
-import com.ssafy.trycatch.common.sse.NotificationService;
-import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.UserQuestionDto;
-import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
 import com.ssafy.trycatch.user.controller.dto.VerifyDto;
 import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
@@ -46,14 +44,12 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
     private static final Long UN_LOGINED_USER = -1L;
     private final UserService userService;
-    private final QuestionService questionService;
 
     @Autowired
     public UserController(
-        UserService userService, QuestionService questionService
+        UserService userService
     ) {
         this.userService = userService;
-        this.questionService = questionService;
     }
 
     @GetMapping("/name")
@@ -272,7 +268,7 @@ public class UserController {
     @GetMapping("/{uid}/recent/list")
     public ResponseEntity<List<UserFeedDto>> findRecentFeed(
         @PathVariable Long uid, @AuthUserElseGuest User requestUser) {
-        if (UN_LOGINED_USER == requestUser.getId()) {
+        if (UN_LOGINED_USER.equals(requestUser.getId())) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -283,7 +279,7 @@ public class UserController {
     @GetMapping("/{userId}/subscription/list")
     public ResponseEntity<List<UserSubscriptionDto>> findSubscriptionList(
         @PathVariable Long userId, @AuthUserElseGuest User requestUser) {
-        if (UN_LOGINED_USER == requestUser.getId()) {
+        if (UN_LOGINED_USER.equals(requestUser.getId())) {
             return ResponseEntity.badRequest().build();
         }
         try {

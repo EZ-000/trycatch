@@ -39,4 +39,8 @@ public class RoadmapService extends CrudService<Roadmap, Long, RoadmapRepository
     public List<Roadmap> findTopList() {
         return repository.findTop3ByOrderByLikesDescIdAsc();
     }
+
+    public Boolean isExist(Long userId) {
+        return repository.existsByUser_Id(userId);
+    }
 }
