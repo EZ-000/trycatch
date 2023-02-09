@@ -6,12 +6,15 @@ import com.ssafy.trycatch.feed.service.FeedService;
 import lombok.Builder;
 import lombok.Data;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Data
 public class SearchFeedResponseDto {
 
@@ -55,6 +58,7 @@ public class SearchFeedResponseDto {
 		private String thumbnailImage;
 
 		static Item of(ESFeed entity, FeedService feedService) {
+			log.info(entity.getId());
 			return Item.builder()
  				.id(feedService.findByESId(entity.getId()).getId())
 				.feedId(entity.getId())
