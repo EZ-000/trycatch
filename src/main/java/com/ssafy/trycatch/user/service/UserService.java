@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,8 @@ import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
 import com.ssafy.trycatch.qna.domain.Answer;
@@ -46,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
+	private final ESFeedRepository eSFeedRepository;
 	private final SubscriptionRepository subscriptionRepository;
 	private final ReadRepository readRepository;
 	private final BookmarkRepository bookmarkRepository;
@@ -83,7 +87,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		LikesRepository likesRepository,
 		BookmarkRepository bookmarkRepository,
 		ReadRepository readRepository,
-		SubscriptionRepository subscriptionRepository) {
+		SubscriptionRepository subscriptionRepository,
+		ESFeedRepository eSFeedRepository) {
 		super(repository);
 		this.withdrawalRepository = withdrawalRepository;
 		this.followRepository = followRepository;
@@ -91,6 +96,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		this.bookmarkRepository = bookmarkRepository;
 		this.readRepository = readRepository;
 		this.subscriptionRepository = subscriptionRepository;
+		this.eSFeedRepository = eSFeedRepository;
 	}
 
 	public User findUserById(@NotNull Long userId) {
@@ -140,11 +146,16 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		User user = repository.findById(uid)
 			.orElseThrow(UserNotFoundException::new);
 
-		return Objects.requireNonNull(getFollowers(user, type))
-			.stream()
-			.map(e -> repository.findById(e.getId())
-				.orElseThrow(UserNotFoundException::new))
-			.collect(Collectors.toList());
+		Set<Follow> followSet = getFollowers(user, type);
+		if (followSet.isEmpty()) {
+			return Collections.emptyList();
+		} else {
+			return Objects.requireNonNull(followSet)
+				.stream()
+				.map(e -> repository.findById(e.getId())
+					.orElseThrow(UserNotFoundException::new))
+				.collect(Collectors.toList());
+		}
 	}
 
 	private Set<Follow> getFollowers(User user, String type) {
@@ -207,13 +218,12 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			.orElseThrow(UserNotFoundException::new)
 			.getAnswers();
 
-
 		List<UserAnswerDto> result = new ArrayList<>();
 		for (Answer iterAnswer : answerList) {
 			Question question = iterAnswer.getQuestion();
 			boolean flag = likesRepository.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(
 				id, iterAnswer.getId(),
-				TargetType.ANSWER).isPresent() ? true : false;
+				TargetType.ANSWER).isPresent();
 
 			UserAnswerDto userAnswerDto = UserAnswerDto.builder()
 				.answerId(iterAnswer.getId())
@@ -230,7 +240,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 				.build();
 			result.add(userAnswerDto);
 		}
-		return result.stream().sorted(Comparator.comparing(UserAnswerDto::getAnswerId).reversed()).collect(Collectors.toList());
+		return result.stream()
+			.sorted(Comparator.comparing(UserAnswerDto::getAnswerId).reversed())
+			.collect(Collectors.toList());
 	}
 
 	public List<UserQuestionDto> getUserQuestionDtoList(Long uid, Long id) {
@@ -276,13 +288,22 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 				.build();
 			result.add(userQuestionDto);
 		}
-		return result.stream().sorted(Comparator.comparing(UserQuestionDto::getQuestionId).reversed()).collect(Collectors.toList());
+		return result.stream()
+			.sorted(Comparator.comparing(UserQuestionDto::getQuestionId).reversed())
+			.collect(Collectors.toList());
 	}
 
 	public List<UserRecentFeedDto> findRecentFeedList(Long id) {
-		List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
-		return recentReadList.stream()
-			.map(e -> UserRecentFeedDto.from(e))
+		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
+
+		List<UserRecentFeedDto> result = new ArrayList<>();
+		for(Read read : recentReadList){
+			final String esId = read.getFeed().getEsId();
+			final ESFeed esFeed = eSFeedRepository.findById(esId).orElse(new ESFeed());
+			result.add(UserRecentFeedDto.from(read.getFeed(), esFeed));
+		}
+
+		return result.stream()
 			.sorted(Comparator.comparing(UserRecentFeedDto::getFeedId))
 			.collect(Collectors.toList());
 	}
@@ -308,7 +329,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 			result.add(userSubscriptionDto);
 		}
-		return result.stream().sorted(Comparator.comparing(UserSubscriptionDto::getCompanyId)).collect(Collectors.toList());
+		return result.stream()
+			.sorted(Comparator.comparing(UserSubscriptionDto::getCompanyId))
+			.collect(Collectors.toList());
 	}
 
 	/**
