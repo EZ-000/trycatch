@@ -5,6 +5,7 @@ import com.ssafy.trycatch.common.controller.dto.CompanyResponseDto;
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.service.CompanyService;
 import com.ssafy.trycatch.common.service.exceptions.CompanyNotFoundException;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.domain.User;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +41,14 @@ public class CompanyController {
 		@PathVariable Long companyId,
 		@AuthUserElseGuest User requestUser) {
 		Company company = companyService.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-		CompanyResponseDto result = CompanyResponseDto.from(company, requestUser);
+		List<UserFeedDto> feedList = companyService.findFeedList(company,requestUser);
+		CompanyResponseDto result = CompanyResponseDto.from(company, requestUser, feedList);
 		return ResponseEntity.ok(result);
 	}
 
 	@GetMapping("/id/{companyName}")
 	public ResponseEntity<Long> findCompanyName(
-		@PathVariable Long companyName) {
+		@PathVariable String companyName) {
 		try {
 			final Long companyId = companyService.findCompanyIdByCompanyName(companyName);
 			return ResponseEntity.ok(companyId);

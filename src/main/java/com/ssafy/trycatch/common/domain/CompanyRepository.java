@@ -9,5 +9,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     List<Company> findAllByLogoIsNotNull();
 
-    Optional<Long> findCompanyIdByCompanyName(Long companyName);
+    Optional<Long> findCompanyIdByName(String companyName);
 }
