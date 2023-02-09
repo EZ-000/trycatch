@@ -59,4 +59,9 @@ public class FeedService {
         return feedRepository.findByEsId(feedId)
                 .orElseThrow(ESFeedNotFoundException::new);
     }
+
+    public ESFeed findESFeedByESId(String feedId) {
+        return esFeedRepository.findById(feedId)
+            .orElseThrow(ESFeedNotFoundException::new);
+    }
 }
