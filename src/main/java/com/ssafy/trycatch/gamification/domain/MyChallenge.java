@@ -34,12 +34,14 @@ public class MyChallenge {
     private User user;
 
     @Column(name = "progress")
-    private Integer progress;
+    private Long progress;
 
     @Column(name = "succeed")
     private Boolean succeed;
 
-    @Column(name = "earn")
-    private Instant earn;
+    @Column(name = "start_from")
+    private Instant startFrom;
 
+    @Column(name = "earned_at")
+    private Instant earnAt;
 }

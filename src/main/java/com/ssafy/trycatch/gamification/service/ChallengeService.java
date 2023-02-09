@@ -13,4 +13,6 @@ public class ChallengeService extends CrudService<Challenge, Long, ChallengeRepo
     public ChallengeService(ChallengeRepository repository) {
         super(repository);
     }
+
+
 }

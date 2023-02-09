@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -27,14 +27,22 @@ public class Challenge {
     private String condition;
 
     @Size(max = 30)
-    @Column(name = "name", length = 30)
-    private String name;
+    @Column(name = "title", length = 30)
+    private String title;
+
+    @Size(max = 200)
+    @Column(name = "content", length = 30)
+    private String content;
 
     @Column(name = "start_from")
-    private LocalDate startFrom;
+    private Instant startFrom;
 
     @Column(name = "end_at")
-    private LocalDate endAt;
+    private Instant endAt;
+
+    @Size(max = 500)
+    @Column(name="img_src")
+    private String imgSrc;
 
     @OneToMany(mappedBy = "challenge")
     @ToString.Exclude
