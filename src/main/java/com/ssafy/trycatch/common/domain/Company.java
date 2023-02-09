@@ -25,8 +25,8 @@ public class Company {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 50)
-    @Column(name = "name", length = 50)
+    @Size(max = 128)
+    @Column(name = "name", length = 128)
     private String name;
 
     @OneToMany(mappedBy = "company")
@@ -44,35 +44,35 @@ public class Company {
     @Builder.Default
     private Set<Feed> feeds = new LinkedHashSet<>();
 
-    @Size(max = 50)
-    @Column(name = "name_ko", length = 50)
+    @Size(max = 128)
+    @Column(name = "name_ko", length = 128)
     private String nameKo;
 
-    @Size(max = 50)
-    @Column(name = "name_en", length = 50)
+    @Size(max = 128)
+    @Column(name = "name_en", length = 128)
     private String nameEn;
 
-    @Size(max = 50)
-    @Column(name = "group_name", length = 50)
+    @Size(max = 128)
+    @Column(name = "group_name", length = 128)
     private String groupName;
 
-    @Size(max = 50)
-    @Column(name = "platform", length = 50)
+    @Size(max = 128)
+    @Column(name = "platform", length = 128)
     private String platform;
 
-    @Size(max = 255)
+    @Lob
     @Column(name = "icon")
     private String icon;
 
-    @Size(max = 255)
+    @Lob
     @Column(name = "logo")
     private String logo;
 
-    @Size(max = 255)
+    @Lob
     @Column(name = "blog")
     private String blog;
 
-    @Size(max = 255)
+    @Lob
     @Column(name = "rss")
     private String rss;
 
