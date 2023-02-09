@@ -28,8 +28,8 @@ VALUES (1, 'summary 1', 'title 1', 'url 1', 1),
 
 INSERT INTO feed(id, company_id, title, url, created_at, view_count, updated_at, es_id)
 VALUES
-    (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', '4GLbL4YB5tqxoIWWuVAu'),
-    (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', '6GLbL4YB5tqxoIWWuVD2');
+    (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', 'P8x1NIYBAWExQKiWa9_K'),
+    (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', 'QMx1NIYBAWExQKiWa9_K');
 
 INSERT INTO follow
 VALUES (1, 1, 2),

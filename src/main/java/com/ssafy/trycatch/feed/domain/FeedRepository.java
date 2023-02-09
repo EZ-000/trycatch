@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FeedRepository extends JpaRepository<Feed, Long> {
-
-	Optional<Feed> findByEsId(String feedId);
+	Optional<Feed> findByEsId(String esId);
 }

@@ -56,7 +56,7 @@ public class SearchFeedResponseDto {
 
 		static Item of(ESFeed entity, FeedService feedService) {
 			return Item.builder()
-// 				.id(feedService.findByESId(entity.getId()).getId())
+ 				.id(feedService.findByESId(entity.getId()).getId())
 				.feedId(entity.getId())
 				.title(entity.getTitle())
 				.summary(entity.getSummary())
