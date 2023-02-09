@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
+import com.ssafy.trycatch.common.sse.NotificationService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
@@ -323,5 +324,4 @@ public class UserController {
     public ResponseEntity<String> findRanks() {
         return ResponseEntity.ok("질문답변 활동에서 가장 높은 포인트를 얻은 사람 목록을 조회합니다.");
     }
-
 }
