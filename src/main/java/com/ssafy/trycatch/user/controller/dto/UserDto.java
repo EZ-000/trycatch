@@ -1,11 +1,11 @@
 package com.ssafy.trycatch.user.controller.dto;
 
+import java.util.List;
+
 import com.ssafy.trycatch.user.domain.User;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class UserDto {
@@ -19,9 +19,9 @@ public class UserDto {
 			.profileImg(saved.getImageSrc())
 			.subscriptionCount(saved.getSubscriptions()
 				.size())
-			.followerCount(saved.getFollowers()
+			.followerCount(saved.getFollowees()
 				.size())
-			.followingCount(saved.getFollowees()
+			.followingCount(saved.getFollowers()
 				.size())
 			.tags(tagList)
 			.isFollowed(flag)
