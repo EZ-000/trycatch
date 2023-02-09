@@ -1,15 +1,5 @@
 package com.ssafy.trycatch.common.controller;
 
-import com.ssafy.trycatch.roadmap.domain.Roadmap;
-import com.ssafy.trycatch.roadmap.service.RoadmapService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 import com.ssafy.trycatch.common.domain.Likes;
@@ -20,7 +10,13 @@ import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
 import com.ssafy.trycatch.qna.service.QuestionService;
+import com.ssafy.trycatch.roadmap.domain.Roadmap;
+import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/${apiPrefix}/like")
@@ -49,15 +45,19 @@ public class LikesController {
      */
     @PostMapping
     public ResponseEntity<Void> likeTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
-        // 마지막 좋아요의 활성화 여부 확인 (중복 방지)
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        likesService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
         final TargetType type = TargetType
                 .valueOf(likesRequestDto.getType());
 
         final Likes lastLikes = likesService
-                .getLikes(requestUser.getId(), likesRequestDto.getId(), type);
+                .getLastLikesOrFalse(userId, likesRequestDto.getId(), type);
 
         if (lastLikes.getActivated()) {
             throw new LikesDuplicatedException();
@@ -101,16 +101,26 @@ public class LikesController {
      */
     @PutMapping
     public ResponseEntity<Void> unlikeTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody LikesRequestDto likesRequestDto
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        likesService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
         final TargetType type = TargetType
                 .valueOf(likesRequestDto.getType());
 
-        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
         final Likes lastLikes = likesService
-                .getLikes(requestUser.getId(), likesRequestDto.getId(), type);
-        lastLikes.setActivated(!lastLikes.getActivated());
+                .getLastLikesOrThrow(userId, likesRequestDto.getId(), type);
+
+        if (!lastLikes.getActivated()) {
+            throw new LikesDuplicatedException();
+        }
+
+        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
+        lastLikes.setActivated(false);
         likesService.register(lastLikes);
 
         // TargetType에 따라 좋아요 수 감소
@@ -127,6 +137,7 @@ public class LikesController {
 
             answer.setLikes(answer.getLikes() - 1);
             answerService.saveAnswer(answer);
+
         } else if (type == TargetType.ROADMAP) {
             final Roadmap roadmap = roadmapService
                     .findByRoadmapId(likesRequestDto.getId());

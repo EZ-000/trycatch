@@ -1,5 +1,12 @@
 package com.ssafy.trycatch.feed.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface FeedRepository extends JpaRepository<Feed, Long> {}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface FeedRepository extends JpaRepository<Feed, Long> {
+
+	Optional<Feed> findByEsId(String feedId);
+}

@@ -1,11 +1,9 @@
 package com.ssafy.trycatch.user.controller.dto;
 
-import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
-
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.Builder;
 import lombok.Data;
+import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
 
 @Data
 public class SimpleUserInfo {
@@ -37,5 +35,18 @@ public class SimpleUserInfo {
         this.profileImage = profileImage;
         this.companyName = companyName;
         this.isFollowed = isFollowed;
+    }
+
+    public static SimpleUserInfo from(User user, Boolean flag) {
+        if (null == user.getCompany()) {throw new ValidateException("Null Company");}
+
+        return SimpleUserInfo.builder()
+            .userId(user.getId())
+            .userName(user.getUsername())
+            .profileImage(user.getImageSrc())
+            .companyName(user.getCompany()
+                .getName())
+            .isFollowed(flag)
+            .build();
     }
 }

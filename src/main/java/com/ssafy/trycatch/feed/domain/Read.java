@@ -1,5 +1,7 @@
 package com.ssafy.trycatch.feed.domain;
 
+import java.time.Instant;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,7 +48,8 @@ public class Read {
     @ToString.Exclude
     private User user;
 
-    @Column(name = "bookmark")
-    private Boolean bookmark;
+    @NotNull
+    @Column(name = "read_at", nullable = false)
+    private Instant readAt;
 
 }

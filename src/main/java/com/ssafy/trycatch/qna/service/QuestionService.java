@@ -1,16 +1,16 @@
 package com.ssafy.trycatch.qna.service;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.domain.QuestionCategory;
-import com.ssafy.trycatch.common.service.exceptions.QuestionCategoryNotFoundException;
 import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESQuestionRepository;
 import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
@@ -23,33 +23,29 @@ import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
-import com.ssafy.trycatch.user.domain.UserRepository;
-import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
+
+
 
 @Service
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final ESQuestionRepository esQuestionRepository;
-    private final UserRepository userRepository;
-
     private final AnswerRepository answerRepository;
 
     @Autowired
     public QuestionService(
             QuestionRepository questionRepository,
             ESQuestionRepository esQuestionRepository,
-            UserRepository userRepository,
             AnswerRepository answerRepository
     ) {
         this.questionRepository = questionRepository;
         this.esQuestionRepository = esQuestionRepository;
-        this.userRepository = userRepository;
         this.answerRepository = answerRepository;
     }
 
-    public Question saveQuestion(Question question) {
-        return questionRepository.save(question);
+    public void saveQuestion(Question question) {
+        questionRepository.save(question);
     }
 
     public Question saveQuestion(User requestUser, CreateQuestionRequestDto requestDto) {
@@ -57,24 +53,34 @@ public class QuestionService {
         final Question question = requestDto.newQuestion(requestUser);
         questionRepository.save(question);
 
-        final ESQuestion esQuestion = ESQuestion.of(requestDto);
+        final ESQuestion esQuestion = ESQuestion.of(question.getId(), requestDto);
         esQuestionRepository.save(esQuestion);
 
         return question;
     }
 
-    public Question acceptAnswer(Long questionId, Long answerId) {
+    public Question acceptAnswer(Long questionId, Long answerId, User user) {
+
         final Question question = questionRepository.findById(questionId)
-                                                    .orElseThrow(QuestionNotFoundException::new);
+                .orElseThrow(QuestionNotFoundException::new);
+
+        final Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(AnswerNotFoundException::new);
+
+        // 요청 유저가 질문 작성자가 아닌 경우나 본인 답변을 채택하려는 경우 예외처리
+        final User questionAuthor = question.getUser();
+        final User answerAuthor = answer.getUser();
+
+        if ((user != questionAuthor) || (questionAuthor == answerAuthor)) {
+            throw new RequestUserNotValidException();
+        }
 
         question.setChosen(true);
         questionRepository.save(question);
 
-        final Answer answer = answerRepository.findById(answerId)
-                                              .orElseThrow(AnswerNotFoundException::new);
-
         answer.setChosen(true);
         answerRepository.save(answer);
+
         return question;
     }
 
@@ -89,16 +95,9 @@ public class QuestionService {
                 .orElseThrow(QuestionNotFoundException::new);
     }
 
-    public List<Question> findQuestionsByTitle(String title, Pageable pageable) {
-        return questionRepository.findByTitleLike(title, pageable);
-    }
-
     public List<Question> findAllQuestionsByCategory(QuestionCategory questionCategory, Pageable pageable) {
-        final List<Question> questions = questionRepository.findByCategoryNameOrderByCreatedAtDesc(
-                questionCategory,
-                pageable);
-
-        return questions;
+        return questionRepository
+                .findByCategoryNameOrderByCreatedAtDesc(questionCategory, pageable);
     }
 
     @Transactional
@@ -115,11 +114,11 @@ public class QuestionService {
         final Question question = questionRepository.findById(questionId)
                                                     .orElseThrow(QuestionNotFoundException::new);
 
-        if (question.getUser()
-                    .getId() != userId) {throw new RequestUserNotValidException();}
+        if (!Objects.equals(question.getUser().getId(), userId)) {
+            throw new RequestUserNotValidException();
+        }
 
-        final QuestionCategory questionCategory = Optional.ofNullable(QuestionCategory.valueOf(category))
-                                                          .orElseThrow(QuestionCategoryNotFoundException::new);
+        final QuestionCategory questionCategory = QuestionCategory.valueOf(category);
 
         question.setCategoryName(questionCategory);
         question.setTitle(title);
@@ -136,13 +135,26 @@ public class QuestionService {
     public void deleteQuestion(Long questionId, Long userId) {
         final Question question = questionRepository.findById(questionId)
                                                     .orElseThrow(QuestionNotFoundException::new);
-        if (question.getUser()
-                    .getId() != userId) {throw new RequestUserNotValidException();}
+        if (!Objects.equals(question.getUser().getId(), userId)) {
+            throw new RequestUserNotValidException();
+        }
         questionRepository.deleteById(questionId);
     }
 
-    public List<Question> findQuestionListByAnswerId(List<Long> answerIdList) {
-        // answerIdList.stream().map(e->questionRepository)
-        return Collections.emptyList();
+    public Page<ESQuestion> search(String query, Pageable pageable) {
+        return esQuestionRepository.searchByTitleOrContent(query, pageable);
+    }
+
+    public List<Question> findPopularQuestions(Optional<String> category, Pageable pageable) {
+        final List<Question> popularQuestions;
+        final QuestionCategory questionCategory = QuestionCategory.valueOf(category.orElse("DEFAULT"));
+        if (QuestionCategory.DEFAULT == questionCategory) {
+            popularQuestions = questionRepository.findAllByOrderByLikesDesc(pageable);
+        } else {
+            popularQuestions = questionRepository
+                    .findByCategoryNameOrderByLikesDesc(questionCategory, pageable);
+        }
+
+        return popularQuestions;
     }
 }

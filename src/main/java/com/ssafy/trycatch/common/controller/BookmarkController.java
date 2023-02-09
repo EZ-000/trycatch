@@ -2,21 +2,28 @@ package com.ssafy.trycatch.common.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
+import com.ssafy.trycatch.common.controller.dto.FindBookmarkedFeedDto;
 import com.ssafy.trycatch.common.controller.dto.FindBookmarkedQuestionDto;
 import com.ssafy.trycatch.common.controller.dto.FindBookmarkedRoadmapDto;
 import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.exceptions.BookmarkDuplicatedException;
+import com.ssafy.trycatch.common.service.exceptions.LikesDuplicatedException;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.feed.domain.Feed;
+import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,15 +33,19 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
     private final QuestionService questionService;
     private final RoadmapService roadmapService;
+    private final FeedService feedService;
 
     @Autowired
     public BookmarkController(
             BookmarkService bookmarkService,
             QuestionService questionService,
-            RoadmapService roadmapService) {
+            RoadmapService roadmapService,
+            FeedService feedService
+    ) {
         this.bookmarkService = bookmarkService;
         this.questionService = questionService;
         this.roadmapService = roadmapService;
+        this.feedService = feedService;
     }
 
     /**
@@ -44,20 +55,28 @@ public class BookmarkController {
      */
     @PostMapping
     public ResponseEntity<Void> bookmarkTarget(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
-        // 마지막 북마크의 활성화 여부 확인 (중복 방지)
-        final TargetType type = TargetType.valueOf(bookmarkRequestDto.getType());
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
+        final TargetType type = TargetType
+                .valueOf(bookmarkRequestDto.getType());
+
         final Bookmark lastBookmark = bookmarkService
-                .getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
+                .getLastBookmarkOrFalse(userId, bookmarkRequestDto.getId(), type);
+
         if (lastBookmark.getActivated()) {
             throw new BookmarkDuplicatedException();
         }
 
-        // 좋아요 생성과 저장
+        // 북마크 생성과 저장
         final Bookmark newBookmark = bookmarkRequestDto.newBookmark(requestUser);
         bookmarkService.register(newBookmark);
+
         return ResponseEntity.status(201)
                              .build();
     }
@@ -69,16 +88,26 @@ public class BookmarkController {
      */
     @PutMapping
     public ResponseEntity<Void> removeBookmark(
-            @AuthUserElseGuest User requestUser,
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser,
             @RequestBody BookmarkRequestDto bookmarkRequestDto
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 중복 요청 방지
         final TargetType type = TargetType
                 .valueOf(bookmarkRequestDto.getType());
 
-        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
         final Bookmark lastBookmark = bookmarkService
-                .getLastBookmark(requestUser.getId(), bookmarkRequestDto.getId(), type);
-        lastBookmark.setActivated(!lastBookmark.getActivated());
+                .getLastBookmarkOrThrow(userId, bookmarkRequestDto.getId(), type);
+
+        if (!lastBookmark.getActivated()) {
+            throw new LikesDuplicatedException();
+        }
+
+        // 마지막 likes를 가져와서 활성화 상태를 false로 변경
+        lastBookmark.setActivated(false);
         bookmarkService.register(lastBookmark);
 
         return ResponseEntity.status(204)
@@ -87,15 +116,19 @@ public class BookmarkController {
 
     /**
      * @param requestUser 요청자
-     * @return 유저가 북마크한 질문 리스트를 FindBookmarkedQuestionResponseDto로 반환
+     * @return 유저가 북마크한 질문 리스트를 FindBookmarkedQuestionDto로 반환
      */
     @GetMapping("/question")
     public ResponseEntity<List<FindBookmarkedQuestionDto>> findBookmarkedQuestions(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(requestUser.getId(), TargetType.QUESTION);
+                .getActivatedBookmarks(userId, TargetType.QUESTION);
 
         // List<Bookmark>을 List<Question>으로 변환
         List<Question> bookmarkedQuestions = activatedBookmarks
@@ -115,15 +148,19 @@ public class BookmarkController {
 
     /**
      * @param requestUser 요청자
-     * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapResponseDto 로 반환
+     * @return 유저가 북마크한 로드맵 리스트를 FindBookmarkedRoadmapDto 로 반환
      */
     @GetMapping("/roadmap")
     public ResponseEntity<List<FindBookmarkedRoadmapDto>> findBookmarkedRoadmaps(
-            @AuthUserElseGuest User requestUser
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
     ) {
-        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Roadmap> 반환
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(requestUser.getId(), TargetType.ROADMAP);
+                .getActivatedBookmarks(userId, TargetType.ROADMAP);
 
         // List<Bookmark>을 List<Roadmap>으로 변환
         List<Roadmap> bookmarkedRoadmaps = activatedBookmarks
@@ -139,5 +176,41 @@ public class BookmarkController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(bookmarkedRoadmapsResponse);
+    }
+
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<FindBookmarkedFeedDto>> findBookmarkedFeeds(
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser
+    ) {
+        // 게스트 요청 방지
+        final Long userId = requestUser.getId();
+        bookmarkService.checkUserOrThrow(userId);
+
+        // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 피드 리스트 List<Bookmark> 반환
+        List<Bookmark> activatedBookmarks = bookmarkService
+                .getActivatedBookmarks(userId, TargetType.FEED);
+
+        // List<Bookmark>을 List<Feed>으로 변환
+        List<Feed> bookmarkedFeeds = activatedBookmarks
+                .stream()
+                .map(Bookmark::getTargetId)
+                .map(feedService::findById)
+                .collect(Collectors.toList());
+
+        // List<Feed>를 List<FindBookmarkedFeedDto>로 변환
+        final List<FindBookmarkedFeedDto> responseDtoList = new ArrayList<>();
+
+        for (Feed bookmarkedFeed : bookmarkedFeeds) {
+            final String stringId = bookmarkedFeed.getEsId();
+            final ESFeed esFeed = feedService.findESFeedByESId(stringId);
+
+            final FindBookmarkedFeedDto responseDto = FindBookmarkedFeedDto
+                    .from(bookmarkedFeed, esFeed);
+
+            responseDtoList.add(responseDto);
+        }
+
+        return ResponseEntity.ok(responseDtoList);
     }
 }

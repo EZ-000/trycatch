@@ -1,16 +1,21 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.service.LikesService;
+import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
+import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
+import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
 import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 
 /**
@@ -20,7 +25,11 @@ import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 public class FindQuestionResponseDto implements Serializable {
 
     public static FindQuestionResponseDto from(
-            Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked, List<FindAnswerResponseDto> answers
+            Question question,
+            SimpleUserDto simpleUserDto,
+            Boolean isLiked,
+            Boolean isBookmarked,
+            List<FindAnswerResponseDto> answers
     ) {
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())
@@ -55,12 +64,25 @@ public class FindQuestionResponseDto implements Serializable {
      * @return 새로운 DTO 인스턴스
      */
     public static FindQuestionResponseDto from(
-            Question question, SimpleUserDto simpleUserDto, Boolean isLiked, Boolean isBookmarked
+            Question question,
+            SimpleUserDto simpleUserDto,
+            User requestUser,
+            Boolean isLiked,
+            Boolean isBookmarked,
+            LikesService likesService
     ) {
-        final List<FindAnswerResponseDto> answerResponseDtoList = question.getAnswers()
-                .stream()
-                .map(FindAnswerResponseDto::from)
-                .collect(Collectors.toList());
+        final Set<Answer> answers = question.getAnswers();
+        final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
+
+        for (Answer answer : answers) {
+            final Boolean isAnswerLiked = likesService
+                    .isLikedByUserAndTarget(requestUser.getId(), answer.getId(), ANSWER);
+
+            final FindAnswerResponseDto responseDto = FindAnswerResponseDto
+                    .from(answer, requestUser, isAnswerLiked);
+
+            answerResponseDtoList.add(responseDto);
+        }
 
         return FindQuestionResponseDto.builder()
                 .questionId(question.getId())

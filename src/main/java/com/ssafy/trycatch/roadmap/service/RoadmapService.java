@@ -1,5 +1,7 @@
 package com.ssafy.trycatch.roadmap.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +32,11 @@ public class RoadmapService extends CrudService<Roadmap, Long, RoadmapRepository
         repository.save(saved);
     }
 
-    public Long findId(Long userId) {
-        return repository.findByUserId(userId)
-                         .orElseThrow()
-                         .getId();
-    }
-
     public Roadmap findByRoadmapId(Long roadmapId) {
         return repository.findById(roadmapId).orElseThrow(RoadmapNotFoundException::new);
     }
 
+    public List<Roadmap> findTopList() {
+        return repository.findTop3ByOrderByLikesDescIdAsc();
+    }
 }

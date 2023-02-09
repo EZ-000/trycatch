@@ -1,5 +1,11 @@
 package com.ssafy.trycatch.feed.domain;
 
+import com.ssafy.trycatch.common.domain.Company;
+import lombok.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -12,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -68,5 +75,10 @@ public class Feed {
     @ToString.Exclude
     @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
+
+    @Size(max = 25)
+    @NotNull
+    @Column(name = "es_id", nullable = false, length = 25)
+    private String esId;
 
 }

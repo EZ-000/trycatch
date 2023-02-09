@@ -26,9 +26,10 @@ INSERT INTO conference
 VALUES (1, 'summary 1', 'title 1', 'url 1', 1),
     (2, 'summary 2', 'title 2', 'url 2', 2);
 
-INSERT INTO feed
-VALUES (1, '2023-01-01', 'title 1', '2023-01-01 12:00:00', 'url 1', 0, 1),
-    (2, '2023-01-02', 'title 2', '2023-01-01 12:00:00', 'url 2', 0, 2);
+INSERT INTO feed(id, company_id, title, url, created_at, view_count, updated_at, es_id)
+VALUES
+    (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', '4GLbL4YB5tqxoIWWuVAu'),
+    (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', '6GLbL4YB5tqxoIWWuVD2');
 
 INSERT INTO follow
 VALUES (1, 1, 2),
@@ -58,9 +59,9 @@ INSERT INTO ranking
 VALUES (1, 'DEV', 1),
     (2, 'DEV', 2);
 
-INSERT INTO "read"
-VALUES (1, false, 1, 1),
-    (2, true, 2, 2);
+INSERT INTO "read"(id,feed_id,user_id,read_at)
+VALUES (1, 1, 1, current_date),
+    (2, 2, 2, current_date);
 
 INSERT INTO report
 VALUES (1, 'content 1', '2023-01-01 12:00:00', 1, 1, 'feed'),

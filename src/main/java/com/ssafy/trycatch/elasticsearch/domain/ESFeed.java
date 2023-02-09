@@ -1,19 +1,14 @@
 package com.ssafy.trycatch.elasticsearch.domain;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,11 +24,11 @@ public class ESFeed {
     @Field(type = FieldType.Keyword)
     private String url;
 
-    @Field(type = FieldType.Keyword, name = "default_name")
+    @Field(type = FieldType.Keyword, name = "name")
     private String name;
 
-    @Field(type = FieldType.Text, name = "names")
-    private List<String> names;
+    @Field(type = FieldType.Long, name = "pk")
+    private Long pk;
 
     @Field(type = FieldType.Text, name = "title")
     private String title;

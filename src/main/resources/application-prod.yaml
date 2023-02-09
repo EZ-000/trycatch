@@ -18,6 +18,10 @@ spring:
               - read:user
               - public_repo
 
+elasticsearch:
+  question:
+    index: question-prod
+
 settings:
   cross-origin: >
     https://try-catch.kr

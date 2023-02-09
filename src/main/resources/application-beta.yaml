@@ -18,6 +18,14 @@ spring:
               - read:user
               - public_repo
 
+logging:
+  level:
+    root: info
+
+elasticsearch:
+  question:
+    index: question-beta
+
 settings:
   login:
     on_success:

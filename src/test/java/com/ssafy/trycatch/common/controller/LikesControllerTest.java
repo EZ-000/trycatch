@@ -1,13 +1,10 @@
 package com.ssafy.trycatch.common.controller;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
+import com.ssafy.trycatch.common.infra.config.jwt.Token;
+import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
+import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -28,14 +30,27 @@ import com.ssafy.trycatch.common.controller.dto.LikesRequestDto;
 @PropertySource("classpath:application-local.yml")
 class LikesControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Value("${apiPrefix}")
     private String apiVersion;
+
+    private final Token token;
+
+    @Autowired
+    public LikesControllerTest(
+            MockMvc mockMvc,
+            ObjectMapper objectMapper,
+            TokenService tokenService,
+            @Value("${apiPrefix}") String apiVersion
+    ) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = objectMapper;
+        this.apiVersion = apiVersion;
+        this.token = tokenService.generateToken("1", "USER");
+    }
 
     @Test
     void likeTarget() throws Exception {
@@ -46,6 +61,7 @@ class LikesControllerTest {
                 .build();
 
         this.mockMvc.perform(post("/" + apiVersion + "/like")
+                                     .header(HttpHeaders.AUTHORIZATION, token.getToken())
                                      .contentType(MediaType.APPLICATION_JSON)
                                      .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isCreated())
@@ -67,8 +83,10 @@ class LikesControllerTest {
                 .type("DEFAULT")
                 .build();
 
-        this.mockMvc.perform(put("/" + apiVersion + "/like").contentType(MediaType.APPLICATION_JSON)
-                                                             .content(objectMapper.writeValueAsString(requestDto)))
+        this.mockMvc.perform(put("/" + apiVersion + "/like")
+                        .header(HttpHeaders.AUTHORIZATION, token.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
                     .andExpect(status().isNoContent())
                     .andDo(MockMvcRestDocumentation.document(
                             "unlike-target",

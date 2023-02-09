@@ -1,12 +1,11 @@
 package com.ssafy.trycatch.common.infra.config.auth;
 
-import java.time.LocalDate;
-import java.util.Map;
-
+import com.ssafy.trycatch.user.domain.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import com.ssafy.trycatch.user.domain.User;
+import java.time.LocalDate;
+import java.util.Map;
 
 @Component
 public class UserRequestMapper {

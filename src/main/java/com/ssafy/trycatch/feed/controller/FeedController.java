@@ -1,7 +1,13 @@
 package com.ssafy.trycatch.feed.controller;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
-
+import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
+import com.ssafy.trycatch.feed.service.FeedService;
+import com.ssafy.trycatch.user.domain.User;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
@@ -14,14 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
-import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
-import com.ssafy.trycatch.feed.service.FeedService;
-import com.ssafy.trycatch.user.domain.User;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
 @RestController
@@ -73,7 +72,7 @@ public class FeedController {
     // localhost:8080/v1/feed/search?query=qr
     @GetMapping("/search")
     public ResponseEntity<SearchFeedResponseDto> search(
-            @AuthUserElseGuest User requestUser, SearchFeedRequestDto requestDto
+            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser, SearchFeedRequestDto requestDto
     ) {
 
         final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
@@ -93,6 +92,6 @@ public class FeedController {
             feedPage = feedService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage));
+        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage, feedService));
     }
 }

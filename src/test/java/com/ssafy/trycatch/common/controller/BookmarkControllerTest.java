@@ -1,16 +1,9 @@
 package com.ssafy.trycatch.common.controller;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
+import com.ssafy.trycatch.common.infra.config.jwt.Token;
+import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +15,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,14 +30,27 @@ import com.ssafy.trycatch.common.controller.dto.BookmarkRequestDto;
 @PropertySource("classpath:application-local.yml")
 class BookmarkControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Value("${apiPrefix}")
     private String apiVersion;
+
+    private final Token token;
+
+    @Autowired
+    public BookmarkControllerTest(
+            MockMvc mockMvc,
+            ObjectMapper objectMapper,
+            TokenService tokenService,
+            @Value("${apiPrefix}") String apiVersion
+    ) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = objectMapper;
+        this.apiVersion = apiVersion;
+        this.token = tokenService.generateToken("1", "USER");
+    }
 
     @Test
     void bookmarkTarget() throws Exception {
@@ -50,6 +62,7 @@ class BookmarkControllerTest {
 
         this.mockMvc.perform(
                         post("/" + apiVersion + "/bookmark")
+                                .header(HttpHeaders.AUTHORIZATION, token.getToken())
                                 .content(objectMapper.writeValueAsString(requestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -70,6 +83,7 @@ class BookmarkControllerTest {
 
         this.mockMvc.perform(
                         put("/" + apiVersion + "/bookmark")
+                                .header(HttpHeaders.AUTHORIZATION, token.getToken())
                                 .content(objectMapper.writeValueAsString(requestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -91,6 +105,7 @@ class BookmarkControllerTest {
 
         this.mockMvc.perform(
                         get("/" + apiVersion + "/bookmark/question")
+                                .header(HttpHeaders.AUTHORIZATION, token.getToken())
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
@@ -117,6 +132,7 @@ class BookmarkControllerTest {
 
         this.mockMvc.perform(
                         get("/" + apiVersion + "/bookmark/roadmap")
+                                .header(HttpHeaders.AUTHORIZATION, token.getToken())
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())

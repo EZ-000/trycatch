@@ -1,31 +1,25 @@
 package com.ssafy.trycatch.elasticsearch.domain;
 
-import java.util.List;
-
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.List;
 
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "question")
+@Document(indexName = "#{@environment.getProperty('elasticsearch.question.index')}")
 public class ESQuestion {
 
-    public static ESQuestion of(CreateQuestionRequestDto requestDto) {
+    public static ESQuestion of(Long questionId, CreateQuestionRequestDto requestDto) {
         return ESQuestion.builder()
+                .questionId(questionId)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .category(requestDto.getCategory())
@@ -35,6 +29,10 @@ public class ESQuestion {
 
     @Id
     private String id;
+
+    @Field(type = FieldType.Long)
+    private Long questionId;
+
     @Field(type = FieldType.Keyword)
     private String category;
     @Field(type = FieldType.Text)
@@ -45,7 +43,8 @@ public class ESQuestion {
     private List<String> tags;
 
     @Builder
-    public ESQuestion(String category, String title, String content, List<String> tags) {
+    public ESQuestion(Long questionId, String category, String title, String content, List<String> tags) {
+        this.questionId = questionId;
         this.category = category;
         this.title = title;
         this.content = content;

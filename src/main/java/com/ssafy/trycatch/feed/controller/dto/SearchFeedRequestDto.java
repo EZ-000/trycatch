@@ -1,18 +1,14 @@
 package com.ssafy.trycatch.feed.controller.dto;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.lang.Nullable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
-
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
