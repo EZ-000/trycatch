@@ -2,7 +2,6 @@ package com.ssafy.trycatch.feed.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import com.ssafy.trycatch.elasticsearch.domain.ESUser;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto.FeedSortOption;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
@@ -79,7 +78,7 @@ public class FeedController {
 
         final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
 
-        // TODO : 구독 필터 구현, 유저 맞춤 정렬 구현
+        // TODO : 구독 필터 구현
         final String query = requestDto.getQuery();
 
         Page<ESFeed> feedPage;

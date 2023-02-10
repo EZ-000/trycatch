@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -47,12 +48,17 @@ public class FeedService {
 	}
 
 	public Page<ESFeed> commonSearch(String query, Pageable pageable) {
-		log.info(query);
-		return esFeedRepository.searchByTitleOrContent(query, pageable);
+        if (StringUtils.hasText(query)) {
+            return esFeedRepository.searchByTitleOrContent(query, pageable);
+        }
+        return esFeedRepository.findAll(pageable);
 	}
 
 	public Page<ESFeed> advanceSearch(String queryString, Pageable pageable) {
-		return esFeedRepository.searchByQueryString(queryString, pageable);
+        if (StringUtils.hasText(queryString)) {
+            return esFeedRepository.searchByQueryString(queryString, pageable);
+        }
+        return esFeedRepository.findAll(pageable);
 	}
 
     public String findIconByCompany(Long companyId) {
