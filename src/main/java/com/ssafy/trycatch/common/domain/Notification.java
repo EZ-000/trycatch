@@ -37,14 +37,14 @@ public class Notification {
 	/**
 	 * 알림을 받을 유저를 의미함.
 	 */
-	@Column(name = "userId")
+	@Column(name = "user_id")
 	private Long userId;
 
 	/**
 	 * 팔로우라면 팔로우한 사용자의 ID
 	 * 답변채택, 내글에 답변이 추가되는 경우, QuestionID
 	 */
-	@Column(name = "targetId")
+	@Column(name = "target_id")
 	private Long targetId;
 
 	@ToString.Exclude
