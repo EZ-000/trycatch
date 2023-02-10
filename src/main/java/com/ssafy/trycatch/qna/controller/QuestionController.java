@@ -21,10 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
@@ -85,8 +84,10 @@ public class QuestionController {
             final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
                     question,
                     userInQNADto,
+                    requestUser,
                     isLiked,
-                    isBookmarked);
+                    isBookmarked,
+                    likesService);
 
             responseDtoList.add(responseDto);
         }
@@ -214,9 +215,10 @@ public class QuestionController {
         final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
                 question,
                 simpleUserDto,
+                requestUser,
                 isLiked,
                 isBookmarked,
-                answerResponseDtoList);
+                likesService);
 
         return ResponseEntity.ok(responseDto);
     }
@@ -265,7 +267,6 @@ public class QuestionController {
                              .build();
     }
 
-    // MOCK API: 질문 검색
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
             @RequestParam String query,
@@ -329,6 +330,47 @@ public class QuestionController {
 
         return ResponseEntity.status(201)
                              .body(responseDto);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<PopularQuestionResponseDto>> popularQuestions(
+            @AuthUserElseGuest User requestUser,
+            @RequestParam @Nullable Optional<String> category,
+            @PageableDefault Pageable pageable
+    ) {
+        final List<Question> questions = questionService.findPopularQuestions(category, pageable);
+
+        final List<PopularQuestionResponseDto> responseDtoList = new ArrayList<>();
+        for (Question question : questions) {
+            final User author = question.getUser();
+            final SimpleUserDto userInQNADto = SimpleUserDto.builder()
+                    .author(author)
+                    .requestUser(requestUser)
+                    .build();
+
+            final Long targetId = question.getId();
+            final boolean isLiked = likesService.isLikedByUserAndTarget(
+                    requestUser.getId(),
+                    targetId,
+                    QUESTION);
+
+            final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
+                    requestUser.getId(),
+                    targetId,
+                    QUESTION);
+
+            responseDtoList.add(PopularQuestionResponseDto.from(question, userInQNADto, isLiked, isBookmarked));
+        }
+
+        return ResponseEntity.ok(responseDtoList);
+    }
+
+    @GetMapping("/popular-tag")
+    public ResponseEntity<PopularTagsResponseDto> popularTags() {
+        final List<String> tags = new ArrayList<>(Arrays
+                .asList("Spring", "SpringBoot", "React", "TypeScript", "Nginx", "Kafka", "Java", "Python", "PyTorch", "PostgreSQL"));
+
+        return ResponseEntity.ok(PopularTagsResponseDto.from(tags));
     }
 
     // MOCK API: 에러코드 기반 질문 추천

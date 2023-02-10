@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 public class FindBookmarkedFeedDto implements Serializable {
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final Long id;
     private final String feedId;
     private final String title;
     private final String content;
@@ -20,9 +21,11 @@ public class FindBookmarkedFeedDto implements Serializable {
     private final List<String> tags;
     private final String url;
     private final List<String> keywords;
+    private final String logoSrc;
 
     @Builder
     public FindBookmarkedFeedDto(
+            Long id,
             String feedId,
             String title,
             String content,
@@ -30,8 +33,10 @@ public class FindBookmarkedFeedDto implements Serializable {
             String companyName,
             List<String> tags,
             String url,
-            List<String> keywords
+            List<String> keywords,
+            String logoSrc
     ) {
+        this.id = id;
         this.feedId = feedId;
         this.title = title;
         this.content = content;
@@ -40,13 +45,16 @@ public class FindBookmarkedFeedDto implements Serializable {
         this.tags = tags;
         this.url = url;
         this.keywords = keywords;
+        this.logoSrc = logoSrc;
     }
 
     public static FindBookmarkedFeedDto from(
             Feed feed,
-            ESFeed esFeed
+            ESFeed esFeed,
+            String logoSrc
     ) {
         return FindBookmarkedFeedDto.builder()
+                .id(feed.getId())
                 .feedId(esFeed.getId())
                 .title(feed.getTitle())
                 .content(esFeed.getContent())
@@ -56,6 +64,7 @@ public class FindBookmarkedFeedDto implements Serializable {
                 .tags(esFeed.getTags())
                 .url(esFeed.getUrl())
                 .keywords(esFeed.getKeywords())
+                .logoSrc(logoSrc)
                 .build();
     }
 }

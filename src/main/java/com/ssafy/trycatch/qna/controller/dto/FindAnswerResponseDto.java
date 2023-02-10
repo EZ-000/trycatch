@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
@@ -21,7 +20,6 @@ public class FindAnswerResponseDto implements Serializable {
      */
     public static FindAnswerResponseDto from(Answer answer, User user, Boolean isLiked) {
 
-        final Question question = answer.getQuestion();
         final User author = answer.getUser();
 
         return FindAnswerResponseDto.builder()
@@ -31,7 +29,7 @@ public class FindAnswerResponseDto implements Serializable {
                                 .requestUser(user)
                                 .build())
                 .content(answer.getContent())
-                .timestamp(question.getCreatedAt()
+                .timestamp(answer.getCreatedAt()
                                    .atZone(TZ_SEOUL)
                                    .toInstant()
                                    .toEpochMilli())
@@ -44,9 +42,9 @@ public class FindAnswerResponseDto implements Serializable {
     }
 
     public static FindAnswerResponseDto from(Answer answer) {
-        final Question question = answer.getQuestion();
+
         final User author = answer.getUser();
-        final long timestamp = question.getCreatedAt()
+        final long timestamp = answer.getCreatedAt()
                                        .atZone(TZ_SEOUL)
                                        .toInstant()
                                        .toEpochMilli();

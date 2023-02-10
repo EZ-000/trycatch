@@ -9,8 +9,12 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends PagingAndSortingRepository<Question, Long> {
-    List<Question> findByTitleLike(String title, Pageable pageable);
-
     List<Question> findByCategoryNameOrderByCreatedAtDesc(QuestionCategory categoryName, Pageable pageable);
+
+    List<Question> findAllByOrderByLikesDesc(Pageable pageable);
+
+    List<Question> findByCategoryNameOrderByLikesDesc(QuestionCategory categoryName, Pageable pageable);
+
+
 
 }

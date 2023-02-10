@@ -1,9 +1,7 @@
 package com.ssafy.trycatch.feed.domain;
 
 import com.ssafy.trycatch.common.domain.Company;
-import lombok.*;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
@@ -22,10 +20,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import com.ssafy.trycatch.common.domain.Company;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,12 +48,12 @@ public class Feed {
     @ToString.Exclude
     private Company company;
 
-    @Size(max = 80)
-    @Column(name = "title", length = 80)
+    @Size(max = 256)
+    @Column(name = "title", length = 256)
     private String title;
 
-    @Size(max = 100)
-    @Column(name = "url", length = 100)
+    @Lob
+    @Column(name = "url")
     private String url;
 
     @Column(name = "created_at")
@@ -76,25 +70,9 @@ public class Feed {
     @Builder.Default
     private Set<Read> reads = new LinkedHashSet<>();
 
-    @Lob
-    @Column(name = "summary")
-    private String summary;
-
-    @Lob
-    @Column(name = "thumbnail")
-    private String thumbnail;
-
-    @Lob
-    @Column(name = "tags")
-    private String tags;
-
-    @Lob
-    @Column(name = "keywords")
-    private String keywords;
-
-    @Size(max = 25)
+    @Size(max = 128)
     @NotNull
-    @Column(name = "es_id", nullable = false, length = 25)
+    @Column(name = "es_id", nullable = false, length = 128)
     private String esId;
 
 }
