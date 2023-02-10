@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "dev_blog-#{@environment.getProperty('elasticsearch.index.prefix')}")
+@Document(indexName = "dev-blog-#{@environment.getProperty('elasticsearch.index.prefix')}")
 public class ESFeed {
 
     @Id
