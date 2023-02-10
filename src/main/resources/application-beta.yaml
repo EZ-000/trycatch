@@ -17,8 +17,6 @@ spring:
               - user:email
               - read:user
               - public_repo
-  jpa:
-    open-in-view: false
 
 logging:
   level:
