@@ -101,7 +101,7 @@ public class NotificationService {
 			.targetId(fromUser.getId())
 			.type(notifyType)
 			.createdAt(LocalDateTime.now())
-			.activated(true)
+			.activated(false)
 			.subject(fromUser.getUsername())
 			.build();
 	}
@@ -129,7 +129,10 @@ public class NotificationService {
 		List<Notification> savedNotifylist = notificationRepository.findByUserIdOrderByIdAsc(userId);
 		try {
 			for (Notification notification : savedNotifylist) {
-				send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
+				if(notification.getActivated()) {
+					send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
+					notification.setActivated(!notification.getActivated());
+				}
 			}
 		} catch (IOException e) {
 			log.info(e.getMessage());
