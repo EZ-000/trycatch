@@ -31,6 +31,11 @@ VALUES
     (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', 'W3jAOYYBf0cVr-Ejeu5X'),
     (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', 'XHjAOYYBf0cVr-Ejeu5X');
 
+INSERT INTO notify_type(id,description)
+VALUES (1, 'follow'),
+       (2, 'answerAcceptance'),
+       (3, 'answerRegistration');
+
 INSERT INTO follow
 VALUES (1, 1, 2),
     (2, 2, 1),
