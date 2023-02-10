@@ -9,7 +9,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -22,10 +21,10 @@ public class ESUser {
     @Id
     private String id;
 
-    @Field(type = FieldType.Long)
+    @Field(type = FieldType.Long, name = "uid")
     private Long uid;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, name = "tags")
     private List<String> tags;
 
     @Field(type = FieldType.Dense_Vector, name = "vector",  dims = 768)
