@@ -13,6 +13,22 @@ import java.util.List;
 @Repository
 public interface ESQuestionRepository extends ElasticsearchRepository<ESQuestion, String> {
 
-    @Query("{\"multi_match\": {\"query\": \"?0\", \"fields\": [\"title\", \"content\"]}}")
-    Page<ESQuestion> searchByTitleOrContent(String query, Pageable pageable);
+    @Query("{" +
+            "    \"bool\": {" +
+            "        \"must\": [" +
+            "            {" +
+            "                \"multi_match\": {" +
+            "                    \"query\": \"?0\"," +
+            "                    \"fields\": [\"title\", \"content\"]" +
+            "                }" +
+            "            }," +
+            "            {" +
+            "                \"match\": {" +
+            "                    \"category\": \"?1\"" +
+            "                }" +
+            "            }" +
+            "        ]" +
+            "    }" +
+            "}")
+    Page<ESQuestion> searchByTitleOrContentAndCategory(String query, String category, Pageable pageable);
 }

@@ -279,9 +279,11 @@ public class QuestionController {
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
             @RequestParam String query,
+            @RequestParam String category,
             @PageableDefault Pageable pageable
     ) {
-        final Page<ESQuestion> esQuestions = questionService.search(query, pageable);
+        final QuestionCategory enumCategory = QuestionCategory.of(category);
+        final Page<ESQuestion> esQuestions = questionService.search(query, enumCategory, pageable);
         final List<SearchQuestionResponseDto> questions = esQuestions.stream()
                                                                      .map(ESQuestion::getQuestionId)
                                                                      .map(questionService::findQuestionById)

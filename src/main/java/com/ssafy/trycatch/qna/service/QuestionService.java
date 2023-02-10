@@ -141,8 +141,8 @@ public class QuestionService {
         questionRepository.deleteById(questionId);
     }
 
-    public Page<ESQuestion> search(String query, Pageable pageable) {
-        return esQuestionRepository.searchByTitleOrContent(query, pageable);
+    public Page<ESQuestion> search(String query, QuestionCategory category, Pageable pageable) {
+        return esQuestionRepository.searchByTitleOrContentAndCategory(query, category.name(), pageable);
     }
 
     public List<Question> findPopularQuestions(Optional<String> category, Pageable pageable) {

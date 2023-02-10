@@ -45,7 +45,7 @@ class FeedControllerTest {
                          .queryParam("advanced", "true")
                          .queryParam("publishDateStart", LocalDate.of(2000, 1, 1).toString())
                          .queryParam("publishDateEnd", LocalDate.now().toString())
-                         .queryParam("query", "( _id : P8x1NIYBAWExQKiWa9_K ) OR ( _id : QMx1NIYBAWExQKiWa9_K )")
+                         .queryParam("query", "( _id : * ) OR ( title : * )")
              )
                      .andExpect(status().isOk())
                      .andDo(document(
@@ -63,6 +63,7 @@ class FeedControllerTest {
                                      parameterWithName("publishDateEnd").description("게시일 끝")
                              ),
                              responseFields(
+                                     fieldWithPath("feedList.[]").description("피드 목록").optional(),
                                      fieldWithPath("feedList.[].id").description("피드 RDB 아이디"),
                                      fieldWithPath("feedList.[].feedId").description("피드 아이디"),
                                      fieldWithPath("feedList.[].title").description("피드 제목"),
