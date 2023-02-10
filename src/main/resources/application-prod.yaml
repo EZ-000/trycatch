@@ -19,8 +19,8 @@ spring:
               - public_repo
 
 elasticsearch:
-  question:
-    index: question-prod
+  index:
+    prefix: prod
 
 settings:
   cross-origin: >

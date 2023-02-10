@@ -56,4 +56,7 @@ public class ESFeed {
 
     @Field(type = FieldType.Keyword, name = "thumbnail")
     private String thumbnailUrl;
+
+    @Field(type = FieldType.Dense_Vector, name = "vector", dims = 768)
+    private List<Float> vector;
 }
