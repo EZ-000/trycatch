@@ -35,9 +35,9 @@ public class NotificationDto {
 	public static NotificationDto fromEntity(Notification notification) {
 		return NotificationDto.builder()
 			.id(notification.getId())
-			.type(notification.getType().getDescription())
+			.type(notification.getTypecode().getDescription())
 			.from(notification.getTargetId())
-			.title(notification.getSubject())
+			.title(notification.getTitle())
 			.timestamp(notification.getCreatedAt().atZone(TZ_SEOUL)
 				.toInstant()
 				.toEpochMilli())

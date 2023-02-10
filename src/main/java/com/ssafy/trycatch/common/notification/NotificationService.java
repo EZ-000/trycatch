@@ -85,10 +85,10 @@ public class NotificationService {
 		return Notification.builder()
 			.userId(question.getUser().getId())
 			.targetId(question.getId())
-			.type(notifyType)
+			.typecode(notifyType)
 			.createdAt(LocalDateTime.now())
 			.activated(true)
-			.subject(question.getTags())
+			.title(question.getTags())
 			.build();
 	}
 
@@ -99,10 +99,10 @@ public class NotificationService {
 		return Notification.builder()
 			.userId(toUser.getId())
 			.targetId(fromUser.getId())
-			.type(notifyType)
+			.typecode(notifyType)
 			.createdAt(LocalDateTime.now())
 			.activated(false)
-			.subject(fromUser.getUsername())
+			.title(fromUser.getUsername())
 			.build();
 	}
 

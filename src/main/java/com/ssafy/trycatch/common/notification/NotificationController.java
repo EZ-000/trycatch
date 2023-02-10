@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.common.notification;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,7 +41,11 @@ public class NotificationController {
 
 		// SseEmitter 생성
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-
+		try {
+			notificationService.send(sseEmitter,"connect","dummy");
+		} catch (IOException e) {
+			log.info(e.getMessage());
+		}
 		notificationService.sendSaved(sseEmitter, userId);
 
 

@@ -34,9 +34,7 @@ public class Notification {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	/**
-	 * 알림을 받을 유저를 의미함.
-	 */
+	// 알림을 받을 유저를 의미함.
 	@Column(name = "user_id")
 	private Long userId;
 
@@ -50,27 +48,16 @@ public class Notification {
 	@ToString.Exclude
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "typecode")
-	private NotifyType type;
-
-	@Column(name = "activated")
-	private Boolean activated;
+	private NotifyType typecode;
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
+	@Column(name = "activated")
+	private Boolean activated;
+
 	@Size(max = 128)
 	@Column(name = "title", length = 128)
-	private String subject;
+	private String title;
 
-	@Builder
-	public Notification(Long userId, Long targetId, NotifyType type, Boolean activated,
-		LocalDateTime createdAt,
-		String subject) {
-		this.userId = userId;
-		this.targetId = targetId;
-		this.type = type;
-		this.activated = activated;
-		this.createdAt = createdAt;
-		this.subject = subject;
-	}
 }
