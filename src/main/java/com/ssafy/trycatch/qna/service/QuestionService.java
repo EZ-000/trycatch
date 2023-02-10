@@ -23,7 +23,7 @@ import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
-
+import org.springframework.util.StringUtils;
 
 
 @Service
@@ -142,7 +142,10 @@ public class QuestionService {
     }
 
     public Page<ESQuestion> search(String query, QuestionCategory category, Pageable pageable) {
-        return esQuestionRepository.searchByTitleOrContentAndCategory(query, category.name(), pageable);
+        if (StringUtils.hasText(query)) {
+            return esQuestionRepository.searchByTitleOrContentAndCategory(query, category.name(), pageable);
+        }
+        return esQuestionRepository.searchByCategory(category.name(), pageable);
     }
 
     public List<Question> findPopularQuestions(Optional<String> category, Pageable pageable) {

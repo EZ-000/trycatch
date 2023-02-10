@@ -22,6 +22,7 @@ INSERT INTO challenge
 VALUES (1, 'super', '2023-02-01', 'test challenge 1', '2023-01-01'),
     (2, 'doper', '2023-02-02', 'test challenge 2', '2023-01-02');
 
+
 INSERT INTO conference
 VALUES (1, 'summary 1', 'title 1', 'url 1', 1),
     (2, 'summary 2', 'title 2', 'url 2', 2);
