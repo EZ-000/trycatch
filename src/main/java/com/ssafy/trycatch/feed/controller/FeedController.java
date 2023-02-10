@@ -2,7 +2,9 @@ package com.ssafy.trycatch.feed.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.elasticsearch.domain.ESUser;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
+import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto.FeedSortOption;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedResponseDto;
 import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.user.domain.User;
@@ -34,7 +36,7 @@ public class FeedController {
         this.feedService = feedService;
     }
 
-    private static Pageable newPageable(Integer page, Integer size, SearchFeedRequestDto.FeedSortOption sort) {
+    private static Pageable newPageable(Integer page, Integer size, FeedSortOption sort) {
         return new AbstractPageRequest(page, size) {
 
             @NonNull
@@ -79,9 +81,14 @@ public class FeedController {
 
         // TODO : 구독 필터 구현, 유저 맞춤 정렬 구현
         final String query = requestDto.getQuery();
+
         Page<ESFeed> feedPage;
-        if (StringUtils.hasText(query)) {
-            if (requestDto.isAdvanced()) {
+        if (requestDto.getSort() == FeedSortOption.user) {
+            // 나와의 관련도순
+            Long userId = requestUser.getId();
+            feedPage = feedService.searchByQueryAndUser(userId, query, pageable);
+        } else if (StringUtils.hasText(query)) {
+            if (requestDto.getAdvanced()) {
                 // 고급 검색
                 feedPage = feedService.advanceSearch(query, pageable);
             } else {

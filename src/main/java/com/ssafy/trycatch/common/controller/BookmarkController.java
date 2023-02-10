@@ -12,6 +12,7 @@ import com.ssafy.trycatch.common.service.exceptions.BookmarkDuplicatedException;
 import com.ssafy.trycatch.common.service.exceptions.LikesDuplicatedException;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.domain.Feed;
+import com.ssafy.trycatch.feed.service.ESFeedService;
 import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
@@ -36,6 +37,7 @@ public class BookmarkController {
     private final RoadmapService roadmapService;
     private final FeedService feedService;
     private final UserService userService;
+    private final ESFeedService esFeedService;
 
     @Autowired
     public BookmarkController(
@@ -43,12 +45,14 @@ public class BookmarkController {
             QuestionService questionService,
             RoadmapService roadmapService,
             FeedService feedService,
-            UserService userService
+            UserService userService,
+            ESFeedService esFeedService
     ) {
         this.bookmarkService = bookmarkService;
         this.questionService = questionService;
         this.roadmapService = roadmapService;
         this.feedService = feedService;
+        this.esFeedService = esFeedService;
         this.userService = userService;
     }
 
@@ -208,10 +212,11 @@ public class BookmarkController {
 
         for (Feed bookmarkedFeed : bookmarkedFeeds) {
             final String stringId = bookmarkedFeed.getEsId();
-            final ESFeed esFeed = feedService.findByESId(stringId);
+            final ESFeed esFeed = esFeedService.findById(stringId);
+            final String logoSrc = feedService.findIconByCompany(esFeed.getPk());
 
             final FindBookmarkedFeedDto responseDto = FindBookmarkedFeedDto
-                    .from(bookmarkedFeed, esFeed);
+                    .from(bookmarkedFeed, esFeed, logoSrc);
 
             responseDtoList.add(responseDto);
         }

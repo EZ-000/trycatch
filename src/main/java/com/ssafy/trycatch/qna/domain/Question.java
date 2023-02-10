@@ -37,8 +37,8 @@ public class Question {
     @ToString.Exclude
     private User user;
 
-    @Size(max = 50)
-    @Column(name = "title", length = 50)
+    @Size(max = 128)
+    @Column(name = "title", length = 128)
     private String title;
 
     @Lob

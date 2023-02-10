@@ -20,6 +20,8 @@ import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.CrudService;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
 import com.ssafy.trycatch.qna.domain.Answer;
@@ -28,7 +30,7 @@ import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.UserQuestionDto;
-import com.ssafy.trycatch.user.controller.dto.UserRecentFeedDto;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.FollowRepository;
@@ -46,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
+	private final ESFeedRepository eSFeedRepository;
 	private final SubscriptionRepository subscriptionRepository;
 	private final ReadRepository readRepository;
 	private final BookmarkRepository bookmarkRepository;
@@ -83,7 +86,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		LikesRepository likesRepository,
 		BookmarkRepository bookmarkRepository,
 		ReadRepository readRepository,
-		SubscriptionRepository subscriptionRepository) {
+		SubscriptionRepository subscriptionRepository,
+		ESFeedRepository eSFeedRepository) {
 		super(repository);
 		this.withdrawalRepository = withdrawalRepository;
 		this.followRepository = followRepository;
@@ -91,6 +95,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		this.bookmarkRepository = bookmarkRepository;
 		this.readRepository = readRepository;
 		this.subscriptionRepository = subscriptionRepository;
+		this.eSFeedRepository = eSFeedRepository;
 	}
 
 	public User findUserById(@NotNull Long userId) {
@@ -140,11 +145,21 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		User user = repository.findById(uid)
 			.orElseThrow(UserNotFoundException::new);
 
-		return Objects.requireNonNull(getFollowers(user, type))
-			.stream()
-			.map(e -> repository.findById(e.getId())
-				.orElseThrow(UserNotFoundException::new))
-			.collect(Collectors.toList());
+		Set<Follow> followSet = getFollowers(user, type);
+
+		if (type.equals("follower")) {
+			return followSet.stream()
+				.map(Follow::getFollower)
+				.sorted(Comparator.comparing(User::getId))
+				.collect(Collectors.toList());
+		} else if (type.equals("followee")) {
+			return followSet.stream()
+				.map(Follow::getFollowee)
+				.sorted(Comparator.comparing(User::getId))
+				.collect(Collectors.toList());
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	private Set<Follow> getFollowers(User user, String type) {
@@ -207,7 +222,6 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			.orElseThrow(UserNotFoundException::new)
 			.getAnswers();
 
-
 		List<UserAnswerDto> result = new ArrayList<>();
 		for (Answer iterAnswer : answerList) {
 			Question question = iterAnswer.getQuestion();
@@ -230,7 +244,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 				.build();
 			result.add(userAnswerDto);
 		}
-		return result.stream().sorted(Comparator.comparing(UserAnswerDto::getAnswerId).reversed()).collect(Collectors.toList());
+		return result.stream()
+			.sorted(Comparator.comparing(UserAnswerDto::getAnswerId).reversed())
+			.collect(Collectors.toList());
 	}
 
 	public List<UserQuestionDto> getUserQuestionDtoList(Long uid, Long id) {
@@ -276,14 +292,28 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 				.build();
 			result.add(userQuestionDto);
 		}
-		return result.stream().sorted(Comparator.comparing(UserQuestionDto::getQuestionId).reversed()).collect(Collectors.toList());
+		return result.stream()
+			.sorted(Comparator.comparing(UserQuestionDto::getQuestionId).reversed())
+			.collect(Collectors.toList());
 	}
 
-	public List<UserRecentFeedDto> findRecentFeedList(Long id) {
-		List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
-		return recentReadList.stream()
-			.map(e -> UserRecentFeedDto.from(e))
-			.sorted(Comparator.comparing(UserRecentFeedDto::getFeedId))
+	public List<UserFeedDto> findRecentFeedList(Long id) {
+		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
+
+		List<UserFeedDto> result = new ArrayList<>();
+		for (Read read : recentReadList) {
+			final String esId = read.getFeed().getEsId();
+			final ESFeed esFeed = eSFeedRepository.findById(esId).orElse(new ESFeed());
+
+			boolean isBookmarked = bookmarkRepository
+				.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(read.getUser().getId(), read.getFeed().getId(),
+					TargetType.FEED).isPresent();
+
+			result.add(UserFeedDto.from(read.getFeed(), esFeed, isBookmarked));
+		}
+
+		return result.stream()
+			.sorted(Comparator.comparing(UserFeedDto::getFeedId))
 			.collect(Collectors.toList());
 	}
 
@@ -308,7 +338,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 			result.add(userSubscriptionDto);
 		}
-		return result.stream().sorted(Comparator.comparing(UserSubscriptionDto::getCompanyId)).collect(Collectors.toList());
+		return result.stream()
+			.sorted(Comparator.comparing(UserSubscriptionDto::getCompanyId))
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -318,6 +350,6 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	 * @return
 	 */
 	public Boolean getIsFollowed(Long targetId, Long id) {
-		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent() ? true : false;
+		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent();
 	}
 }

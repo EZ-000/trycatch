@@ -1,11 +1,11 @@
 package com.ssafy.trycatch.user.controller.dto;
 
+import java.util.List;
+
 import com.ssafy.trycatch.user.domain.User;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class UserDto {
