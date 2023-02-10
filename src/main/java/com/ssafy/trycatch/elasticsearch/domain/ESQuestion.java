@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "#{@environment.getProperty('elasticsearch.question.index')}")
+@Document(indexName = "question-#{@environment.getProperty('elasticsearch.index.prefix')}")
 public class ESQuestion {
 
     public static ESQuestion of(Long questionId, CreateQuestionRequestDto requestDto) {

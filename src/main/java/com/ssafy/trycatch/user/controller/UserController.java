@@ -26,9 +26,9 @@ import com.ssafy.trycatch.common.notification.NotificationService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.UserQuestionDto;
-import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
 import com.ssafy.trycatch.user.controller.dto.VerifyDto;
 import com.ssafy.trycatch.user.controller.dto.WithdrawalRequestDto;
@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/${apiPrefix}/user")
 public class UserController {
-	private static final Long UN_LOGINED_USER = -1L;
+private static final Long UN_LOGINED_USER = -1L;
 	private final UserService userService;
 	private final NotificationService notificationService;
 
@@ -270,25 +270,25 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/{uid}/recent/list")
-	public ResponseEntity<List<UserFeedDto>> findRecentFeed(
-		@PathVariable Long uid, @AuthUserElseGuest User requestUser) {
-		if (UN_LOGINED_USER == requestUser.getId()) {
-			return ResponseEntity.badRequest().build();
-		}
+    @GetMapping("/{uid}/recent/list")
+    public ResponseEntity<List<UserFeedDto>> findRecentFeed(
+        @PathVariable Long uid, @AuthUserElseGuest User requestUser) {
+        if (UN_LOGINED_USER.equals(requestUser.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
 
 		List<UserFeedDto> result = userService.findRecentFeedList(requestUser.getId());
 		return ResponseEntity.ok(result);
 	}
 
-	@GetMapping("/{userId}/subscription/list")
-	public ResponseEntity<List<UserSubscriptionDto>> findSubscriptionList(
-		@PathVariable Long userId, @AuthUserElseGuest User requestUser) {
-		if (UN_LOGINED_USER == requestUser.getId()) {
-			return ResponseEntity.badRequest().build();
-		}
-		try {
-			List<UserSubscriptionDto> result = userService.findSubscriptionList(userId, requestUser.getId());
+    @GetMapping("/{userId}/subscription/list")
+    public ResponseEntity<List<UserSubscriptionDto>> findSubscriptionList(
+        @PathVariable Long userId, @AuthUserElseGuest User requestUser) {
+        if (UN_LOGINED_USER.equals(requestUser.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            List<UserSubscriptionDto> result = userService.findSubscriptionList(userId,requestUser.getId());
 
 			return ResponseEntity.ok(result);
 		} catch (UserNotFoundException u) {
@@ -325,4 +325,5 @@ public class UserController {
 	public ResponseEntity<String> findRanks() {
 		return ResponseEntity.ok("질문답변 활동에서 가장 높은 포인트를 얻은 사람 목록을 조회합니다.");
 	}
+
 }

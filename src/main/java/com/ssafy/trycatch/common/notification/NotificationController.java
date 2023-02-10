@@ -43,6 +43,7 @@ public class NotificationController {
 
 		notificationService.sendSaved(sseEmitter, userId);
 
+
 		// userId key값으로 해서 SseEmitter를 저장
 		sseEmitters.put(userId, sseEmitter);
 

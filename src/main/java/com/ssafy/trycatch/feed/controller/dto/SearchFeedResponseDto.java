@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 @Data
 public class SearchFeedResponseDto {
 
-	public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage, FeedService feedService) {
-		return new SearchFeedResponseDto(esFeedPage.stream()
-			.map(entity -> Item.of(entity, feedService))
-			.collect(Collectors.toList()));
-	}
+    public static SearchFeedResponseDto of(Page<ESFeed> esFeedPage, FeedService feedService) {
+        return new SearchFeedResponseDto(esFeedPage.stream()
+                                                   .map(entity -> Item.of(entity, feedService))
+                                                   .collect(Collectors.toList()));
+    }
 
 	private List<Item> feedList;
 

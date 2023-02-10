@@ -9,4 +9,7 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
     Optional<Roadmap> findByUserId(Long userId);
 
     List<Roadmap> findTop3ByOrderByLikesDescIdAsc();
+
+    boolean existsByUser_Id(Long id);
+
 }
