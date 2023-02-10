@@ -1,6 +1,5 @@
-package com.ssafy.trycatch.common.sse;
+package com.ssafy.trycatch.common.notification;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,14 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping("/${apiPrefix}")
-public class SseController {
+public class NotificationController {
 
 	public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 	private final TokenService tokenService;
 	private final NotificationService notificationService;
 
 	@Autowired
-	public SseController(
+	public NotificationController(
 		TokenService tokenService,
 		NotificationService notificationService) {
 		this.tokenService = tokenService;
@@ -41,16 +40,8 @@ public class SseController {
 
 		// SseEmitter 생성
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-		try {
-			notificationService.send(sseEmitter, "connect", "dummy");
-			// db에 쌓인것이 있다면 쭉 send
-			//notificationService.prevSend
 
-
-			// 없다면 nothing
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		notificationService.sendSaved(sseEmitter, userId);
 
 		// userId key값으로 해서 SseEmitter를 저장
 		sseEmitters.put(userId, sseEmitter);

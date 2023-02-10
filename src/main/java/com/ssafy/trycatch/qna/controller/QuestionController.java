@@ -2,6 +2,7 @@ package com.ssafy.trycatch.qna.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.notification.NotificationService;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.LikesService;
 import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
@@ -38,18 +39,21 @@ public class QuestionController {
     private final AnswerService answerService;
     private final LikesService likesService;
     private final BookmarkService bookmarkService;
+    private final NotificationService notificationService;
 
     @Autowired
     public QuestionController(
             QuestionService questionService,
             AnswerService answerService,
             LikesService likesService,
-            BookmarkService bookmarkService
+            BookmarkService bookmarkService,
+            NotificationService notificationService
     ) {
         this.questionService = questionService;
         this.answerService = answerService;
         this.likesService = likesService;
         this.bookmarkService = bookmarkService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -243,6 +247,11 @@ public class QuestionController {
         // 응답
         final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(answer);
 
+        // 내글에 내가 답변을 생성하는 경우는, 알림을 생성하지 않는다.
+        if(!requestUser.getId().equals(question.getUser().getId())) {
+            notificationService.notifyAddAnswer(question);
+        }
+
         return ResponseEntity.status(201)
                              .body(answerResponseDto);
 
@@ -327,6 +336,8 @@ public class QuestionController {
                 authorDto,
                 isLiked,
                 isBookmarked);
+
+        notificationService.notifyAcceptAnswer(question);
 
         return ResponseEntity.status(201)
                              .body(responseDto);
