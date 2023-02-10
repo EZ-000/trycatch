@@ -1,6 +1,5 @@
 package com.ssafy.trycatch.common.notification;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,16 +40,9 @@ public class NotificationController {
 
 		// SseEmitter 생성
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-		try {
-			notificationService.send(sseEmitter, "connect", "dummy");
-			// db에 쌓인것이 있다면 쭉 send
-			//notificationService.prevSend
 
+		notificationService.sendSaved(sseEmitter, userId);
 
-			// 없다면 nothing
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		// userId key값으로 해서 SseEmitter를 저장
 		sseEmitters.put(userId, sseEmitter);
