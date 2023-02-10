@@ -278,7 +278,7 @@ public class QuestionController {
 
     @GetMapping("/search")
     public ResponseEntity<List<SearchQuestionResponseDto>> search(
-            @RequestParam String query,
+            @RequestParam(required = false) String query,
             @RequestParam String category,
             @PageableDefault Pageable pageable
     ) {
