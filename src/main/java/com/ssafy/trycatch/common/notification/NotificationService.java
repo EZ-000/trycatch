@@ -55,7 +55,7 @@ public class NotificationService {
 			.findById(NotifyEnumType.FOLLOW.getId())
 			.orElse(NotifyType.builder().build());
 
-		Notification notification = dataBuilder(src, toUser, notifyType);
+		Notification notification = notificationRepository.save(dataBuilder(src, toUser, notifyType));
 		emitOrSaveMessage(toUser, notification);
 	}
 
@@ -66,7 +66,7 @@ public class NotificationService {
 			.findById(NotifyEnumType.ANSWER_REGISTRATION.getId())
 			.orElse(NotifyType.builder().build());
 
-		Notification notification = dataBuilder(question, notifyType);
+		Notification notification = notificationRepository.save(dataBuilder(question, notifyType));
 		emitOrSaveMessage(toUser, notification);
 	}
 
@@ -77,7 +77,7 @@ public class NotificationService {
 			.findById(NotifyEnumType.ANSWER_ACCEPTANCE.getId())
 			.orElse(NotifyType.builder().build());
 
-		Notification notification = dataBuilder(question, notifyType);
+		Notification notification = notificationRepository.save(dataBuilder(question, notifyType));
 		emitOrSaveMessage(toUser, notification);
 	}
 
@@ -88,7 +88,7 @@ public class NotificationService {
 			.typecode(notifyType)
 			.createdAt(LocalDateTime.now())
 			.activated(true)
-			.title(question.getTags())
+			.title(question.getTitle())
 			.build();
 	}
 
@@ -101,7 +101,7 @@ public class NotificationService {
 			.targetId(fromUser.getId())
 			.typecode(notifyType)
 			.createdAt(LocalDateTime.now())
-			.activated(false)
+			.activated(true)
 			.title(fromUser.getUsername())
 			.build();
 	}
@@ -114,8 +114,9 @@ public class NotificationService {
 			} catch (Exception e) {
 				sseEmitters.remove(toUser.getId());
 			}
+			notification.setActivated(false);
 		} else {
-			notificationRepository.save(notification);
+			// notificationRepository.save(notification);
 		}
 	}
 
@@ -131,7 +132,7 @@ public class NotificationService {
 			for (Notification notification : savedNotifylist) {
 				if(notification.getActivated()) {
 					send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
-					notification.setActivated(!notification.getActivated());
+					notification.setActivated(false);
 				}
 			}
 		} catch (IOException e) {
