@@ -49,7 +49,7 @@ public class Notification {
 
 	@ToString.Exclude
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "type")
+	@JoinColumn(name = "typecode")
 	private NotifyType type;
 
 	@Column(name = "activated")
@@ -59,7 +59,7 @@ public class Notification {
 	private LocalDateTime createdAt;
 
 	@Size(max = 128)
-	@Column(name = "subject", length = 128)
+	@Column(name = "title", length = 128)
 	private String subject;
 
 	@Builder
