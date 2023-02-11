@@ -1,16 +1,7 @@
 package com.ssafy.trycatch.feed.service;
 
-import com.ssafy.trycatch.common.domain.Company;
-import com.ssafy.trycatch.common.domain.CompanyRepository;
-import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import com.ssafy.trycatch.elasticsearch.domain.ESUser;
-import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
-import com.ssafy.trycatch.elasticsearch.domain.repository.ESUserRepository;
-import com.ssafy.trycatch.feed.domain.Feed;
-import com.ssafy.trycatch.feed.domain.FeedRepository;
-import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
-
-import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +10,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
+import com.ssafy.trycatch.common.domain.Company;
+import com.ssafy.trycatch.common.domain.CompanyRepository;
+import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
+import com.ssafy.trycatch.elasticsearch.domain.ESUser;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
+import com.ssafy.trycatch.elasticsearch.domain.repository.ESUserRepository;
+import com.ssafy.trycatch.feed.domain.Feed;
+import com.ssafy.trycatch.feed.domain.FeedRepository;
+import com.ssafy.trycatch.feed.domain.Read;
+import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
+import com.ssafy.trycatch.user.domain.User;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -27,7 +31,7 @@ public class FeedService {
 	private final FeedRepository feedRepository;
 	private final ESFeedRepository esFeedRepository;
 	private final CompanyRepository companyRepository;
-
+	private final ReadRepository readRepository;
     private final ESUserRepository esUserRepository;
 
     @Autowired
@@ -35,12 +39,14 @@ public class FeedService {
             FeedRepository feedRepository,
             ESFeedRepository esFeedRepository,
             CompanyRepository companyRepository,
-            ESUserRepository esUserRepository
+            ESUserRepository esUserRepository,
+		ReadRepository readRepository
     ) {
         this.feedRepository = feedRepository;
         this.esFeedRepository = esFeedRepository;
         this.companyRepository = companyRepository;
         this.esUserRepository = esUserRepository;
+		this.readRepository = readRepository;
     }
 
 	public Page<ESFeed> findAll(Pageable pageable) {
@@ -84,4 +90,13 @@ public class FeedService {
         final int end = Math.min((start + pageable.getPageSize()), esFeedList.size());
         return new PageImpl<>(esFeedList.subList(start, end), pageable, esFeedList.size());
     }
+
+	public void readFeed(User requestUser, Long feedId) {
+		Feed feed = feedRepository.findById(feedId).orElseThrow(FeedNotFoundException::new);
+		readRepository.save(Read.builder()
+			.user(requestUser)
+			.feed(feed)
+			.readAt(Instant.now())
+			.build());
+	}
 }
