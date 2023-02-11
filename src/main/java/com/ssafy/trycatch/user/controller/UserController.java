@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.notification.NotificationService;
+import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserDto;
@@ -43,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/${apiPrefix}/user")
 public class UserController {
-private static final Long UN_LOGINED_USER = -1L;
+	private static final Long UN_LOGINED_USER = -1L;
 	private final UserService userService;
 	private final NotificationService notificationService;
 
@@ -83,6 +84,12 @@ private static final Long UN_LOGINED_USER = -1L;
 			return ResponseEntity.badRequest()
 				.build();
 		}
+	}
+
+	@GetMapping("/roadmap")
+	public ResponseEntity<Boolean> isExistRoadmap(@AuthUserElseGuest User requestUser) {
+		boolean flag = userService.haveRoadmap(requestUser);
+		return ResponseEntity.ok(flag);
 	}
 
 	@GetMapping("/detail/{targetId}")
@@ -270,25 +277,39 @@ private static final Long UN_LOGINED_USER = -1L;
 		}
 	}
 
-    @GetMapping("/{uid}/recent/list")
-    public ResponseEntity<List<UserFeedDto>> findRecentFeed(
-        @PathVariable Long uid, @AuthUserElseGuest User requestUser) {
-        if (UN_LOGINED_USER.equals(requestUser.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
+	@PostMapping("/recent/{feedId}")
+	public ResponseEntity<String> readFeed(
+		@PathVariable Long feedId,
+		@AuthUserElseGuest User requestUser) {
+		try {
+			userService.readFeed(requestUser, feedId);
+			return ResponseEntity.ok().build();
+		} catch (UserNotFoundException e) {
+			return ResponseEntity.ok("해당 사용자가 없음");
+		} catch (FeedNotFoundException e) {
+			return ResponseEntity.ok("해당 Feed가 없음");
+		}
+	}
+
+	@GetMapping("/{uid}/recent/list")
+	public ResponseEntity<List<UserFeedDto>> findRecentFeed(
+		@PathVariable Long uid, @AuthUserElseGuest User requestUser) {
+		if (UN_LOGINED_USER.equals(requestUser.getId())) {
+			return ResponseEntity.badRequest().build();
+		}
 
 		List<UserFeedDto> result = userService.findRecentFeedList(requestUser.getId());
 		return ResponseEntity.ok(result);
 	}
 
-    @GetMapping("/{userId}/subscription/list")
-    public ResponseEntity<List<UserSubscriptionDto>> findSubscriptionList(
-        @PathVariable Long userId, @AuthUserElseGuest User requestUser) {
-        if (UN_LOGINED_USER.equals(requestUser.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            List<UserSubscriptionDto> result = userService.findSubscriptionList(userId,requestUser.getId());
+	@GetMapping("/{userId}/subscription/list")
+	public ResponseEntity<List<UserSubscriptionDto>> findSubscriptionList(
+		@PathVariable Long userId, @AuthUserElseGuest User requestUser) {
+		if (UN_LOGINED_USER.equals(requestUser.getId())) {
+			return ResponseEntity.badRequest().build();
+		}
+		try {
+			List<UserSubscriptionDto> result = userService.findSubscriptionList(userId, requestUser.getId());
 
 			return ResponseEntity.ok(result);
 		} catch (UserNotFoundException u) {
