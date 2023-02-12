@@ -33,7 +33,9 @@ settings:
     on_fail:
       redirect_uri: https://beta.try-catch.duckdns.org/error
 
-  cross-origin: "*"
+  cross-origin: >
+    http://localhost:5173,
+    https://beta.try-catch.duckdns.org,
 
 # >
 #   http://localhost:5173,
