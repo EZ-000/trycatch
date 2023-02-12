@@ -25,7 +25,7 @@ public class AnswerService {
     }
 
     public List<Answer> findByQuestionId(Long questionId) {
-        return answerRepository.findByQuestionId(questionId);
+        return answerRepository.findByQuestion_Id(questionId);
     }
 
     public Answer findById(Long answerId) {

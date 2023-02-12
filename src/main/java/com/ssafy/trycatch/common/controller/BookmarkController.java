@@ -19,6 +19,7 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.UserService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,17 +36,25 @@ public class BookmarkController {
     private final QuestionService questionService;
     private final RoadmapService roadmapService;
     private final FeedService feedService;
+    private final UserService userService;
     private final ESFeedService esFeedService;
 
     @Autowired
-    public BookmarkController(BookmarkService bookmarkService, QuestionService questionService, RoadmapService roadmapService, FeedService feedService, ESFeedService esFeedService) {
+    public BookmarkController(
+            BookmarkService bookmarkService,
+            QuestionService questionService,
+            RoadmapService roadmapService,
+            FeedService feedService,
+            UserService userService,
+            ESFeedService esFeedService
+    ) {
         this.bookmarkService = bookmarkService;
         this.questionService = questionService;
         this.roadmapService = roadmapService;
         this.feedService = feedService;
+        this.userService = userService;
         this.esFeedService = esFeedService;
     }
-
 
     /**
      * @param requestUser 로그인된 유저
@@ -59,7 +68,8 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
+
 
         // 중복 요청 방지
         final TargetType type = TargetType
@@ -92,7 +102,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 중복 요청 방지
         final TargetType type = TargetType
@@ -123,7 +133,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
@@ -155,7 +165,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
@@ -184,7 +194,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 피드 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
