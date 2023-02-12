@@ -5,7 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -36,12 +36,17 @@ public class MyChallenge {
     @Column(name = "progress")
     private Long progress;
 
-    @Column(name = "succeed")
-    private Boolean succeed;
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status_info")
+    private StatusInfo statusInfo;
 
     @Column(name = "start_from")
-    private Instant startFrom;
+    private LocalDateTime startFrom;
+
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
 
     @Column(name = "earned_at")
-    private Instant earnAt;
+    private LocalDateTime earnedAt;
 }

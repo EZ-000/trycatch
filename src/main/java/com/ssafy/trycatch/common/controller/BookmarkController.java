@@ -52,8 +52,8 @@ public class BookmarkController {
         this.questionService = questionService;
         this.roadmapService = roadmapService;
         this.feedService = feedService;
-        this.esFeedService = esFeedService;
         this.userService = userService;
+        this.esFeedService = esFeedService;
     }
 
     /**

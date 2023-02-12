@@ -43,29 +43,32 @@ public class ChallengeController {
             @PageableDefault Pageable pageable
     ) {
         final Long userId = requestUser.getId();
-        // 유저가 참여하고 있는 챌린지 리스트만 가져와서 for문 돌면서
-        // 챌린지 id를 기준으로 MyChallengeService에서 progress랑 succeed 업데이트
+
+        // 1. 유저의 진행 상태 업데이트
         final List<MyChallenge> myChallenges = myChallengeService
-                .findMyChallenges(userId, pageable);
+                .findMyOngoingChallenges(userId, pageable);
 
+        for (MyChallenge myChallenge : myChallenges) {
+            myChallengeService.updateMyChallenge(myChallenge);
+        }
 
+        // 2. 전체 리스트 조회
         final List<Challenge> challenges = challengeService.findAll();
-
 
         final List<FindChallengeResponseDto> responseDtos = new ArrayList<>();
         for (Challenge challenge : challenges) {
             final Long challengeId = challenge.getId();
+            final MyChallenge myChallenge = myChallengeService
+                    .findMyLatestChallenge(challengeId, userId);
 
-            final Boolean isJoined = myChallengeService.IsJoined(challengeId, userId);
-            final Boolean isSucceed = myChallengeService.IsSucceed(challengeId, userId);
-            final Long progress = myChallengeService.getProgress(challengeId, userId);
-
-            final FindChallengeResponseDto responseDto = FindChallengeResponseDto.from(
-                    challenge,
-                    isJoined,
-                    isSucceed,
-                    progress);
-
+            final FindChallengeResponseDto responseDto;
+            if (null != myChallenge.getId()) {
+                responseDto = FindChallengeResponseDto.from(
+                        challenge,
+                        myChallenge);
+            } else {
+                responseDto = FindChallengeResponseDto.from(challenge);
+            }
             responseDtos.add(responseDto);
         }
         return ResponseEntity.ok(responseDtos);

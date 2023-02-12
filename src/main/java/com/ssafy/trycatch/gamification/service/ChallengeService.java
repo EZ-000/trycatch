@@ -8,11 +8,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ChallengeService extends CrudService<Challenge, Long, ChallengeRepository> {
-
     @Autowired
     public ChallengeService(ChallengeRepository repository) {
         super(repository);
     }
-
-
 }
