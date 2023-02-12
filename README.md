@@ -1,5 +1,6 @@
 # Sequence diagram
 
+
 # Bookmark
 
 ### 북마크 추가 / 삭제
