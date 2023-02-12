@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class GithubRepo {
+public class GithubRepoDto {
     String nodeId;
     String languagesUrl;
     String description;

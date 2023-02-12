@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ssafy.trycatch.qna.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +16,6 @@ import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESQuestionRepository;
 import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
 import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.AnswerRepository;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.domain.QuestionRepository;
 import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;

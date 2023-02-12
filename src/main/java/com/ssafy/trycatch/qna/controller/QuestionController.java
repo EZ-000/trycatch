@@ -2,18 +2,24 @@ package com.ssafy.trycatch.qna.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
+import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
 import com.ssafy.trycatch.common.notification.NotificationService;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.LikesService;
 import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import com.ssafy.trycatch.qna.controller.dto.*;
 import com.ssafy.trycatch.qna.domain.Answer;
+import com.ssafy.trycatch.qna.domain.GithubRepo;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.AnswerService;
+import com.ssafy.trycatch.qna.service.GithubRepoService;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.GithubService;
 import io.swagger.annotations.ApiParam;
+
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +29,9 @@ import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +48,9 @@ public class QuestionController {
     private final LikesService likesService;
     private final BookmarkService bookmarkService;
     private final NotificationService notificationService;
+    private final GithubRepoService githubRepoService;
+    private final GithubService githubService;
+    private final TokenService tokenService;
 
     @Autowired
     public QuestionController(
@@ -47,13 +58,16 @@ public class QuestionController {
             AnswerService answerService,
             LikesService likesService,
             BookmarkService bookmarkService,
-            NotificationService notificationService
-    ) {
+            NotificationService notificationService,
+            GithubRepoService githubRepoService, GithubService githubService, TokenService tokenService) {
         this.questionService = questionService;
         this.answerService = answerService;
         this.likesService = likesService;
         this.bookmarkService = bookmarkService;
         this.notificationService = notificationService;
+        this.githubRepoService = githubRepoService;
+        this.githubService = githubService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
@@ -207,11 +221,19 @@ public class QuestionController {
         final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
         for (Answer answer : answers) {
             final long answerId = answer.getId();
+            final long userId = requestUser.getId();
+
             final boolean answerIsLiked = likesService
                     .isLikedByUserAndTarget(requestUser.getId(), answerId, ANSWER);
 
+            final boolean repoChecked = githubRepoService
+                    .isRepoChecked(userId);
+
+            final GithubRepo githubRepo = githubRepoService
+                    .findByUser(userId);
+
             final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
-                    answer, requestUser, answerIsLiked);
+                    answer, requestUser, answerIsLiked, repoChecked, githubRepo);
 
             answerResponseDtoList.add(responseDto);
         }
@@ -245,7 +267,12 @@ public class QuestionController {
         final Answer answer = answerService.saveAnswer(answerDto);
 
         // 응답
-        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(answer);
+        final Long userId = requestUser.getId();
+
+        final Boolean repoChecked = githubRepoService.isRepoChecked(userId);
+        final GithubRepo githubRepo = githubRepoService.findByUser(userId);
+        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto
+                .from(answer, repoChecked, githubRepo);
 
         // 내글에 내가 답변을 생성하는 경우는, 알림을 생성하지 않는다.
         if(!requestUser.getId().equals(question.getUser().getId())) {
@@ -311,11 +338,19 @@ public class QuestionController {
         final List<FindAnswerResponseDto> answerResponseDtoList = new ArrayList<>();
         for (Answer answer : answers) {
             final long targetId = answer.getId();
+            final long userId = requestUser.getId();
+
             final boolean answerIsLiked = likesService
-                    .isLikedByUserAndTarget(requestUser.getId(), targetId, ANSWER);
+                    .isLikedByUserAndTarget(userId, targetId, ANSWER);
+
+            final boolean repoChecked = githubRepoService
+                    .isRepoChecked(userId);
+
+            final GithubRepo githubRepo = githubRepoService
+                    .findByUser(userId);
 
             final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
-                    answer, requestUser, answerIsLiked);
+                    answer, requestUser, answerIsLiked, repoChecked, githubRepo);
 
             answerResponseDtoList.add(responseDto);
         }
@@ -386,11 +421,34 @@ public class QuestionController {
         return ResponseEntity.ok(PopularTagsResponseDto.from(tags));
     }
 
+    @SneakyThrows
+    @PostMapping("/{questionId}/{answerId}/commit")
+    public ResponseEntity<Void> commitAnswer(
+            @AuthUserElseGuest User requestUser,
+            HttpServletRequest request,  // FIXME
+            @PathVariable Long questionId,
+            @PathVariable Long answerId
+    ) {
+        final String githubToken = tokenService.getAccessToken(request.getHeader("Authorization"));  // FIXME
+
+        final GithubRepo githubRepo = githubRepoService.findByUser(requestUser.getId());
+        final String repoName = githubRepo.getRepoName();
+
+        final Question question = questionService.findQuestionById(questionId);
+        final String fileName = "RE: " + question.getTitle();
+
+        final Answer answer = answerService.findById(answerId);
+        final String content = answer.getContent();
+
+        githubService.createFile(githubToken, repoName, fileName, content);
+
+        return ResponseEntity.status(201).build();
+    }
+
+
     // MOCK API: 에러코드 기반 질문 추천
     @GetMapping("/ec")
     public ResponseEntity<List<SuggestQuestionResponseDto>> suggestQuestions() {
-
-        return ResponseEntity.ok()
-                             .build();
+        return ResponseEntity.ok().build();
     }
 }
