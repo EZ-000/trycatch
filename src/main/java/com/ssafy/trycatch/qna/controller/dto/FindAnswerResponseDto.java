@@ -1,6 +1,7 @@
 package com.ssafy.trycatch.qna.controller.dto;
 
 import com.ssafy.trycatch.qna.domain.Answer;
+import com.ssafy.trycatch.qna.domain.GithubRepo;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
@@ -18,7 +19,13 @@ public class FindAnswerResponseDto implements Serializable {
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
-    public static FindAnswerResponseDto from(Answer answer, User user, Boolean isLiked) {
+    public static FindAnswerResponseDto from(
+            Answer answer,
+            User user,
+            Boolean isLiked,
+            Boolean repoChecked,
+            GithubRepo githubRepo
+    ) {
 
         final User author = answer.getUser();
 
@@ -38,10 +45,17 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(isLiked)
                 .accepted(answer.getChosen())
+                .repoChecked(repoChecked)
+                .doCommit(githubRepo.getDoCommit())
+                .repoName(githubRepo.getRepoName())
                 .build();
     }
 
-    public static FindAnswerResponseDto from(Answer answer) {
+    public static FindAnswerResponseDto from(
+            Answer answer,
+            Boolean repoChecked,
+            GithubRepo githubRepo
+    ) {
 
         final User author = answer.getUser();
         final long timestamp = answer.getCreatedAt()
@@ -61,6 +75,36 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(false)
                 .accepted(answer.getChosen())
+                .repoChecked(repoChecked)
+                .doCommit(githubRepo.getDoCommit())
+                .repoName(githubRepo.getRepoName())
+                .build();
+    }
+
+    public static FindAnswerResponseDto from(
+            Answer answer,
+            User user,
+            Boolean isLiked
+    ) {
+
+        final User author = answer.getUser();
+
+        return FindAnswerResponseDto.builder()
+                .answerId(answer.getId())
+                .author(SimpleUserDto.builder()
+                        .author(author)
+                        .requestUser(user)
+                        .build())
+                .content(answer.getContent())
+                .timestamp(answer.getCreatedAt()
+                        .atZone(TZ_SEOUL)
+                        .toInstant()
+                        .toEpochMilli())
+                .updatedAt(answer.getUpdatedAt()
+                        .toEpochMilli())
+                .likeCount(answer.getLikes())
+                .isLiked(isLiked)
+                .accepted(answer.getChosen())
                 .build();
     }
 
@@ -72,6 +116,9 @@ public class FindAnswerResponseDto implements Serializable {
     private final Integer likeCount;
     private final Boolean isLiked;
     private final Boolean accepted;
+    private final Boolean repoChecked;
+    private final Boolean doCommit;
+    private final String repoName;
 
     @Builder
     public FindAnswerResponseDto(
@@ -82,8 +129,8 @@ public class FindAnswerResponseDto implements Serializable {
             Long updatedAt,
             Integer likeCount,
             Boolean isLiked,
-            Boolean accepted
-    ) {
+            Boolean accepted,
+            Boolean repoChecked, Boolean doCommit, String repoName) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
@@ -92,6 +139,9 @@ public class FindAnswerResponseDto implements Serializable {
         this.likeCount = likeCount;
         this.isLiked = isLiked;
         this.accepted = accepted;
+        this.repoChecked = repoChecked;
+        this.doCommit = doCommit;
+        this.repoName = repoName;
     }
 }
 

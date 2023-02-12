@@ -12,7 +12,5 @@ public interface AnswerRepository extends PagingAndSortingRepository<Answer, Lon
     List<Answer> findByQuestion_Id(Long id);
 
     List<Answer> findByCreatedAtGreaterThanEqual(LocalDateTime startFrom);
-
-
-
+    
 }
