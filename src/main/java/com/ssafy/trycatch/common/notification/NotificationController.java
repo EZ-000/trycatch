@@ -46,7 +46,8 @@ public class NotificationController {
 		} catch (IOException e) {
 			log.info(e.getMessage());
 		}
-		notificationService.sendSaved(sseEmitter, userId);
+		// 임시처리, 누수 의심 disable 처리
+		//notificationService.sendSaved(sseEmitter, userId);
 
 
 		// userId key값으로 해서 SseEmitter를 저장
