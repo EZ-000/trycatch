@@ -1,24 +1,20 @@
 package com.ssafy.trycatch.user.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ssafy.trycatch.user.service.dto.GithubRepo;
-import com.ssafy.trycatch.user.service.dto.GithubUser;
-import lombok.extern.slf4j.Slf4j;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.graphql.client.GraphQlClient;
-import org.springframework.graphql.client.HttpGraphQlClient;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 
 @Slf4j
@@ -62,10 +58,28 @@ public class GithubService {
                 .map(this::getVector);
     }
 
-    public static void main(String[] args) throws Exception {
-        GithubService service = new GithubService();
-        service.getVectorFromToken("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")
-                .doOnSuccess(System.out::println)
-                .block();
+    /**
+     *
+     * @param githubToken 깃허브 Oauth 토큰
+     * @param repoName 저장소 이름
+     * @param fileName  경로를 포함한 파일 이름
+     * @param content   파일 내용
+     * @throws IOException
+     */
+    public void createFile(String githubToken, String repoName, String fileName, String content) throws IOException {
+        final GitHub gitHub = GitHub.connectUsingOAuth(githubToken);
+        final String myName = gitHub.getMyself().getLogin();
+
+        GHRepository repo;
+        try {
+            repo = gitHub.getRepository(myName + "/" + repoName);
+        } catch (IOException e) {
+            repo = gitHub.createRepository(repoName).create();
+        }
+        repo.createContent()
+                .content(content)
+                .path(fileName)
+                .message("create file")
+                .commit();
     }
 }
