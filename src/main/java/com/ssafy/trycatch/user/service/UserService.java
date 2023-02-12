@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +34,9 @@ import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.roadmap.domain.RoadmapRepository;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
+import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
 import com.ssafy.trycatch.user.controller.dto.UserQuestionDto;
-import com.ssafy.trycatch.user.controller.dto.UserFeedDto;
 import com.ssafy.trycatch.user.controller.dto.UserSubscriptionDto;
 import com.ssafy.trycatch.user.domain.Follow;
 import com.ssafy.trycatch.user.domain.FollowRepository;
@@ -309,7 +310,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	}
 
 	public List<UserFeedDto> findRecentFeedList(Long id) {
-		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id);
+		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id,PageRequest.of(0,10));
 
 		List<UserFeedDto> result = new ArrayList<>();
 		for (Read read : recentReadList) {
