@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.trycatch.common.domain.Notification;
@@ -126,6 +127,7 @@ public class NotificationService {
 			.data(message));
 	}
 
+	@Transactional
 	public void sendSaved(SseEmitter sseEmitter, Long userId) {
 		List<Notification> savedNotifylist = notificationRepository.findByUserIdOrderByIdAsc(userId);
 		try {
