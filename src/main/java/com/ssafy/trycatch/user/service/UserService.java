@@ -2,6 +2,7 @@ package com.ssafy.trycatch.user.service;
 
 import static com.ssafy.trycatch.common.infra.config.ConstValues.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,10 +23,14 @@ import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.CrudService;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESFeedRepository;
+import com.ssafy.trycatch.feed.domain.Feed;
+import com.ssafy.trycatch.feed.domain.FeedRepository;
 import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
+import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.Question;
+import com.ssafy.trycatch.roadmap.domain.RoadmapRepository;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserInfo;
 import com.ssafy.trycatch.user.controller.dto.UserAnswerDto;
 import com.ssafy.trycatch.user.controller.dto.UserModifyDto;
@@ -48,6 +53,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
+	private final RoadmapRepository roadmapRepository;
+	private final FeedRepository feedRepository;
 	private final ESFeedRepository eSFeedRepository;
 	private final SubscriptionRepository subscriptionRepository;
 	private final ReadRepository readRepository;
@@ -87,7 +94,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		BookmarkRepository bookmarkRepository,
 		ReadRepository readRepository,
 		SubscriptionRepository subscriptionRepository,
-		ESFeedRepository eSFeedRepository) {
+		ESFeedRepository eSFeedRepository,
+		FeedRepository feedRepository,
+		RoadmapRepository roadmapRepository) {
 		super(repository);
 		this.withdrawalRepository = withdrawalRepository;
 		this.followRepository = followRepository;
@@ -96,6 +105,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		this.readRepository = readRepository;
 		this.subscriptionRepository = subscriptionRepository;
 		this.eSFeedRepository = eSFeedRepository;
+		this.feedRepository = feedRepository;
+		this.roadmapRepository = roadmapRepository;
 	}
 
 	public User findUserById(@NotNull Long userId) {
@@ -227,7 +238,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			Question question = iterAnswer.getQuestion();
 			boolean flag = likesRepository.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(
 				id, iterAnswer.getId(),
-				TargetType.ANSWER).isPresent() ? true : false;
+				TargetType.ANSWER).isPresent();
 
 			UserAnswerDto userAnswerDto = UserAnswerDto.builder()
 				.answerId(iterAnswer.getId())
@@ -351,5 +362,18 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	 */
 	public Boolean getIsFollowed(Long targetId, Long id) {
 		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent();
+	}
+
+	public void readFeed(User requestUser, Long feedId) {
+		Feed feed = feedRepository.findById(feedId).orElseThrow(FeedNotFoundException::new);
+		readRepository.save(Read.builder()
+			.user(requestUser)
+			.feed(feed)
+			.readAt(Instant.now())
+			.build());
+	}
+
+	public boolean haveRoadmap(User requestUser) {
+		return roadmapRepository.existsByUser_Id(requestUser.getId());
 	}
 }
