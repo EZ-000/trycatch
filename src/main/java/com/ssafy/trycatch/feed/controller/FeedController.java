@@ -2,6 +2,7 @@ package com.ssafy.trycatch.feed.controller;
 
 import static org.springframework.data.domain.Sort.Direction.*;
 
+import com.ssafy.trycatch.common.service.BookmarkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
@@ -35,10 +36,15 @@ import lombok.extern.slf4j.Slf4j;
 public class FeedController {
 
     private final FeedService feedService;
+    private final BookmarkService bookmarkService;
 
     @Autowired
-    public FeedController(FeedService feedService) {
+    public FeedController(
+            FeedService feedService,
+            BookmarkService bookmarkService
+    ) {
         this.feedService = feedService;
+        this.bookmarkService = bookmarkService;
     }
 
     private static Pageable newPageable(Integer page, Integer size, FeedSortOption sort) {
@@ -104,7 +110,8 @@ public class FeedController {
             feedPage = feedService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(SearchFeedResponseDto.of(feedPage, feedService));
+        return ResponseEntity.ok(SearchFeedResponseDto.of(
+                feedPage, feedService, bookmarkService, requestUser));
     }
 
     @PostMapping("/read")
