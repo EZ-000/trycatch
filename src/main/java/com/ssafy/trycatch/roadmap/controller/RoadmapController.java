@@ -102,7 +102,9 @@ public class RoadmapController {
 			roadmapId,
 			ROADMAP);
 
-		return ResponseEntity.ok(RoadmapResponseDto.from(roadmap, isBookmarked, isLiked));
+		final boolean isFollowed = userService.getIsFollowed(userId,requestUser.getId());
+
+		return ResponseEntity.ok(RoadmapResponseDto.from(roadmap, isBookmarked, isLiked, isFollowed));
 	}
 
 	@PostMapping("")
@@ -114,7 +116,7 @@ public class RoadmapController {
 			return ResponseEntity.badRequest().build();
 		}
 		Roadmap registeredRoadmap = roadmapService.register(roadmap);
-		RoadmapResponseDto result = RoadmapResponseDto.from(registeredRoadmap, false, false);
+		RoadmapResponseDto result = RoadmapResponseDto.from(registeredRoadmap, false, false, false);
 
 		return ResponseEntity.ok(result);
 	}
