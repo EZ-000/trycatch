@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.trycatch.common.domain.Notification;
@@ -109,15 +108,16 @@ public class NotificationService {
 
 	private void emitOrSaveMessage(User toUser, Notification notification) {
 		if (sseEmitters.containsKey(toUser.getId())) {
+			// Case1. 해당 유저가 연결된 경우.
 			SseEmitter sseEmitter = sseEmitters.get(toUser.getId());
 			try {
 				send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
 			} catch (Exception e) {
 				sseEmitters.remove(toUser.getId());
 			}
-			notification.setActivated(false);
 		} else {
-			// notificationRepository.save(notification);
+			// Case2. 해당 user가 연결되지 않은 경우
+			// 이미 저장을 했기때문에 별도의 처리를 하지 않는다.
 		}
 	}
 
@@ -127,18 +127,35 @@ public class NotificationService {
 			.data(message));
 	}
 
-	@Transactional
 	public void sendSaved(SseEmitter sseEmitter, Long userId) {
 		List<Notification> savedNotifylist = notificationRepository.findByUserIdOrderByIdAsc(userId);
 		try {
 			for (Notification notification : savedNotifylist) {
-				if(notification.getActivated()) {
+				if (notification.getActivated()) {
 					send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
-					notification.setActivated(false);
 				}
 			}
 		} catch (IOException e) {
 			log.info(e.getMessage());
+		}
+	}
+
+	public void readAlarm(List<Long> userReadList, User requestUser) {
+		for (Long id : userReadList) {
+			Notification notification = notificationRepository.findById(id)
+				.orElse(Notification.builder().id(-1L).build());
+
+			if (notification.getId().equals(-1L)) {
+				// 알림Id가 존재하지 않은 경우
+				// Nothing To Do
+			} else if (!notification.getUserId().equals(requestUser.getId())) {
+				// 알림을 받을 대상과, 요청자가 다른 경우
+				// Nothing To Do
+			} else {
+				// 해당 Id가 존재한다면, 읽음처리하고 다시 저장.
+				notification.setActivated(false);
+				notificationRepository.save(notification);
+			}
 		}
 	}
 }
