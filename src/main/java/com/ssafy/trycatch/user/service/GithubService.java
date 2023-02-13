@@ -80,45 +80,11 @@ public class GithubService {
                 .commit();
     }
 
-    /**
-     * 특정 유저의 현재부터 특정 시점까지의 타겟 이벤트 발생 횟수를 카운트
-     * @param githubToken 깃허브 토큰
-     * @param from 날짜 경계값 ( 이 시간보다 이른 이벤트만 카운팅 )
-     * @param events 카운트할 이벤트 종류
-     */
-    public Integer countEvents(String githubToken, Date from, GHEvent... events) throws IOException {
-        final GitHub gitHub = GitHub.connectUsingOAuth(githubToken);
-        final GHMyself myself = gitHub.getMyself();
-        final Set<GHEvent> targetEvents = new HashSet<>(Arrays.asList(events));
-        final PagedIterator<GHEventInfo> ghEventInfoPagedIterator = myself.listEvents()
-                                                                          ._iterator(10);
-        int count = 0;
-
-        while (ghEventInfoPagedIterator.hasNext()) {
-            for (GHEventInfo eventInfo : ghEventInfoPagedIterator.nextPage()) {
-
-                // 특정 날짜보다 오래된 이벤트라면 현재 카운트를 반환
-                if (eventInfo.getCreatedAt().after(from)) {
-                    return count;
-                }
-
-                // 카운팅 대상 이벤트인경우 카운트
-                if (targetEvents.contains(eventInfo.getType())) {
-                    count++;
-                }
-            }
-        }
-
-        return count;
-    }
-
-    /**
-     * 특정 유저의 현재부터 특정 시점까지 커밋 횟수를 카운트
-     * @param githubToken 깃허브 토큰
-     * @param from 날짜 경계값 ( 이 시간보다 이른 이벤트만 카운팅 )
-     */
-    public Integer countCommits(String githubToken, Date from) throws IOException {
-
+    public Integer countEvent(
+            String githubToken,
+            Function<GHEventInfo, Condition> validator,
+            Function<GHEventInfo, Integer> counter
+    ) throws IOException {
         final GitHub gitHub = GitHub.connectUsingOAuth(githubToken);
         final GHMyself myself = gitHub.getMyself();
         final PagedIterator<GHEventInfo> ghEventInfoPagedIterator = myself.listEvents()
@@ -127,20 +93,41 @@ public class GithubService {
         int count = 0;
         while (ghEventInfoPagedIterator.hasNext()) {
             for (GHEventInfo eventInfo : ghEventInfoPagedIterator.nextPage()) {
-
-                // 특정 날짜보다 오래된 이벤트라면 현재 카운트를 반환
-                if (eventInfo.getCreatedAt().after(from)) {
-                    return count;
-                }
-
-                // 카운팅 대상 이벤트인경우 카운트
-                if (GHEvent.PUSH == eventInfo.getType()) {
-                    Push push = eventInfo.getPayload(Push.class);
-                    count += push.getCommits().size();
+                switch (validator.apply(eventInfo)) {
+                    case STOP:
+                        return count;
+                    case PASS:
+                        break;
+                    case TARGET:
+                        count += counter.apply(eventInfo);
+                        break;
+                    default:
+                        throw new IllegalStateException();
                 }
             }
         }
 
         return count;
+    }
+
+    public Integer countCommitEvent(
+            String githubToken,
+            Function<GHEventInfo, Condition> validator
+    ) throws IOException {
+        return countEvent(githubToken, validator, ghe -> {
+            if (GHEvent.PUSH == ghe.getType()) {
+                try {
+                    Push push = ghe.getPayload(Push.class);
+                    return push.getCommits().size();
+                } catch (IOException e) {
+                    return 0;
+                }
+            }
+            return 0;
+        });
+    }
+
+    public enum Condition {
+        PASS, TARGET, STOP
     }
 }
