@@ -23,21 +23,25 @@ public class MyBadge {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    @ToString.Exclude
-    private User user;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "badge_id", nullable = false)
     @ToString.Exclude
     private Badge badge;
 
-    @Column(name = "representation")
-    private Boolean representation;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status_info")
+    private StatusInfo statusInfo;
+
+    @Column(name = "on_profile")
+    private Boolean onProfile;
 
     @NotNull
-    @Column(name = "earn", nullable = false)
-    private Instant earn;
+    @Column(name = "earned_at", nullable = false)
+    private Instant earnedAt;
 
 }

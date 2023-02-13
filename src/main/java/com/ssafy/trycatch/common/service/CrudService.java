@@ -37,9 +37,7 @@ public abstract class CrudService<T, ID, R extends JpaRepository<T, ID>> {
         return repository.saveAllAndFlush(entities);
     }
 
-    public Optional<T> findById(ID id) {
-        return repository.findById(id);
-    }
+    public Optional<T> findById(ID id) { return repository.findById(id); }
 
     public boolean existsById(ID id) {
         return repository.existsById(id);

@@ -10,9 +10,9 @@ VALUES (1, 'AAA', '1', 'git_add1', 'mail1', true, 'c1_mail', 111, 'i am first', 
     (2, 'BBB', '2', 'git_add2', 'mail2', false, 'c2_mail', 222, 'i am second', '2023-01-30', 0, 'null'),
     (3, 'CCC', '3', 'git_add3', 'mail3', false, 'c3_mail', 333, 'i am third', '2023-02-03', 0, 'null');
 
-INSERT INTO badge
-VALUES (1, 'super', 'test badge 1'),
-    (2, 'doper', 'test badge 2');
+INSERT INTO badge (id, title, content, img_src)
+VALUES (1, 'badge 1', 'content 1', ''),
+    (2, 'badge 2', 'content 2', '');
 
 INSERT INTO banner
 VALUES (1, '2023-02-01', 'test banner 1', '2023-01-01'),
@@ -47,9 +47,9 @@ INTO history
 VALUES (1, 1, 1, 2022, 1),
     (2, 2, 2, 2022, 2);
 
-INSERT INTO my_badge
-VALUES (1, '2023-01-01 12:00:00', true, 1, 1),
-    (2, '2023-01-01 12:00:00', true, 2, 2);
+INSERT INTO my_badge (id, badge_id, user_id, status_info, on_profile, earned_at)
+VALUES (1, 1, 1, 'SUCCESS', true, current_date),
+    (2, 2, 1, 'SUCCESS', false, current_date);
 
 INSERT INTO my_challenge (id, challenge_id, user_id, progress, status_info, start_from, end_at, earned_at)
 VALUES (1, 1, 1, 0, 'ONGOING', current_date, '2023-02-17', '2023-02-10'),
