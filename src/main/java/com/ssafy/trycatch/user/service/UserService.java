@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	private final ReadRepository readRepository;
 	private final BookmarkRepository bookmarkRepository;
 	private final LikesRepository likesRepository;
+	private final WithdrawalRepository withdrawalRepository;
+	private final FollowRepository followRepository;
+
 	private static final User GUEST = User.builder()
 		.id(-1L)
 		.githubNodeId("")
@@ -84,8 +88,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		return GUEST;
 	}
 
-	private final WithdrawalRepository withdrawalRepository;
-	private final FollowRepository followRepository;
+	private static final Long UN_LOGINED_USER = -1L;
 
 	public UserService(
 		UserRepository repository,
@@ -310,7 +313,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	}
 
 	public List<UserFeedDto> findRecentFeedList(Long id) {
-		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id,PageRequest.of(0,10));
+		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id, PageRequest.of(0, 10));
 
 		List<UserFeedDto> result = new ArrayList<>();
 		for (Read read : recentReadList) {
@@ -376,5 +379,25 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	public boolean haveRoadmap(User requestUser) {
 		return roadmapRepository.existsByUser_Id(requestUser.getId());
+	}
+
+	public boolean subscribeCompany(Long companyId, User requestUser) {
+		final Long userId = requestUser.getId();
+		if (userId.equals(UN_LOGINED_USER)) {
+			return false;
+		}
+
+		Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
+			userId);
+
+		return true;
+	}
+
+	public boolean unSubscribeCompany(Long companyId, User requestUser) {
+		if (requestUser.getId().equals(UN_LOGINED_USER)) {
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -327,14 +327,21 @@ public class UserController {
 		return ResponseEntity.ok("획득한 (대표) 배지 리스트를 조회합니다.");
 	}
 
-	@PostMapping("/news")
-	public ResponseEntity<String> subscribeNewsletter() {
-		return ResponseEntity.ok("뉴스레터 받기를 등록합니다.");
+	// 기업을 구독한다.
+	@PostMapping("/subscribe/{companyId}")
+	public ResponseEntity<String> subscribeCompany(
+		@PathVariable Long companyId,
+		@AuthUserElseGuest User requestUser) {
+		userService.subscribeCompany(companyId, requestUser);
+		return ResponseEntity.ok().build();
 	}
 
-	@PutMapping("/news")
-	public ResponseEntity<String> unsubscribeNewsletter() {
-		return ResponseEntity.ok("뉴스레터 받기를 취소합니다.");
+	@PutMapping("/subscribe/{companyId}")
+	public ResponseEntity<String> unsubscribeCompany(
+		@PathVariable Long companyId,
+		@AuthUserElseGuest User requestUser) {
+		userService.unSubscribeCompany(companyId, requestUser);
+		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/report")
