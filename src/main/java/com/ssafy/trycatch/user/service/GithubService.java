@@ -56,7 +56,6 @@ public class GithubService {
     }
 
     /**
-     *
      * @param githubToken 깃허브 Oauth 토큰
      * @param repoName 저장소 이름
      * @param fileName  경로를 포함한 파일 이름

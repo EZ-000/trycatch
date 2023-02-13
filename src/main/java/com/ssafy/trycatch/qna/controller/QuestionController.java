@@ -1,5 +1,25 @@
 package com.ssafy.trycatch.qna.controller;
 
+import static com.ssafy.trycatch.common.domain.TargetType.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
 import com.ssafy.trycatch.common.infra.config.jwt.TokenService;
@@ -7,7 +27,18 @@ import com.ssafy.trycatch.common.notification.NotificationService;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.common.service.LikesService;
 import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
-import com.ssafy.trycatch.qna.controller.dto.*;
+import com.ssafy.trycatch.qna.controller.dto.AcceptAnswerResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.CreateAnswerRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.CreateQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.FindAnswerResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.FindQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.PopularQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.PopularTagsResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.PutAnswerRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.PutQuestionRequestDto;
+import com.ssafy.trycatch.qna.controller.dto.SearchQuestionResponseDto;
+import com.ssafy.trycatch.qna.controller.dto.SuggestQuestionResponseDto;
 import com.ssafy.trycatch.qna.domain.Answer;
 import com.ssafy.trycatch.qna.domain.GithubRepo;
 import com.ssafy.trycatch.qna.domain.Question;
@@ -20,16 +51,9 @@ import com.ssafy.trycatch.user.service.GithubService;
 import io.swagger.annotations.ApiParam;
 
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.util.*;
@@ -374,7 +398,7 @@ public class QuestionController {
                 isLiked,
                 isBookmarked);
 
-        notificationService.notifyAcceptAnswer(question);
+        notificationService.notifyAcceptAnswer(question, answerId);
 
         return ResponseEntity.status(201)
                              .body(responseDto);
@@ -425,19 +449,19 @@ public class QuestionController {
     @PostMapping("/{questionId}/{answerId}/commit")
     public ResponseEntity<Void> commitAnswer(
             @AuthUserElseGuest User requestUser,
-            HttpServletRequest request,  // FIXME
+            @RequestHeader("Authorization") String token,
             @PathVariable Long questionId,
             @PathVariable Long answerId
     ) {
-        final String githubToken = tokenService.getAccessToken(request.getHeader("Authorization"));  // FIXME
+        final String githubToken = tokenService.getAccessToken(token);
 
         final GithubRepo githubRepo = githubRepoService.findByUser(requestUser.getId());
         final String repoName = githubRepo.getRepoName();
 
         final Question question = questionService.findQuestionById(questionId);
-        final String fileName = "RE: " + question.getTitle();
-
         final Answer answer = answerService.findById(answerId);
+
+        final String fileName = "RE: " + question.getTitle() + " " + answer.getCreatedAt().toLocalDate().toString();
         final String content = answer.getContent();
 
         githubService.createFile(githubToken, repoName, fileName, content);
