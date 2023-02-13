@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.util.*;
@@ -425,19 +424,19 @@ public class QuestionController {
     @PostMapping("/{questionId}/{answerId}/commit")
     public ResponseEntity<Void> commitAnswer(
             @AuthUserElseGuest User requestUser,
-            HttpServletRequest request,  // FIXME
+            @RequestHeader("Authorization") String token,
             @PathVariable Long questionId,
             @PathVariable Long answerId
     ) {
-        final String githubToken = tokenService.getAccessToken(request.getHeader("Authorization"));  // FIXME
+        final String githubToken = tokenService.getAccessToken(token);
 
         final GithubRepo githubRepo = githubRepoService.findByUser(requestUser.getId());
         final String repoName = githubRepo.getRepoName();
 
         final Question question = questionService.findQuestionById(questionId);
-        final String fileName = "RE: " + question.getTitle();
-
         final Answer answer = answerService.findById(answerId);
+
+        final String fileName = "RE: " + question.getTitle() + " " + answer.getCreatedAt().toLocalDate().toString();
         final String content = answer.getContent();
 
         githubService.createFile(githubToken, repoName, fileName, content);
