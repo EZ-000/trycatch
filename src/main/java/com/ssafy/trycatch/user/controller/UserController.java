@@ -14,6 +14,7 @@ import com.ssafy.trycatch.gamification.domain.MyBadge;
 import com.ssafy.trycatch.gamification.service.BadgeService;
 import com.ssafy.trycatch.gamification.service.MyBadgeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -352,14 +353,14 @@ public class UserController {
 		return ResponseEntity.ok("사용자의 시간에 따른 레포지토리 분석 결과를 조회합니다.");
 	}
 
-	@PostMapping("/news")
-	public ResponseEntity<String> subscribeNewsletter() {
-		return ResponseEntity.ok("뉴스레터 받기를 등록합니다.");
-	}
-
-	@PutMapping("/news")
-	public ResponseEntity<String> unsubscribeNewsletter() {
-		return ResponseEntity.ok("뉴스레터 받기를 취소합니다.");
+	@PutMapping("/subscribe/{companyId}")
+	public ResponseEntity<String> unsubscribeCompany(
+		@PathVariable Long companyId,
+		@AuthUserElseGuest User requestUser) {
+		if(userService.unSubscribeCompany(companyId, requestUser)){
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 	}
 
 	@PostMapping("/report")
