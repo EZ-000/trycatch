@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.trycatch.common.domain.Bookmark;
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.domain.CompanyRepository;
@@ -54,9 +55,20 @@ public class CompanyService extends CrudService<Company, Long, CompanyRepository
 		List<UserFeedDto> result = new ArrayList<>();
 
 		for (Feed feed : feeds) {
-			boolean flag = bookmarkRepository
+			// boolean flag = bookmarkRepository
+			// 	.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(requestUser.getId(), feed.getId(),
+			// 		TargetType.FEED).isPresent();
+
+			Bookmark bookmark = bookmarkRepository
 				.findFirstByUserIdAndTargetIdAndTargetTypeOrderByIdDesc(requestUser.getId(), feed.getId(),
-					TargetType.FEED).isPresent();
+					TargetType.FEED).orElse(Bookmark.builder().id(-1L).build());
+
+			boolean flag = true;
+			// 해당 bookmark 가 없거나, 가장 최신에 변경한 bookmark 상태가 false 인 경우
+			if ((bookmark.getId().equals(-1L)) || (bookmark.getActivated().equals(false))) {
+				flag = false;
+			}
+
 			ESFeed esFeed = eSFeedRepository.findById(feed.getEsId()).orElseThrow(ESFeedNotFoundException::new);
 			UserFeedDto userFeedDto = UserFeedDto.builder()
 				.feedId(feed.getId())

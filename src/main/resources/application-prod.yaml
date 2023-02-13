@@ -4,6 +4,9 @@ spring:
     url: jdbc:mariadb://mariadb_prod:3306/TRY_CATCH?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: S08P12E108
     password: LGBmz7o81b
+    hikari:
+      validation-timeout: 2000
+      maximum-pool-size: 1024
 
   security:
     oauth2:
