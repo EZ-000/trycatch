@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.common.notification;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +41,9 @@ public class NotificationController {
 
 	@GetMapping(value = "/connect", consumes = MediaType.ALL_VALUE)
 	public SseEmitter subscribe(@RequestParam String token) {
+		// if (token.equals(null) || token.isEmpty()) {
+		// 	return new SseEmitter(1L);
+		// }
 
 		// 토큰에서 userId값 확인
 		Long userId = Long.parseLong(tokenService.getUid(token));
@@ -47,11 +51,11 @@ public class NotificationController {
 		// SseEmitter 생성
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
-		// try {
-		// 	notificationService.send(sseEmitter,"connect","dummy");
-		// } catch (IOException e) {
-		// 	log.info(e.getMessage());
-		// }
+		try {
+			notificationService.send(sseEmitter,"connect","dummy");
+		} catch (IOException e) {
+			log.info(e.getMessage());
+		}
 
 		// 임시처리, 누수 의심 disable 처리
 		notificationService.sendSaved(sseEmitter, userId);
