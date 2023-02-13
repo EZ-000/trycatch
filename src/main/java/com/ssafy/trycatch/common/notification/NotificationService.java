@@ -16,6 +16,8 @@ import com.ssafy.trycatch.common.domain.NotifyEnumType;
 import com.ssafy.trycatch.common.domain.NotifyType;
 import com.ssafy.trycatch.common.domain.NotifyTypeRepository;
 import com.ssafy.trycatch.common.notification.dto.NotificationDto;
+import com.ssafy.trycatch.qna.domain.Answer;
+import com.ssafy.trycatch.qna.domain.AnswerRepository;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.domain.UserRepository;
@@ -26,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class NotificationService {
+	private final AnswerRepository answerRepository;
 	private final String MESSAGE = "message";
 	private final NotificationRepository notificationRepository;
 	private final NotifyTypeRepository notifyTypeRepository;
@@ -35,10 +38,12 @@ public class NotificationService {
 	public NotificationService(
 		NotificationRepository notificationRepository,
 		NotifyTypeRepository notifyTypeRepository,
-		UserRepository userRepository) {
+		UserRepository userRepository,
+		AnswerRepository answerRepository) {
 		this.notificationRepository = notificationRepository;
 		this.notifyTypeRepository = notifyTypeRepository;
 		this.userRepository = userRepository;
+		this.answerRepository = answerRepository;
 	}
 
 	/**
@@ -70,12 +75,13 @@ public class NotificationService {
 		emitOrSaveMessage(toUser, notification);
 	}
 
-	public void notifyAcceptAnswer(Question question) {
-		User toUser = question.getUser();
-
+	public void notifyAcceptAnswer(Question question, Long answerId) {
 		NotifyType notifyType = notifyTypeRepository
 			.findById(NotifyEnumType.ANSWER_ACCEPTANCE.getId())
 			.orElse(NotifyType.builder().build());
+
+		Answer answer = answerRepository.findById(answerId).get();
+		User toUser = answer.getUser();
 
 		Notification notification = notificationRepository.save(dataBuilder(question, notifyType));
 		emitOrSaveMessage(toUser, notification);
