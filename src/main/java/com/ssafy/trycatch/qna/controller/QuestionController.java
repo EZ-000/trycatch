@@ -18,15 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.QuestionCategory;
@@ -56,10 +48,19 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.user.controller.dto.SimpleUserDto;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.GithubService;
-
 import io.swagger.annotations.ApiParam;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Nullable;
+import javax.validation.Valid;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
+import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
 
 @Slf4j
 @SuppressWarnings("DuplicatedCode")
@@ -448,19 +449,19 @@ public class QuestionController {
     @PostMapping("/{questionId}/{answerId}/commit")
     public ResponseEntity<Void> commitAnswer(
             @AuthUserElseGuest User requestUser,
-            HttpServletRequest request,  // FIXME
+            @RequestHeader("Authorization") String token,
             @PathVariable Long questionId,
             @PathVariable Long answerId
     ) {
-        final String githubToken = tokenService.getAccessToken(request.getHeader("Authorization"));  // FIXME
+        final String githubToken = tokenService.getAccessToken(token);
 
         final GithubRepo githubRepo = githubRepoService.findByUser(requestUser.getId());
         final String repoName = githubRepo.getRepoName();
 
         final Question question = questionService.findQuestionById(questionId);
-        final String fileName = "RE: " + question.getTitle();
-
         final Answer answer = answerService.findById(answerId);
+
+        final String fileName = "RE: " + question.getTitle() + " " + answer.getCreatedAt().toLocalDate().toString();
         final String content = answer.getContent();
 
         githubService.createFile(githubToken, repoName, fileName, content);

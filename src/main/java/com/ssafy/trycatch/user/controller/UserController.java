@@ -1,5 +1,6 @@
 package com.ssafy.trycatch.user.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +8,11 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 
+import com.ssafy.trycatch.gamification.controller.dto.BadgeResponseDto;
+import com.ssafy.trycatch.gamification.domain.Badge;
+import com.ssafy.trycatch.gamification.domain.MyBadge;
+import com.ssafy.trycatch.gamification.service.BadgeService;
+import com.ssafy.trycatch.gamification.service.MyBadgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,14 +54,18 @@ public class UserController {
 	private static final Long UN_LOGINED_USER = -1L;
 	private final UserService userService;
 	private final NotificationService notificationService;
+	private final BadgeService badgeService;
+	private final MyBadgeService myBadgeService;
 
 	@Autowired
 	public UserController(
-		UserService userService,
-		NotificationService notificationService
-	) {
+			UserService userService,
+			NotificationService notificationService,
+			BadgeService badgeService, MyBadgeService myBadgeService) {
 		this.userService = userService;
 		this.notificationService = notificationService;
+		this.badgeService = badgeService;
+		this.myBadgeService = myBadgeService;
 	}
 
 	@GetMapping("/name")
@@ -318,25 +328,29 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("/{userId}/badge")
+	public ResponseEntity<List<BadgeResponseDto>> findMyBadges(
+			@PathVariable Long userId
+	) {
+		final List<MyBadge> myBadges = myBadgeService.findByUserIdAndSuccess(userId);
+
+		final List<BadgeResponseDto> responseDtos = new ArrayList<>();
+		for (MyBadge myBadge : myBadges) {
+			final Long badgeId = myBadge.getBadge().getId();
+			final Badge badge = badgeService.findById(badgeId).orElse(new Badge());
+
+			if (null != badge.getId()) {
+				final BadgeResponseDto responseDto = BadgeResponseDto.from(badge, myBadge);
+				responseDtos.add(responseDto);
+			}
+		}
+
+		return ResponseEntity.ok(responseDtos);
+	}
+
 	@GetMapping("/{userId}/history")
 	public ResponseEntity<String> findHistory(@PathVariable Long userId) {
 		return ResponseEntity.ok("사용자의 시간에 따른 레포지토리 분석 결과를 조회합니다.");
-	}
-
-	@GetMapping("/{userId}/badge/list")
-	public ResponseEntity<String> findBadge(@PathVariable Long userId) {
-		return ResponseEntity.ok("획득한 (대표) 배지 리스트를 조회합니다.");
-	}
-
-	// 기업을 구독한다.
-	@PostMapping("/subscribe/{companyId}")
-	public ResponseEntity<String> subscribeCompany(
-		@PathVariable Long companyId,
-		@AuthUserElseGuest User requestUser) {
-		if(userService.subscribeCompany(companyId, requestUser)){
-			return ResponseEntity.ok().build();
-		}
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 	}
 
 	@PutMapping("/subscribe/{companyId}")
