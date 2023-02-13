@@ -12,12 +12,14 @@ import com.ssafy.trycatch.common.service.exceptions.BookmarkDuplicatedException;
 import com.ssafy.trycatch.common.service.exceptions.LikesDuplicatedException;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.domain.Feed;
+import com.ssafy.trycatch.feed.service.ESFeedService;
 import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.qna.domain.Question;
 import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.UserService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,18 +36,24 @@ public class BookmarkController {
     private final QuestionService questionService;
     private final RoadmapService roadmapService;
     private final FeedService feedService;
+    private final UserService userService;
+    private final ESFeedService esFeedService;
 
     @Autowired
     public BookmarkController(
             BookmarkService bookmarkService,
             QuestionService questionService,
             RoadmapService roadmapService,
-            FeedService feedService
+            FeedService feedService,
+            UserService userService,
+            ESFeedService esFeedService
     ) {
         this.bookmarkService = bookmarkService;
         this.questionService = questionService;
         this.roadmapService = roadmapService;
         this.feedService = feedService;
+        this.userService = userService;
+        this.esFeedService = esFeedService;
     }
 
     /**
@@ -60,7 +68,8 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
+
 
         // 중복 요청 방지
         final TargetType type = TargetType
@@ -93,7 +102,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 중복 요청 방지
         final TargetType type = TargetType
@@ -124,7 +133,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
@@ -156,7 +165,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
@@ -185,7 +194,7 @@ public class BookmarkController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        bookmarkService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 피드 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
@@ -203,10 +212,11 @@ public class BookmarkController {
 
         for (Feed bookmarkedFeed : bookmarkedFeeds) {
             final String stringId = bookmarkedFeed.getEsId();
-            final ESFeed esFeed = feedService.findESFeedByESId(stringId);
+            final ESFeed esFeed = esFeedService.findById(stringId);
+            final String logoSrc = feedService.findIconByCompany(esFeed.getPk());
 
             final FindBookmarkedFeedDto responseDto = FindBookmarkedFeedDto
-                    .from(bookmarkedFeed, esFeed);
+                    .from(bookmarkedFeed, esFeed, logoSrc);
 
             responseDtoList.add(responseDto);
         }

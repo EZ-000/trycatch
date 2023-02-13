@@ -18,9 +18,10 @@ INSERT INTO banner
 VALUES (1, '2023-02-01', 'test banner 1', '2023-01-01'),
     (2, '2023-02-02', 'test banner 2', '2023-01-02');
 
-INSERT INTO challenge
-VALUES (1, 'super', '2023-02-01', 'test challenge 1', '2023-01-01'),
-    (2, 'doper', '2023-02-02', 'test challenge 2', '2023-01-02');
+INSERT INTO challenge (id, title, content, term, img_src)
+VALUES (1, 'title 1', 'content 1', 7, ''),
+    (2, 'title 2', 'content 2', 30, '');
+
 
 INSERT INTO conference
 VALUES (1, 'summary 1', 'title 1', 'url 1', 1),
@@ -28,8 +29,13 @@ VALUES (1, 'summary 1', 'title 1', 'url 1', 1),
 
 INSERT INTO feed(id, company_id, title, url, created_at, view_count, updated_at, es_id)
 VALUES
-    (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', '4GLbL4YB5tqxoIWWuVAu'),
-    (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', '6GLbL4YB5tqxoIWWuVD2');
+    (1, '2','titie1', 'url1', '2023-02-07' , 1, '2023-02-07', 'W3jAOYYBf0cVr-Ejeu5X'),
+    (2, '2','titie2', 'url2', '2023-02-07' , 1, '2023-02-07', 'XHjAOYYBf0cVr-Ejeu5X');
+
+INSERT INTO notify_type(id,description)
+VALUES (1, 'follow'),
+       (2, 'answerAcceptance'),
+       (3, 'answerRegistration');
 
 INSERT INTO follow
 VALUES (1, 1, 2),
@@ -45,15 +51,15 @@ INSERT INTO my_badge
 VALUES (1, '2023-01-01 12:00:00', true, 1, 1),
     (2, '2023-01-01 12:00:00', true, 2, 2);
 
-INSERT INTO my_challenge
-VALUES (1, '2023-01-01 12:00:00', 1, false, 1, 1),
-    (2, '2023-01-01 12:00:00', 1, true, 2, 2);
+INSERT INTO my_challenge (id, challenge_id, user_id, progress, status_info, start_from, end_at, earned_at)
+VALUES (1, 1, 1, 0, 'ONGOING', current_date, '2023-02-17', '2023-02-10'),
+    (2, 2, 1, 0, 'ONGOING', current_date, '2023-02-17', '2023-02-10');
 
 INSERT INTO question
 (id, category_name, user_id, title, content, error_code, created_at, updated_at, chosen, view_count, likes, hidden,
  tags)
-VALUES (1, 'DEV', 1, 'title 1', '2023-01-01', 'error code 1', current_date, current_date, 0, 0, 0, 0, ''),
-    (2, 'DEV', 1, 'title 2', '2023-01-02', 'error code 2', current_date, current_date, 0, 0, 0, 0, '여기는,태그가,있어요');
+VALUES (1, 'DEV', 1, 'title 1', 'content 1', 'error code 1', current_date, current_date, 0, 0, 0, 0, ''),
+    (2, 'DEV', 1, 'title 2', 'content 2', 'error code 2', current_date, current_date, 0, 0, 0, 0, '여기는,태그가,있어요');
 
 INSERT INTO ranking
 VALUES (1, 'DEV', 1),

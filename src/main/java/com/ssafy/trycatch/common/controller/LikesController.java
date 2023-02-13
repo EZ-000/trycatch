@@ -13,6 +13,7 @@ import com.ssafy.trycatch.qna.service.QuestionService;
 import com.ssafy.trycatch.roadmap.domain.Roadmap;
 import com.ssafy.trycatch.roadmap.service.RoadmapService;
 import com.ssafy.trycatch.user.domain.User;
+import com.ssafy.trycatch.user.service.UserService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +26,21 @@ public class LikesController {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final RoadmapService roadmapService;
+    private final UserService userService;
 
     @Autowired
     public LikesController(
             LikesService likesService,
             QuestionService questionService,
             AnswerService answerService,
-            RoadmapService roadmapService) {
+            RoadmapService roadmapService,
+            UserService userService
+    ) {
         this.likesService = likesService;
         this.questionService = questionService;
         this.answerService = answerService;
         this.roadmapService = roadmapService;
+        this.userService = userService;
     }
 
     /**
@@ -50,7 +55,7 @@ public class LikesController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        likesService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 중복 요청 방지
         final TargetType type = TargetType
@@ -106,7 +111,7 @@ public class LikesController {
     ) {
         // 게스트 요청 방지
         final Long userId = requestUser.getId();
-        likesService.checkUserOrThrow(userId);
+        userService.findUserById(userId);
 
         // 중복 요청 방지
         final TargetType type = TargetType

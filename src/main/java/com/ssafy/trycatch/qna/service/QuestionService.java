@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ssafy.trycatch.qna.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,15 +16,11 @@ import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import com.ssafy.trycatch.elasticsearch.domain.repository.ESQuestionRepository;
 import com.ssafy.trycatch.qna.controller.annotation.IncreaseViewCount;
 import com.ssafy.trycatch.qna.controller.dto.CreateQuestionRequestDto;
-import com.ssafy.trycatch.qna.domain.Answer;
-import com.ssafy.trycatch.qna.domain.AnswerRepository;
-import com.ssafy.trycatch.qna.domain.Question;
-import com.ssafy.trycatch.qna.domain.QuestionRepository;
 import com.ssafy.trycatch.qna.service.exceptions.AnswerNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.QuestionNotFoundException;
 import com.ssafy.trycatch.qna.service.exceptions.RequestUserNotValidException;
 import com.ssafy.trycatch.user.domain.User;
-
+import org.springframework.util.StringUtils;
 
 
 @Service
@@ -141,8 +138,11 @@ public class QuestionService {
         questionRepository.deleteById(questionId);
     }
 
-    public Page<ESQuestion> search(String query, Pageable pageable) {
-        return esQuestionRepository.searchByTitleOrContent(query, pageable);
+    public Page<ESQuestion> search(String query, QuestionCategory category, Pageable pageable) {
+        if (StringUtils.hasText(query)) {
+            return esQuestionRepository.searchByTitleOrContentAndCategory(query, category.name(), pageable);
+        }
+        return esQuestionRepository.searchByCategory(category.name(), pageable);
     }
 
     public List<Question> findPopularQuestions(Optional<String> category, Pageable pageable) {

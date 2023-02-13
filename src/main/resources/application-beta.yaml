@@ -4,6 +4,9 @@ spring:
     url: jdbc:mariadb://mariadb_dev:3306/TRY_CATCH?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: S08P12E108
     password: LGBmz7o81b
+    hikari:
+      validation-timeout: 2000
+      maximum-pool-size: 1024
 
   security:
     oauth2:
@@ -16,15 +19,17 @@ spring:
             scope:
               - user:email
               - read:user
-              - public_repo
+              - repo
 
 logging:
   level:
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
     root: info
 
 elasticsearch:
-  question:
-    index: question-beta
+  index:
+    prefix: beta
 
 settings:
   login:
@@ -36,6 +41,10 @@ settings:
   cross-origin: >
     http://localhost:5173,
     https://beta.try-catch.duckdns.org,
+
+# >
+#   http://localhost:5173,
+#   https://beta.try-catch.duckdns.org
 
 
 apiPrefix:

@@ -30,11 +30,11 @@ spring:
             scope:
               - user:email
               - read:user
-              - public_repo
+              - repo
 
 elasticsearch:
-  question:
-    index: question-beta
+  index:
+    prefix: local
 
 logging:
   level:

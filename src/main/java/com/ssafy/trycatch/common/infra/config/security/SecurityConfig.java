@@ -35,8 +35,7 @@ public class SecurityConfig {
             .and()
             .authorizeRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            .antMatchers("/token/**", "/v1/**", "/docs/**", "/swagger-ui/**")
-            .permitAll()
+            .antMatchers("/token/**", "/v1/**", "/docs/**", "/swagger-ui/**").permitAll()
             .anyRequest()
             // 인증이 모두 필요
             .authenticated()
