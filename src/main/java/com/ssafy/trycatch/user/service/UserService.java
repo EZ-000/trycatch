@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
 import com.ssafy.trycatch.common.domain.Company;
+import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.CrudService;
@@ -55,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
+	private final CompanyRepository companyRepository;
 	private final RoadmapRepository roadmapRepository;
 	private final FeedRepository feedRepository;
 	private final ESFeedRepository eSFeedRepository;
@@ -100,7 +102,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		SubscriptionRepository subscriptionRepository,
 		ESFeedRepository eSFeedRepository,
 		FeedRepository feedRepository,
-		RoadmapRepository roadmapRepository) {
+		RoadmapRepository roadmapRepository,
+		CompanyRepository companyRepository) {
 		super(repository);
 		this.withdrawalRepository = withdrawalRepository;
 		this.followRepository = followRepository;
@@ -111,6 +114,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		this.eSFeedRepository = eSFeedRepository;
 		this.feedRepository = feedRepository;
 		this.roadmapRepository = roadmapRepository;
+		this.companyRepository = companyRepository;
 	}
 
 	public User findUserById(@NotNull Long userId) {
@@ -383,20 +387,39 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	public boolean subscribeCompany(Long companyId, User requestUser) {
 		final Long userId = requestUser.getId();
-		if (userId.equals(UN_LOGINED_USER)) {
+		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
+			userId);
+		final Optional<Company> company = companyRepository.findById(companyId);
+
+		// 처리할 수 없는 경우.
+		// Case1. 비 로그인 유저인 경우.
+		// Case2. 이미 구독중인 Case
+		// Case3. 존재하지 않는 기업
+		if (userId.equals(UN_LOGINED_USER) || subscription.isPresent() || !company.isPresent()) {
 			return false;
 		}
 
-		Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
-			userId);
+		subscriptionRepository.save(Subscription.builder()
+			.user(requestUser)
+			.company(company.get())
+			.build());
 
 		return true;
 	}
 
 	public boolean unSubscribeCompany(Long companyId, User requestUser) {
-		if (requestUser.getId().equals(UN_LOGINED_USER)) {
+		final Long userId = requestUser.getId();
+		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
+			userId);
+		//final Optional<Company> company = companyRepository.findById(companyId);
+
+		// 처리할 수 없는 경우.
+		// Case1. 비 로그인 유저인 경우.
+		// Case2. 구독중이 아닌 경우.
+		if (userId.equals(UN_LOGINED_USER) || !subscription.isPresent()) {
 			return false;
 		}
+		subscriptionRepository.delete(subscription.get());
 
 		return true;
 	}
