@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.trycatch.common.domain.BookmarkRepository;
 import com.ssafy.trycatch.common.domain.Company;
+import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.common.domain.LikesRepository;
 import com.ssafy.trycatch.common.domain.TargetType;
 import com.ssafy.trycatch.common.service.CrudService;
@@ -54,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService extends CrudService<User, Long, UserRepository> {
+	private final CompanyRepository companyRepository;
 	private final RoadmapRepository roadmapRepository;
 	private final FeedRepository feedRepository;
 	private final ESFeedRepository eSFeedRepository;
@@ -61,6 +64,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	private final ReadRepository readRepository;
 	private final BookmarkRepository bookmarkRepository;
 	private final LikesRepository likesRepository;
+	private final WithdrawalRepository withdrawalRepository;
+	private final FollowRepository followRepository;
+
 	private static final User GUEST = User.builder()
 		.id(-1L)
 		.githubNodeId("")
@@ -84,8 +90,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		return GUEST;
 	}
 
-	private final WithdrawalRepository withdrawalRepository;
-	private final FollowRepository followRepository;
+	private static final Long UN_LOGINED_USER = -1L;
 
 	public UserService(
 		UserRepository repository,
@@ -97,7 +102,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		SubscriptionRepository subscriptionRepository,
 		ESFeedRepository eSFeedRepository,
 		FeedRepository feedRepository,
-		RoadmapRepository roadmapRepository) {
+		RoadmapRepository roadmapRepository,
+		CompanyRepository companyRepository) {
 		super(repository);
 		this.withdrawalRepository = withdrawalRepository;
 		this.followRepository = followRepository;
@@ -108,6 +114,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		this.eSFeedRepository = eSFeedRepository;
 		this.feedRepository = feedRepository;
 		this.roadmapRepository = roadmapRepository;
+		this.companyRepository = companyRepository;
 	}
 
 	public User findUserById(@NotNull Long userId) {
@@ -310,7 +317,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 	}
 
 	public List<UserFeedDto> findRecentFeedList(Long id) {
-		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id,PageRequest.of(0,10));
+		final List<Read> recentReadList = readRepository.findTop10ByUserIdOrderByIdDesc(id, PageRequest.of(0, 10));
 
 		List<UserFeedDto> result = new ArrayList<>();
 		for (Read read : recentReadList) {
@@ -376,5 +383,44 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	public boolean haveRoadmap(User requestUser) {
 		return roadmapRepository.existsByUser_Id(requestUser.getId());
+	}
+
+	public boolean subscribeCompany(Long companyId, User requestUser) {
+		final Long userId = requestUser.getId();
+		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
+			userId);
+		final Optional<Company> company = companyRepository.findById(companyId);
+
+		// 처리할 수 없는 경우.
+		// Case1. 비 로그인 유저인 경우.
+		// Case2. 이미 구독중인 Case
+		// Case3. 존재하지 않는 기업
+		if (userId.equals(UN_LOGINED_USER) || subscription.isPresent() || !company.isPresent()) {
+			return false;
+		}
+
+		subscriptionRepository.save(Subscription.builder()
+			.user(requestUser)
+			.company(company.get())
+			.build());
+
+		return true;
+	}
+
+	public boolean unSubscribeCompany(Long companyId, User requestUser) {
+		final Long userId = requestUser.getId();
+		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
+			userId);
+		//final Optional<Company> company = companyRepository.findById(companyId);
+
+		// 처리할 수 없는 경우.
+		// Case1. 비 로그인 유저인 경우.
+		// Case2. 구독중이 아닌 경우.
+		if (userId.equals(UN_LOGINED_USER) || !subscription.isPresent()) {
+			return false;
+		}
+		subscriptionRepository.delete(subscription.get());
+
+		return true;
 	}
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -327,14 +328,25 @@ public class UserController {
 		return ResponseEntity.ok("획득한 (대표) 배지 리스트를 조회합니다.");
 	}
 
-	@PostMapping("/news")
-	public ResponseEntity<String> subscribeNewsletter() {
-		return ResponseEntity.ok("뉴스레터 받기를 등록합니다.");
+	// 기업을 구독한다.
+	@PostMapping("/subscribe/{companyId}")
+	public ResponseEntity<String> subscribeCompany(
+		@PathVariable Long companyId,
+		@AuthUserElseGuest User requestUser) {
+		if(userService.subscribeCompany(companyId, requestUser)){
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 	}
 
-	@PutMapping("/news")
-	public ResponseEntity<String> unsubscribeNewsletter() {
-		return ResponseEntity.ok("뉴스레터 받기를 취소합니다.");
+	@PutMapping("/subscribe/{companyId}")
+	public ResponseEntity<String> unsubscribeCompany(
+		@PathVariable Long companyId,
+		@AuthUserElseGuest User requestUser) {
+		if(userService.unSubscribeCompany(companyId, requestUser)){
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 	}
 
 	@PostMapping("/report")
