@@ -387,8 +387,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	public boolean subscribeCompany(Long companyId, User requestUser) {
 		final Long userId = requestUser.getId();
-		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
-			userId);
+		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(userId,
+			companyId);
 		final Optional<Company> company = companyRepository.findById(companyId);
 
 		// 처리할 수 없는 경우.
@@ -409,8 +409,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	public boolean unSubscribeCompany(Long companyId, User requestUser) {
 		final Long userId = requestUser.getId();
-		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(companyId,
-			userId);
+		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(userId,
+			companyId);
 		//final Optional<Company> company = companyRepository.findById(companyId);
 
 		// 처리할 수 없는 경우.
@@ -419,7 +419,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		if (userId.equals(UN_LOGINED_USER) || !subscription.isPresent()) {
 			return false;
 		}
-		subscriptionRepository.delete(subscription.get());
+		subscriptionRepository.deleteById(subscription.get().getId());
 
 		return true;
 	}

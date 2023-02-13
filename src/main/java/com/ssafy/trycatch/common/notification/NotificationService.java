@@ -83,8 +83,19 @@ public class NotificationService {
 		Answer answer = answerRepository.findById(answerId).get();
 		User toUser = answer.getUser();
 
-		Notification notification = notificationRepository.save(dataBuilder(question, notifyType));
+		Notification notification = notificationRepository.save(dataBuilder(question, answer, notifyType));
 		emitOrSaveMessage(toUser, notification);
+	}
+
+	private Notification dataBuilder(Question question, Answer answer, NotifyType notifyType) {
+		return Notification.builder()
+			.userId(answer.getUser().getId())
+			.targetId(question.getId())
+			.typecode(notifyType)
+			.createdAt(LocalDateTime.now())
+			.activated(true)
+			.title(question.getTitle())
+			.build();
 	}
 
 	private Notification dataBuilder(Question question, NotifyType notifyType) {
