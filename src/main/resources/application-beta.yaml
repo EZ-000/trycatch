@@ -5,7 +5,6 @@ spring:
     username: S08P12E108
     password: LGBmz7o81b
     hikari:
-      leak-detection-threshold: 2000
       validation-timeout: 2000
       maximum-pool-size: 1024
 

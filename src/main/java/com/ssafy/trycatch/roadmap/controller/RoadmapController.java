@@ -3,7 +3,9 @@ package com.ssafy.trycatch.roadmap.controller;
 import static com.ssafy.trycatch.common.domain.TargetType.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,7 +81,9 @@ public class RoadmapController {
 			allDtoList.add(responseDto);
 		}
 
-		return ResponseEntity.ok(allDtoList);
+		return ResponseEntity.ok(allDtoList.stream().
+			sorted(Comparator.comparing(RoadmapListResponseDto::getRoadmapId))
+			.collect(Collectors.toList()));
 	}
 
 	@GetMapping("/{userName}")
