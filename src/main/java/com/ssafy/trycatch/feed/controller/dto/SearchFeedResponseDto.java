@@ -71,7 +71,6 @@ public class SearchFeedResponseDto {
 				FeedService feedService,
 				BookmarkService bookmarkService,
 				User requestUser) {
-			log.info(entity.getId());
 			final Long id = feedService.findByESId(entity.getId()).getId();
 
 			return Item.builder()
