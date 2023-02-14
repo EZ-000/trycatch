@@ -1,5 +1,15 @@
 package com.ssafy.trycatch.feed.service;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
@@ -12,14 +22,8 @@ import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
 import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 import com.ssafy.trycatch.user.domain.User;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.time.Instant;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -96,5 +100,12 @@ public class FeedService {
 			.feed(feed)
 			.readAt(Instant.now())
 			.build());
+	}
+
+	public List<Company> getTop5CompanyList() {
+		List<Long> top5PopularCompanyId = companyRepository.findTop5PopularCompany();
+		return top5PopularCompanyId.stream()
+			.map(e -> companyRepository.findById(e).get())
+			.collect(Collectors.toList());
 	}
 }

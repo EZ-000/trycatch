@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
@@ -11,4 +12,12 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     Optional<Company> findByNameEn(String nameEn);
 
+    @Query(value = "SELECT  b.company_id, COUNT(*) AS cnt\n"
+        + "FROM    `read` a, feed b, company c\n"
+        + "WHERE   a.feed_id = b.id\n"
+        + "    AND b.company_id = c.id\n"
+        + "GROUP BY company_id\n"
+        + "ORDER BY cnt DESC, company_id ASC\n"
+        + "LIMIT 5", nativeQuery = true)
+    List<Long> findTop5PopularCompany();
 }
