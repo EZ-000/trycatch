@@ -1,23 +1,7 @@
 package com.ssafy.trycatch.feed.controller;
 
-import static org.springframework.data.domain.Sort.Direction.*;
-
-import com.ssafy.trycatch.common.service.BookmarkService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.AbstractPageRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
+import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto;
 import com.ssafy.trycatch.feed.controller.dto.SearchFeedRequestDto.FeedSortOption;
@@ -26,9 +10,20 @@ import com.ssafy.trycatch.feed.service.FeedService;
 import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
 @RestController
@@ -89,14 +84,13 @@ public class FeedController {
     ) {
 
         final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
-
         final String query = requestDto.getQuery();
 
-
-        Page<ESFeed> feedPage;
+        Collection<ESFeed> feedPage;
         if (requestDto.getSort() == FeedSortOption.user) {
             // 나와의 관련도순
-            Long userId = 1L;
+            Long userId = requestUser.getId(); // FIXME
+//            Long userId = 1L;
             if (StringUtils.hasText(query)) {
                 feedPage = feedService.searchByQueryAndUser(userId, query, pageable);
             } else {
@@ -105,13 +99,13 @@ public class FeedController {
         } else if (StringUtils.hasText(query)) {
             if (requestDto.getAdvanced()) {
                 // 고급 검색
-                feedPage = feedService.advanceSearch(query, pageable);
+                feedPage = feedService.advanceSearch(query, pageable).toList();
             } else {
                 // 일반 검색
-                feedPage = feedService.commonSearch(query, pageable);
+                feedPage = feedService.commonSearch(query, pageable).toList();
             }
         } else {
-            feedPage = feedService.findAll(pageable);
+            feedPage = feedService.findAll(pageable).toList();
         }
 
         return ResponseEntity.ok(SearchFeedResponseDto.of(

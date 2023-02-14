@@ -32,9 +32,11 @@ public interface ESFeedRepository extends ElasticsearchRepository<ESFeed, String
             "        \"query_vector\": ?1" +
             "      }" +
             "    }" +
-            "  }" +
+            "  }," +
+            "  \"from\": ?2," +
+            "  \"size\": ?3" +
             "}")
-    List<ESFeed> searchByQueryAndVector(String query, List<Float> vector);
+    List<ESFeed> searchByQueryAndVector(String query, List<Float> vector, Integer form, Integer size);
 
     @Query("{" +
             "  \"script_score\": {" +
@@ -47,9 +49,11 @@ public interface ESFeedRepository extends ElasticsearchRepository<ESFeed, String
             "        \"query_vector\": ?0" +
             "      }" +
             "    }" +
-            "  }" +
+            "  }," +
+            "  \"from\": ?1," +
+            "  \"size\": ?2" +
             "}")
-    List<ESFeed> searchByVector(List<Float> vector);
+    List<ESFeed> searchByVector(List<Float> vector, Integer form, Integer size);
 }
 
 
