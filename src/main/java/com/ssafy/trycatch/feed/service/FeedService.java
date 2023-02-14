@@ -91,6 +91,14 @@ public class FeedService {
         return new PageImpl<>(esFeedList.subList(start, end), pageable, esFeedList.size());
     }
 
+    public Page<ESFeed> searchByUser(Long userId, Pageable pageable) {
+        final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
+        final List<ESFeed> esFeedList = esFeedRepository.searchByVector(esUser.getVector());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), esFeedList.size());
+        return new PageImpl<>(esFeedList.subList(start, end), pageable, esFeedList.size());
+    }
+
 	public void readFeed(User requestUser, Long feedId) {
 		Feed feed = feedRepository.findById(feedId).orElseThrow(FeedNotFoundException::new);
 		readRepository.save(Read.builder()

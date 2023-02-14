@@ -1,7 +1,6 @@
 package com.ssafy.trycatch.elasticsearch.domain.repository;
 
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
-import com.ssafy.trycatch.elasticsearch.domain.ESQuestion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
@@ -37,7 +36,20 @@ public interface ESFeedRepository extends ElasticsearchRepository<ESFeed, String
             "}")
     List<ESFeed> searchByQueryAndVector(String query, List<Float> vector);
 
-    Page<ESFeed> searchByContentAndVector(String content, List<Float> vector, Pageable pageable);
+    @Query("{" +
+            "  \"script_score\": {" +
+            "    \"query\": {" +
+            "       \"match_all\": {}" +
+            "    }," +
+            "    \"script\": {" +
+            "      \"source\": \"cosineSimilarity(params.query_vector, doc['vector']) + 1.0\"," +
+            "      \"params\": {" +
+            "        \"query_vector\": ?0" +
+            "      }" +
+            "    }" +
+            "  }" +
+            "}")
+    List<ESFeed> searchByVector(List<Float> vector);
 }
 
 
