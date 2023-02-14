@@ -63,9 +63,11 @@ public class FeedController {
                 return newPageable(0, size, sort);
             }
 
-            @NonNull
             @Override
             public Sort getSort() {
+                if (null == sort) {
+                    return null;
+                }
                 return Sort.by(DESC, sort.name);
             }
 
@@ -80,23 +82,26 @@ public class FeedController {
     // localhost:8080/v1/feed/search?query=qr
     @GetMapping("/search")
     public ResponseEntity<SearchFeedResponseDto> search(
-            @ApiParam(hidden = true) @AuthUserElseGuest User requestUser, SearchFeedRequestDto requestDto
+            @ApiParam(hidden = true)
+            @AuthUserElseGuest User requestUser,
+            SearchFeedRequestDto requestDto
     ) {
 
-        final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
         final String query = requestDto.getQuery();
 
         Collection<ESFeed> feedPage;
         if (requestDto.getSort() == FeedSortOption.user) {
+            final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), null);
             // 나와의 관련도순
             Long userId = requestUser.getId(); // FIXME
 //            Long userId = 1L;
             if (StringUtils.hasText(query)) {
-                feedPage = feedService.searchByQueryAndUser(userId, query, pageable);
+                feedPage = feedService.searchByQueryAndUser(userId, query, pageable).toList();
             } else {
-                feedPage = feedService.searchByUser(userId, pageable);
+                feedPage = feedService.searchByUser(userId, pageable).toList();
             }
         } else if (StringUtils.hasText(query)) {
+            final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
             if (requestDto.getAdvanced()) {
                 // 고급 검색
                 feedPage = feedService.advanceSearch(query, pageable).toList();
@@ -105,6 +110,7 @@ public class FeedController {
                 feedPage = feedService.commonSearch(query, pageable).toList();
             }
         } else {
+            final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
             feedPage = feedService.findAll(pageable).toList();
         }
 

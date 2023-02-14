@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -80,16 +79,14 @@ public class FeedService {
                 .orElseThrow(FeedNotFoundException::new);
     }
 
-    public List<ESFeed> searchByQueryAndUser(Long userId, String query, Pageable pageable) {
+    public Page<ESFeed> searchByQueryAndUser(Long userId, String query, Pageable pageable) {
         final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
-        final int start = (int) pageable.getOffset();
-        return esFeedRepository.searchByQueryAndVector(query, esUser.getVector(), start, pageable.getPageSize());
+        return esFeedRepository.searchByQueryAndVector(query, esUser.getVector(), pageable);
     }
 
-    public List<ESFeed> searchByUser(Long userId, Pageable pageable) {
+    public Page<ESFeed> searchByUser(Long userId, Pageable pageable) {
         final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
-        final int start = (int) pageable.getOffset();
-        return esFeedRepository.searchByVector(esUser.getVector(), start, pageable.getPageSize());
+        return esFeedRepository.searchByVector(esUser.getVector(), pageable);
     }
 
 	public void readFeed(User requestUser, Long feedId) {
