@@ -41,10 +41,6 @@ public class NotificationController {
 
 	@GetMapping(value = "/connect", consumes = MediaType.ALL_VALUE)
 	public SseEmitter subscribe(@RequestParam String token) {
-		// if (token.equals(null) || token.isEmpty()) {
-		// 	return new SseEmitter(1L);
-		// }
-
 		// 토큰에서 userId값 확인
 		Long userId = Long.parseLong(tokenService.getUid(token));
 
@@ -60,7 +56,7 @@ public class NotificationController {
 		// 임시처리, 누수 의심 disable 처리
 		notificationService.sendSaved(sseEmitter, userId);
 
-		// userId key값으로 해서 SseEmitter를 저장
+		// userId key 값으로 해서 SseEmitter 를 저장
 		sseEmitters.put(userId, sseEmitter);
 
 		sseEmitter.onCompletion(() -> sseEmitters.remove(userId));

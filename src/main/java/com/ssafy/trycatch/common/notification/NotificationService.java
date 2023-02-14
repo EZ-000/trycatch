@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationService {
 	private final AnswerRepository answerRepository;
-	private final String MESSAGE = "message";
+	private static final String MESSAGE = "message";
 	private final NotificationRepository notificationRepository;
 	private final NotifyTypeRepository notifyTypeRepository;
 	private final UserRepository userRepository;
@@ -133,7 +133,7 @@ public class NotificationService {
 				sseEmitters.remove(toUser.getId());
 			}
 		} else {
-			// Case2. 해당 user가 연결되지 않은 경우
+			// Case2. 해당 user 가 연결되지 않은 경우
 			// 이미 저장을 했기때문에 별도의 처리를 하지 않는다.
 		}
 	}
