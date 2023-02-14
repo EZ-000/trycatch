@@ -59,30 +59,10 @@ public class RoadmapController {
 		@ApiParam(hidden = true) @AuthUserElseGuest User requestUser
 	) {
 		List<Roadmap> allRoadmaps = roadmapService.findAll();
-		final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
-		for (Roadmap roadmap : allRoadmaps) {
-			final long roadmapId = roadmap.getId();
-
-			final boolean isLiked = likesService.isLikedByUserAndTarget(
-				requestUser.getId(),
-				roadmapId,
-				ROADMAP);
-
-			final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
-				requestUser.getId(),
-				roadmapId,
-				ROADMAP);
-
-			final RoadmapListResponseDto responseDto = RoadmapListResponseDto.from(
-				roadmap,
-				isBookmarked,
-				isLiked);
-
-			allDtoList.add(responseDto);
-		}
+		final List<RoadmapListResponseDto> allDtoList = convertDto(allRoadmaps, requestUser);
 
 		return ResponseEntity.ok(allDtoList.stream().
-			sorted(Comparator.comparing(RoadmapListResponseDto::getRoadmapId))
+			sorted(Comparator.comparing(RoadmapListResponseDto::getRoadmapId).reversed())
 			.collect(Collectors.toList()));
 	}
 
@@ -160,7 +140,13 @@ public class RoadmapController {
 		@ApiParam(hidden = true) @AuthUserElseGuest User requestUser
 	) {
 		List<Roadmap> allRoadmaps = roadmapService.findTopList();
-		final List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
+		final List<RoadmapListResponseDto> allDtoList = convertDto(allRoadmaps, requestUser);
+
+		return ResponseEntity.ok(allDtoList);
+	}
+
+	public List<RoadmapListResponseDto> convertDto(List<Roadmap> allRoadmaps, User requestUser){
+		List<RoadmapListResponseDto> allDtoList = new ArrayList<>();
 		for (Roadmap roadmap : allRoadmaps) {
 			final long roadmapId = roadmap.getId();
 
@@ -181,7 +167,6 @@ public class RoadmapController {
 
 			allDtoList.add(responseDto);
 		}
-
-		return ResponseEntity.ok(allDtoList);
+		return allDtoList;
 	}
 }

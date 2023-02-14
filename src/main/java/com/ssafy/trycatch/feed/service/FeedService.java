@@ -2,10 +2,10 @@ package com.ssafy.trycatch.feed.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -85,10 +85,12 @@ public class FeedService {
 
     public Page<ESFeed> searchByQueryAndUser(Long userId, String query, Pageable pageable) {
         final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
-        final List<ESFeed> esFeedList = esFeedRepository.searchByQueryAndVector(query, esUser.getVector());
-        final int start = (int) pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), esFeedList.size());
-        return new PageImpl<>(esFeedList.subList(start, end), pageable, esFeedList.size());
+        return esFeedRepository.searchByQueryAndVector(query, esUser.getVector(), pageable);
+    }
+
+    public Page<ESFeed> searchByUser(Long userId, Pageable pageable) {
+        final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
+        return esFeedRepository.searchByVector(esUser.getVector(), pageable);
     }
 
 	public void readFeed(User requestUser, Long feedId) {
@@ -98,5 +100,12 @@ public class FeedService {
 			.feed(feed)
 			.readAt(Instant.now())
 			.build());
+	}
+
+	public List<Company> getTop5CompanyList() {
+		List<Long> top5PopularCompanyId = companyRepository.findTop5PopularCompany();
+		return top5PopularCompanyId.stream()
+			.map(e -> companyRepository.findById(e).get())
+			.collect(Collectors.toList());
 	}
 }

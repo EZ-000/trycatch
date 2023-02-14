@@ -38,7 +38,7 @@ elasticsearch:
 
 logging:
   level:
-    root: info
+    root: trace
 
 settings:
   cross-origin: "*"
