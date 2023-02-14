@@ -1,15 +1,5 @@
 package com.ssafy.trycatch.feed.service;
 
-import java.time.Instant;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.domain.CompanyRepository;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
@@ -22,8 +12,15 @@ import com.ssafy.trycatch.feed.domain.Read;
 import com.ssafy.trycatch.feed.domain.ReadRepository;
 import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 import com.ssafy.trycatch.user.domain.User;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.time.Instant;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -83,20 +80,16 @@ public class FeedService {
                 .orElseThrow(FeedNotFoundException::new);
     }
 
-    public Page<ESFeed> searchByQueryAndUser(Long userId, String query, Pageable pageable) {
+    public List<ESFeed> searchByQueryAndUser(Long userId, String query, Pageable pageable) {
         final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
-        final List<ESFeed> esFeedList = esFeedRepository.searchByQueryAndVector(query, esUser.getVector());
         final int start = (int) pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), esFeedList.size());
-        return new PageImpl<>(esFeedList.subList(start, end), pageable, esFeedList.size());
+        return esFeedRepository.searchByQueryAndVector(query, esUser.getVector(), start, pageable.getPageSize());
     }
 
-    public Page<ESFeed> searchByUser(Long userId, Pageable pageable) {
+    public List<ESFeed> searchByUser(Long userId, Pageable pageable) {
         final ESUser esUser = esUserRepository.findByUid(userId).orElseThrow();
-        final List<ESFeed> esFeedList = esFeedRepository.searchByVector(esUser.getVector());
         final int start = (int) pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), esFeedList.size());
-        return new PageImpl<>(esFeedList.subList(start, end), pageable, esFeedList.size());
+        return esFeedRepository.searchByVector(esUser.getVector(), start, pageable.getPageSize());
     }
 
 	public void readFeed(User requestUser, Long feedId) {

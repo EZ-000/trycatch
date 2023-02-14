@@ -3,16 +3,13 @@ package com.ssafy.trycatch.feed.controller.dto;
 import com.ssafy.trycatch.common.service.BookmarkService;
 import com.ssafy.trycatch.elasticsearch.domain.ESFeed;
 import com.ssafy.trycatch.feed.service.FeedService;
-
 import com.ssafy.trycatch.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
-
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.data.domain.Page;
-
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +20,7 @@ import static com.ssafy.trycatch.common.domain.TargetType.FEED;
 public class SearchFeedResponseDto {
 
     public static SearchFeedResponseDto of(
-			Page<ESFeed> esFeedPage,
+			Collection<ESFeed> esFeedPage,
 			FeedService feedService,
 			BookmarkService bookmarkService,
 			User requestUser
