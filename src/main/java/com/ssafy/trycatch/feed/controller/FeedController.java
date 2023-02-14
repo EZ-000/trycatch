@@ -90,14 +90,18 @@ public class FeedController {
 
         final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), requestDto.getSort());
 
-        // TODO : 구독 필터 구현
         final String query = requestDto.getQuery();
+
 
         Page<ESFeed> feedPage;
         if (requestDto.getSort() == FeedSortOption.user) {
             // 나와의 관련도순
-            Long userId = requestUser.getId();
-            feedPage = feedService.searchByQueryAndUser(userId, query, pageable);
+            Long userId = 1L;
+            if (StringUtils.hasText(query)) {
+                feedPage = feedService.searchByQueryAndUser(userId, query, pageable);
+            } else {
+                feedPage = feedService.searchByUser(userId, pageable);
+            }
         } else if (StringUtils.hasText(query)) {
             if (requestDto.getAdvanced()) {
                 // 고급 검색
