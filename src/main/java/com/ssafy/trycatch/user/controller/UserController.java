@@ -13,6 +13,7 @@ import com.ssafy.trycatch.gamification.domain.Badge;
 import com.ssafy.trycatch.gamification.domain.MyBadge;
 import com.ssafy.trycatch.gamification.service.BadgeService;
 import com.ssafy.trycatch.gamification.service.MyBadgeService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,9 +60,9 @@ public class UserController {
 
 	@Autowired
 	public UserController(
-			UserService userService,
-			NotificationService notificationService,
-			BadgeService badgeService, MyBadgeService myBadgeService) {
+		UserService userService,
+		NotificationService notificationService,
+		BadgeService badgeService, MyBadgeService myBadgeService) {
 		this.userService = userService;
 		this.notificationService = notificationService;
 		this.badgeService = badgeService;
@@ -330,7 +331,7 @@ public class UserController {
 
 	@GetMapping("/{userId}/badge")
 	public ResponseEntity<List<BadgeResponseDto>> findMyBadges(
-			@PathVariable Long userId
+		@PathVariable Long userId
 	) {
 		final List<MyBadge> myBadges = myBadgeService.findByUserIdAndSuccess(userId);
 
@@ -353,11 +354,22 @@ public class UserController {
 		return ResponseEntity.ok("사용자의 시간에 따른 레포지토리 분석 결과를 조회합니다.");
 	}
 
+	// 기업을 구독한다.
+	@PostMapping("/subscribe/{companyId}")
+	public ResponseEntity<String> subscribeCompany(
+		@PathVariable Long companyId,
+		@AuthUserElseGuest User requestUser) {
+		if (userService.subscribeCompany(companyId, requestUser)) {
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+	}
+
 	@PutMapping("/subscribe/{companyId}")
 	public ResponseEntity<String> unsubscribeCompany(
 		@PathVariable Long companyId,
 		@AuthUserElseGuest User requestUser) {
-		if(userService.unSubscribeCompany(companyId, requestUser)){
+		if (userService.unSubscribeCompany(companyId, requestUser)) {
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();

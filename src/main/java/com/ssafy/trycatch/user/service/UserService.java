@@ -364,9 +364,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 
 	/**
 	 * Param1 유저를 Param2 유저가 Follow 중인가?
-	 * @param targetId
-	 * @param id
-	 * @return
+	 * @param targetId 대상 ID
+	 * @param id 본인 ID
+	 * @return boolean
 	 */
 	public Boolean getIsFollowed(Long targetId, Long id) {
 		return followRepository.findByFollower_IdAndFollowee_Id(id, targetId).isPresent();
@@ -395,7 +395,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		// Case1. 비 로그인 유저인 경우.
 		// Case2. 이미 구독중인 Case
 		// Case3. 존재하지 않는 기업
-		if (userId.equals(UN_LOGINED_USER) || subscription.isPresent() || !company.isPresent()) {
+		if (userId.equals(UN_LOGINED_USER) || subscription.isPresent() || company.isEmpty()) {
 			return false;
 		}
 
@@ -411,12 +411,11 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		final Long userId = requestUser.getId();
 		final Optional<Subscription> subscription = subscriptionRepository.findByUserIdAndCompanyId(userId,
 			companyId);
-		//final Optional<Company> company = companyRepository.findById(companyId);
 
 		// 처리할 수 없는 경우.
 		// Case1. 비 로그인 유저인 경우.
 		// Case2. 구독중이 아닌 경우.
-		if (userId.equals(UN_LOGINED_USER) || !subscription.isPresent()) {
+		if (userId.equals(UN_LOGINED_USER) || subscription.isEmpty()) {
 			return false;
 		}
 		subscriptionRepository.deleteById(subscription.get().getId());
