@@ -48,13 +48,12 @@ public class NotificationController {
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
 		try {
-			notificationService.send(sseEmitter,"connect","dummy");
+			notificationService.send(sseEmitter, "connect", "dummy");
 		} catch (IOException e) {
 			log.info(e.getMessage());
 		}
 
 		// 임시처리, 누수 의심 disable 처리
-		notificationService.sendSaved(sseEmitter, userId);
 
 		// userId key 값으로 해서 SseEmitter 를 저장
 		sseEmitters.put(userId, sseEmitter);
@@ -64,6 +63,16 @@ public class NotificationController {
 		sseEmitter.onError((e) -> sseEmitters.remove(userId));
 
 		return sseEmitter;
+	}
+
+	@GetMapping("/notification")
+	public ResponseEntity<String> savedNotification(
+		@AuthUserElseGuest User requestUser
+	) {
+		final Long userId = requestUser.getId();
+		SseEmitter sseEmitter = sseEmitters.get(userId);
+		notificationService.sendSaved(sseEmitter, userId);
+		return ResponseEntity.ok("");
 	}
 
 	@PutMapping("/notification")

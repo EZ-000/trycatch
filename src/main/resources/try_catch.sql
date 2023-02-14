@@ -375,3 +375,7 @@ create or replace table TRY_CATCH.withdrawal
     reason varchar(100) not null
 );
 
+insert into notify_type
+values (1, follow),
+       (2, answerAcceptance),
+       (3, answerRegistration);
