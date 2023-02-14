@@ -15,7 +15,6 @@ import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 public class FindAnswerResponseDto implements Serializable {
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
-     *
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
