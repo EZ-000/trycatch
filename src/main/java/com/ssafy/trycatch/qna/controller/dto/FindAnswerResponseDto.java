@@ -22,7 +22,7 @@ public class FindAnswerResponseDto implements Serializable {
             Answer answer,
             User user,
             Boolean isLiked,
-            Boolean repoChecked,
+//            Boolean repoChecked,
             GithubRepo githubRepo
     ) {
 
@@ -44,7 +44,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(isLiked)
                 .accepted(answer.getChosen())
-                .repoChecked(repoChecked)
+                .repoChecked(githubRepo.getDoCommit())
                 .doCommit(githubRepo.getDoCommit())
                 .repoName(githubRepo.getRepoName())
                 .build();
@@ -52,7 +52,7 @@ public class FindAnswerResponseDto implements Serializable {
 
     public static FindAnswerResponseDto from(
             Answer answer,
-            Boolean repoChecked,
+//            Boolean repoChecked,
             GithubRepo githubRepo
     ) {
 
@@ -74,7 +74,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(false)
                 .accepted(answer.getChosen())
-                .repoChecked(repoChecked)
+                .repoChecked(githubRepo.getDoCommit())
                 .doCommit(githubRepo.getDoCommit())
                 .repoName(githubRepo.getRepoName())
                 .build();
@@ -129,7 +129,10 @@ public class FindAnswerResponseDto implements Serializable {
             Integer likeCount,
             Boolean isLiked,
             Boolean accepted,
-            Boolean repoChecked, Boolean doCommit, String repoName) {
+            Boolean repoChecked,
+            Boolean doCommit,
+            String repoName
+    ) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;
