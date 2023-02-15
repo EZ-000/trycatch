@@ -1,17 +1,3 @@
--- 새로운 배지 등록 시 자동으로 my_badge 테이블에 기존 유저가 등록되는 트리거
-CREATE TRIGGER NEW_BADGE
-AFTER INSERT ON badge FOR EACH ROW
-INSERT INTO my_badge(user_id, badge_id, status_info, on_profile, earned_at)
-SELECT a.id, NEW.id, 'ONGOING', true, null
-FROM user a;
-
--- 새로운 유저 등록 시 자동으로 my_badge 테이블에 기존 배지가 등록되는 트리거
-CREATE TRIGGER NEW_USER
-AFTER INSERT ON badge FOR EACH ROW
-INSERT INTO my_badge(user_id, badge_id, status_info, on_profile, earned_at)
-SELECT NEW.id, b.id, 'ONGOING', true, null
-FROM badge b;
-
 -- 이벤트 사용 설정 확인
 SHOW VARIABLES LIKE 'event%';
 -- 이벤트 사용 설정

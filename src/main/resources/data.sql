@@ -194,3 +194,10 @@ INSERT INTO answer
 (id, question_id, user_id, content, created_at, updated_at, chosen, likes, hidden)
 VALUES (1, 1, 1, '1번 답변입니다.', current_timestamp, current_timestamp, false, 0, false),
     (2, 1, 2, '2번 답변입니다.', current_timestamp, current_timestamp, false, 0, false);
+
+INSERT INTO github_repo
+(user_id, repo_name, do_commit)
+VALUES (1, '', false),
+        (2, '', false),
+       (3, '', false),
+       (4, '', false);
