@@ -15,7 +15,6 @@ import static com.ssafy.trycatch.common.infra.config.ConstValues.TZ_SEOUL;
 public class FindAnswerResponseDto implements Serializable {
     /**
      * {@code Question} 엔티티로부터 {@code QuestionResponseDto} 인스턴스를 생성하는 팩토리 메서드
-     *
      * @param answer 엔티티
      * @return 새로운 DTO 인스턴스
      */
@@ -23,7 +22,7 @@ public class FindAnswerResponseDto implements Serializable {
             Answer answer,
             User user,
             Boolean isLiked,
-            Boolean repoChecked,
+//            Boolean repoChecked,
             GithubRepo githubRepo
     ) {
 
@@ -45,7 +44,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(isLiked)
                 .accepted(answer.getChosen())
-                .repoChecked(repoChecked)
+                .repoChecked(githubRepo.getDoCommit())
                 .doCommit(githubRepo.getDoCommit())
                 .repoName(githubRepo.getRepoName())
                 .build();
@@ -53,7 +52,7 @@ public class FindAnswerResponseDto implements Serializable {
 
     public static FindAnswerResponseDto from(
             Answer answer,
-            Boolean repoChecked,
+//            Boolean repoChecked,
             GithubRepo githubRepo
     ) {
 
@@ -75,7 +74,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(false)
                 .accepted(answer.getChosen())
-                .repoChecked(repoChecked)
+                .repoChecked(githubRepo.getDoCommit())
                 .doCommit(githubRepo.getDoCommit())
                 .repoName(githubRepo.getRepoName())
                 .build();
@@ -130,7 +129,10 @@ public class FindAnswerResponseDto implements Serializable {
             Integer likeCount,
             Boolean isLiked,
             Boolean accepted,
-            Boolean repoChecked, Boolean doCommit, String repoName) {
+            Boolean repoChecked,
+            Boolean doCommit,
+            String repoName
+    ) {
         this.answerId = answerId;
         this.author = author;
         this.content = content;

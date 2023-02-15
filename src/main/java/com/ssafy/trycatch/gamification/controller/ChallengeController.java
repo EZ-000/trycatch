@@ -49,7 +49,7 @@ public class ChallengeController {
                 .findMyOngoingChallenges(userId, pageable);
 
         for (MyChallenge myChallenge : myChallenges) {
-            myChallengeService.updateMyChallenge(myChallenge);
+            myChallengeService.updateMyChallenge(userId, myChallenge);
         }
 
         // 2. 전체 리스트 조회

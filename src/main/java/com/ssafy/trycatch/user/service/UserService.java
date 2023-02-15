@@ -154,8 +154,8 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 		if (null != modifyDto.introduction) {
 			targetUser.setIntroduction(modifyDto.getIntroduction());
 		}
-		if (null != modifyDto.profileImage) {
-			targetUser.setImageSrc(modifyDto.getProfileImage());
+		if (null != modifyDto.companyName) {
+			targetUser.setImageSrc(modifyDto.getCompanyName());
 		}
 		repository.save(targetUser);
 	}
@@ -349,13 +349,7 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 				.findByUserIdAndCompanyId(id, company.getId())
 				.isPresent();
 
-			UserSubscriptionDto userSubscriptionDto = UserSubscriptionDto.builder()
-				.companyId(company.getId())
-				.companyName(company.getName())
-				.isSubscribe(flag)
-				.build();
-
-			result.add(userSubscriptionDto);
+			result.add(UserSubscriptionDto.from(company,flag));
 		}
 		return result.stream()
 			.sorted(Comparator.comparing(UserSubscriptionDto::getCompanyId))

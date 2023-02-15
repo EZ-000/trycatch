@@ -21,7 +21,7 @@ public class FeedCompanyResponseDto {
     public static FeedCompanyResponseDto from(Company e, User u, SubscriptionRepository subscriptionRepository) {
         return FeedCompanyResponseDto.builder()
             .companyId(e.getId())
-            .logoSrc(e.getLogo())
+            .logoSrc(e.getIcon())
             .companyName(e.getName())
             .isFollowed(
                 subscriptionRepository

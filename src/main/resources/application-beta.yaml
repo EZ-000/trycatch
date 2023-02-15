@@ -6,7 +6,7 @@ spring:
     password: LGBmz7o81b
     hikari:
       validation-timeout: 2000
-      maximum-pool-size: 1024
+      maximum-pool-size: 999
 
   security:
     oauth2:
@@ -23,8 +23,8 @@ spring:
 
 logging:
   level:
-    com.zaxxer.hikari.HikariConfig: DEBUG
-    com.zaxxer.hikari: TRACE
+#    com.zaxxer.hikari.HikariConfig: DEBUG
+#    com.zaxxer.hikari: TRACE
     root: info
 
 elasticsearch:

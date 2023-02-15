@@ -6,11 +6,11 @@ import lombok.Data;
 @Data
 public class UserModifyDto {
     public final String introduction;
-    public final String profileImage;
+    public final String companyName;
 
     @Builder
-    public UserModifyDto(String introduction, String profileImage) {
+    public UserModifyDto(String introduction, String companyName) {
         this.introduction = introduction;
-        this.profileImage = profileImage;
+        this.companyName = companyName;
     }
 }

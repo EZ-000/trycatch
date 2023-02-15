@@ -1,7 +1,5 @@
 package com.ssafy.trycatch.qna.controller;
 
-import static com.ssafy.trycatch.common.domain.TargetType.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +50,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ssafy.trycatch.common.domain.TargetType.ANSWER;
 import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
@@ -250,14 +242,18 @@ public class QuestionController {
             final boolean answerIsLiked = likesService
                     .isLikedByUserAndTarget(requestUser.getId(), answerId, ANSWER);
 
-            final boolean repoChecked = githubRepoService
-                    .isRepoChecked(userId);
+//            final boolean repoChecked = githubRepoService
+//                    .isRepoChecked(userId);
 
             final GithubRepo githubRepo = githubRepoService
                     .findByUser(userId);
 
             final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
-                    answer, requestUser, answerIsLiked, repoChecked, githubRepo);
+                    answer,
+                    requestUser,
+                    answerIsLiked,
+//                    repoChecked,
+                    githubRepo);
 
             answerResponseDtoList.add(responseDto);
         }
@@ -293,10 +289,12 @@ public class QuestionController {
         // 응답
         final Long userId = requestUser.getId();
 
-        final Boolean repoChecked = githubRepoService.isRepoChecked(userId);
+//        final Boolean repoChecked = githubRepoService.isRepoChecked(userId);
         final GithubRepo githubRepo = githubRepoService.findByUser(userId);
-        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto
-                .from(answer, repoChecked, githubRepo);
+        final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(
+                        answer,
+//                        repoChecked,
+                        githubRepo);
 
         // 내글에 내가 답변을 생성하는 경우는, 알림을 생성하지 않는다.
         if(!requestUser.getId().equals(question.getUser().getId())) {
@@ -367,14 +365,18 @@ public class QuestionController {
             final boolean answerIsLiked = likesService
                     .isLikedByUserAndTarget(userId, targetId, ANSWER);
 
-            final boolean repoChecked = githubRepoService
-                    .isRepoChecked(userId);
+//            final boolean repoChecked = githubRepoService
+//                    .isRepoChecked(userId);
 
             final GithubRepo githubRepo = githubRepoService
                     .findByUser(userId);
 
             final FindAnswerResponseDto responseDto = FindAnswerResponseDto.from(
-                    answer, requestUser, answerIsLiked, repoChecked, githubRepo);
+                    answer,
+                    requestUser,
+                    answerIsLiked,
+//                    repoChecked,
+                    githubRepo);
 
             answerResponseDtoList.add(responseDto);
         }
@@ -433,7 +435,6 @@ public class QuestionController {
 
             responseDtoList.add(PopularQuestionResponseDto.from(question, userInQNADto, isLiked, isBookmarked));
         }
-
         return ResponseEntity.ok(responseDtoList);
     }
 
@@ -461,7 +462,7 @@ public class QuestionController {
         final Question question = questionService.findQuestionById(questionId);
         final Answer answer = answerService.findById(answerId);
 
-        final String fileName = "RE: " + question.getTitle() + " " + answer.getCreatedAt().toLocalDate().toString();
+        final String fileName = "RE: " + question.getTitle() + " " + answer.getCreatedAt().toString();
         final String content = answer.getContent();
 
         githubService.createFile(githubToken, repoName, fileName, content);
