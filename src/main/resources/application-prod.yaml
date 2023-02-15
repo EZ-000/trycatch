@@ -6,7 +6,7 @@ spring:
     password: LGBmz7o81b
     hikari:
       validation-timeout: 2000
-      maximum-pool-size: 1024
+      maximum-pool-size: 999
 
   security:
     oauth2:
