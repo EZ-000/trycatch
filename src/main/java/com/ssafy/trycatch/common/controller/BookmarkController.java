@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ssafy.trycatch.common.domain.TargetType.QUESTION;
+
 @RestController
 @RequestMapping("/${apiPrefix}/bookmark")
 public class BookmarkController {
@@ -137,14 +139,27 @@ public class BookmarkController {
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(userId, TargetType.QUESTION);
+                .getActivatedBookmarks(userId, QUESTION);
 
         // List<Bookmark>을 List<Question>으로 변환
-        List<Question> bookmarkedQuestions = activatedBookmarks
-                .stream()
-                .map(Bookmark::getTargetId)
-                .map(questionService::findQuestionById)
-                .collect(Collectors.toList());
+        // 삭제된 질문에 기록된 북마크 정보이면 그 기록을 찾아 activated를 false로 변경
+        final List<Question> bookmarkedQuestions = new ArrayList<>();
+
+        for (Bookmark bookmark : activatedBookmarks) {
+            final Long questionId = bookmark.getTargetId();
+            final Long foundId = questionService.findQuestionIdByIdOrNull(questionId);
+
+              if (null == foundId) {
+                final Bookmark lastBookmark = bookmarkService
+                        .getLastBookmarkOrThrow(userId, questionId, QUESTION);
+                lastBookmark.setActivated(false);
+                bookmarkService.register(lastBookmark);
+            }
+            else {
+                final Question question = questionService.findQuestionById(questionId);
+                bookmarkedQuestions.add(question);
+            }
+        }
 
         // List<Question>을 List<FindBookmarkedQuestionDto>로 변환
         List<FindBookmarkedQuestionDto> bookmarkedQuestionsResponse = bookmarkedQuestions
