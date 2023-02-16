@@ -108,4 +108,10 @@ public class FeedService {
 			.map(e -> companyRepository.findById(e).get())
 			.collect(Collectors.toList());
 	}
+
+    public Long findFeedIdByIdOrNull(Long feedId) {
+        return feedRepository.findById(feedId)
+                .orElse(new Feed())
+                .getId();
+    }
 }
