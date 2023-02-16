@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ssafy.trycatch.common.domain.TargetType.*;
+
 @RestController
 @RequestMapping("/${apiPrefix}/bookmark")
 public class BookmarkController {
@@ -137,14 +139,27 @@ public class BookmarkController {
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 질문 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(userId, TargetType.QUESTION);
+                .getActivatedBookmarks(userId, QUESTION);
 
         // List<Bookmark>을 List<Question>으로 변환
-        List<Question> bookmarkedQuestions = activatedBookmarks
-                .stream()
-                .map(Bookmark::getTargetId)
-                .map(questionService::findQuestionById)
-                .collect(Collectors.toList());
+        // 삭제된 콘텐츠에 기록된 북마크 정보이면 그 기록을 찾아 activated를 false로 변경
+        final List<Question> bookmarkedQuestions = new ArrayList<>();
+
+        for (Bookmark bookmark : activatedBookmarks) {
+            final Long questionId = bookmark.getTargetId();
+            final Long foundId = questionService.findQuestionIdByIdOrNull(questionId);
+
+              if (null == foundId) {
+                final Bookmark lastBookmark = bookmarkService
+                        .getLastBookmarkOrThrow(userId, questionId, QUESTION);
+                lastBookmark.setActivated(false);
+                bookmarkService.register(lastBookmark);
+            }
+            else {
+                final Question question = questionService.findQuestionById(questionId);
+                bookmarkedQuestions.add(question);
+            }
+        }
 
         // List<Question>을 List<FindBookmarkedQuestionDto>로 변환
         List<FindBookmarkedQuestionDto> bookmarkedQuestionsResponse = bookmarkedQuestions
@@ -169,14 +184,27 @@ public class BookmarkController {
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 북마크 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(userId, TargetType.ROADMAP);
+                .getActivatedBookmarks(userId, ROADMAP);
 
         // List<Bookmark>을 List<Roadmap>으로 변환
-        List<Roadmap> bookmarkedRoadmaps = activatedBookmarks
-                .stream()
-                .map(Bookmark::getTargetId)
-                .map(roadmapService::findByRoadmapId)
-                .collect(Collectors.toList());
+        // 삭제된 콘텐츠에 기록된 북마크 정보이면 그 기록을 찾아 activated를 false로 변경
+        final List<Roadmap> bookmarkedRoadmaps = new ArrayList<>();
+
+        for (Bookmark bookmark : activatedBookmarks) {
+            final Long roadmapId = bookmark.getTargetId();
+            final Long foundId = roadmapService.findRoadmapIdByIdOrNull(roadmapId);
+
+            if (null == foundId) {
+                final Bookmark lastBookmark = bookmarkService
+                        .getLastBookmarkOrThrow(userId, roadmapId, ROADMAP);
+                lastBookmark.setActivated(false);
+                bookmarkService.register(lastBookmark);
+            }
+            else {
+                final Roadmap roadmap = roadmapService.findByRoadmapId(roadmapId);
+                bookmarkedRoadmaps.add(roadmap);
+            }
+        }
 
         // List<Roadmap>을 List<FindBookmarkedRoadmapDto>로 변환
         List<FindBookmarkedRoadmapDto> bookmarkedRoadmapsResponse = bookmarkedRoadmaps
@@ -198,14 +226,27 @@ public class BookmarkController {
 
         // 북마크 서비스에서 userId, targetType, activated 로 활성화된 로드맵 피드 리스트 List<Bookmark> 반환
         List<Bookmark> activatedBookmarks = bookmarkService
-                .getActivatedBookmarks(userId, TargetType.FEED);
+                .getActivatedBookmarks(userId, FEED);
 
         // List<Bookmark>을 List<Feed>으로 변환
-        List<Feed> bookmarkedFeeds = activatedBookmarks
-                .stream()
-                .map(Bookmark::getTargetId)
-                .map(feedService::findById)
-                .collect(Collectors.toList());
+        // 삭제된 콘텐츠에 기록된 북마크 정보이면 그 기록을 찾아 activated를 false로 변경
+        final List<Feed> bookmarkedFeeds = new ArrayList<>();
+
+        for (Bookmark bookmark : activatedBookmarks) {
+            final Long feedId = bookmark.getTargetId();
+            final Long foundId = feedService.findFeedIdByIdOrNull(feedId);
+
+            if (null == foundId) {
+                final Bookmark lastBookmark = bookmarkService
+                        .getLastBookmarkOrThrow(userId, feedId, FEED);
+                lastBookmark.setActivated(false);
+                bookmarkService.register(lastBookmark);
+            }
+            else {
+                final Feed feed = feedService.findById(feedId);
+                bookmarkedFeeds.add(feed);
+            }
+        }
 
         // List<Feed>를 List<FindBookmarkedFeedDto>로 변환
         final List<FindBookmarkedFeedDto> responseDtoList = new ArrayList<>();

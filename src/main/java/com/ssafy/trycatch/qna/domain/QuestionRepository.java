@@ -15,6 +15,4 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
 
     List<Question> findByCategoryNameOrderByLikesDesc(QuestionCategory categoryName, Pageable pageable);
 
-
-
 }
