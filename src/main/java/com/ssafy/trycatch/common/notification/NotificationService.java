@@ -144,17 +144,15 @@ public class NotificationService {
 			.data(message));
 	}
 
-	public void sendSaved(SseEmitter sseEmitter, Long userId) {
+	public void sendSaved(SseEmitter sseEmitter, Long userId) throws IOException {
 		List<Notification> savedNotifylist = notificationRepository.findByUserIdOrderByIdAsc(userId);
-		try {
-			for (Notification notification : savedNotifylist) {
-				if (notification.getActivated()) {
-					send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
-				}
+
+		for (Notification notification : savedNotifylist) {
+			if (notification.getActivated()) {
+				send(sseEmitter, MESSAGE, NotificationDto.fromEntity(notification));
 			}
-		} catch (IOException e) {
-			log.info(e.getMessage());
 		}
+
 	}
 
 	public void readAlarm(List<Long> userReadList, User requestUser) {
