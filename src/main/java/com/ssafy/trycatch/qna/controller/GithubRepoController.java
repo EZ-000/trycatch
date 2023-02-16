@@ -2,7 +2,6 @@ package com.ssafy.trycatch.qna.controller;
 
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.qna.controller.dto.GithubRepoRequestDto;
-import com.ssafy.trycatch.qna.domain.GithubRepo;
 import com.ssafy.trycatch.qna.service.GithubRepoService;
 import com.ssafy.trycatch.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +20,7 @@ public class GithubRepoController {
         this.githubRepoService = githubRepoService;
     }
 
+    /* 사용 중단
     @PostMapping
     public ResponseEntity<Void> registerGithubRepo(
             @AuthUserElseGuest User requestUser,
@@ -32,6 +32,7 @@ public class GithubRepoController {
 
         return ResponseEntity.status(201).build();
     }
+    */
 
     @PutMapping
     public ResponseEntity<Void> putGithubRepo(
@@ -41,7 +42,7 @@ public class GithubRepoController {
         githubRepoService.updateGithubRepo(
                 requestUser.getId(),
                 githubRepoRequestDto.getRepoName(),
-                githubRepoRequestDto.getDoCommit());
+                githubRepoRequestDto.getRepoChecked());
 
         return ResponseEntity.status(201).build();
     }

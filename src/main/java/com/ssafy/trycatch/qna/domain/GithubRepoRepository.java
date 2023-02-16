@@ -7,7 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface GithubRepoRepository extends JpaRepository<GithubRepo, Long> {
-    boolean existsByUserId(Long userId);
     Optional<GithubRepo> findByUserId(Long userId);
 
 }
