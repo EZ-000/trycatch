@@ -89,7 +89,8 @@ public class FeedService {
         final ESUser esUser = esUserRepository.findByUid(requestUser.getId()).orElseThrow();
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.TrueQueryTrueVectorTrueSubscribeTrueAdvanced(query, esUser.getVector(), subscribes, pageable);
     }
@@ -98,7 +99,8 @@ public class FeedService {
         final ESUser esUser = esUserRepository.findByUid(requestUser.getId()).orElseThrow();
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.TrueQueryTrueVectorTrueSubscribeFalseAdvanced(query, esUser.getVector(), subscribes, pageable);
     }
@@ -116,7 +118,8 @@ public class FeedService {
     public Page<ESFeed> TrueQueryFalseVectorTrueSubscribeTrueAdvanced(User requestUser, String query, Pageable pageable) {
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.TrueQueryFalseVectorTrueSubscribeTrueAdvanced(query, subscribes, pageable);
     }
@@ -124,7 +127,8 @@ public class FeedService {
     public Page<ESFeed> TrueQueryFalseVectorTrueSubscribeFalseAdvanced(User requestUser, String query, Pageable pageable) {
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.TrueQueryFalseVectorTrueSubscribeFalseAdvanced(query, subscribes, pageable);
     }
@@ -141,7 +145,8 @@ public class FeedService {
         final ESUser esUser = esUserRepository.findByUid(requestUser.getId()).orElseThrow();
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.FalseQueryTrueVectorTrueSubscribeTrueAdvanced(esUser.getVector(), subscribes, pageable);
     }
@@ -150,7 +155,8 @@ public class FeedService {
         final ESUser esUser = esUserRepository.findByUid(requestUser.getId()).orElseThrow();
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.FalseQueryTrueVectorTrueSubscribeFalseAdvanced(esUser.getVector(), subscribes, pageable);
     }
@@ -168,7 +174,8 @@ public class FeedService {
     public Page<ESFeed> FalseQueryFalseVectorTrueSubscribeTrueAdvanced(User requestUser, Pageable pageable) {
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.FalseQueryFalseVectorTrueSubscribeTrueAdvanced(subscribes, pageable);
     }
@@ -176,7 +183,8 @@ public class FeedService {
     public Page<ESFeed> FalseQueryFalseVectorTrueSubscribeFalseAdvanced(User requestUser, Pageable pageable) {
         final List<Long> subscribes = requestUser.getSubscriptions()
                 .stream()
-                .map(Subscription::getId)
+                .map(Subscription::getCompany)
+                .map(Company::getId)
                 .collect(Collectors.toList());
         return esFeedRepository.FalseQueryFalseVectorTrueSubscribeFalseAdvanced(subscribes, pageable);
     }
