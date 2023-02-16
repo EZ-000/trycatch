@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -41,7 +43,10 @@ public class CompanyController {
 		@PathVariable Long companyId,
 		@AuthUserElseGuest User requestUser) {
 		Company company = companyService.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-		List<UserFeedDto> feedList = companyService.findFeedList(company,requestUser);
+		List<UserFeedDto> feedList = companyService.findFeedList(company,requestUser)
+			.stream()
+			.sorted(Comparator.comparing(UserFeedDto::getCreatedAt).reversed())
+			.collect(Collectors.toList());
 		CompanyResponseDto result = CompanyResponseDto.from(company, requestUser, feedList);
 		return ResponseEntity.ok(result);
 	}
