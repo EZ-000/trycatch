@@ -41,7 +41,7 @@ public class NotificationController {
 		this.notificationService = notificationService;
 	}
 
-	@GetMapping(value = "/connect", consumes = MediaType.ALL_VALUE)
+	@GetMapping(value = "/connect", consumes = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public ResponseEntity<SseEmitter> subscribe(@RequestParam String token,
 		HttpServletResponse response) {
 		// 토큰에서 userId값 확인
