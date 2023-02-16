@@ -155,7 +155,9 @@ public class UserService extends CrudService<User, Long, UserRepository> {
 			targetUser.setIntroduction(modifyDto.getIntroduction());
 		}
 		if (null != modifyDto.companyName) {
-			targetUser.setImageSrc(modifyDto.getCompanyName());
+			final Company newCompany = companyRepository.findByName(modifyDto.getCompanyName())
+				.orElse(companyRepository.findById(1L).get());
+			targetUser.setCompany(newCompany);
 		}
 		repository.save(targetUser);
 	}
