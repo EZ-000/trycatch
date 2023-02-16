@@ -86,10 +86,10 @@ public class NotificationController {
 
 		try {
 			notificationService.sendSaved(sseEmitter, userId);
-			return ResponseEntity.ok("");
+			return ResponseEntity.ok().build();
 		} catch (IOException e) {
 			log.info(e.getMessage());
-			return ResponseEntity.ok("");
+			return ResponseEntity.badRequest().build();
 		}
 	}
 
