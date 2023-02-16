@@ -26,7 +26,7 @@ public class GithubRepo {
     @Column(name = "repo_name")
     private String repoName;
 
-    @Column(name = "do_commit")
-    private Boolean doCommit;
+    @Column(name = "repo_checked")
+    private Boolean repoChecked;
 
 }

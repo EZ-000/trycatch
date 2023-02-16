@@ -242,9 +242,6 @@ public class QuestionController {
             final boolean answerIsLiked = likesService
                     .isLikedByUserAndTarget(requestUser.getId(), answerId, ANSWER);
 
-//            final boolean repoChecked = githubRepoService
-//                    .isRepoChecked(userId);
-
             final GithubRepo githubRepo = githubRepoService
                     .findByUser(userId);
 
@@ -252,7 +249,6 @@ public class QuestionController {
                     answer,
                     requestUser,
                     answerIsLiked,
-//                    repoChecked,
                     githubRepo);
 
             answerResponseDtoList.add(responseDto);
@@ -288,12 +284,9 @@ public class QuestionController {
 
         // 응답
         final Long userId = requestUser.getId();
-
-//        final Boolean repoChecked = githubRepoService.isRepoChecked(userId);
         final GithubRepo githubRepo = githubRepoService.findByUser(userId);
         final FindAnswerResponseDto answerResponseDto = FindAnswerResponseDto.from(
                         answer,
-//                        repoChecked,
                         githubRepo);
 
         // 내글에 내가 답변을 생성하는 경우는, 알림을 생성하지 않는다.
@@ -365,9 +358,6 @@ public class QuestionController {
             final boolean answerIsLiked = likesService
                     .isLikedByUserAndTarget(userId, targetId, ANSWER);
 
-//            final boolean repoChecked = githubRepoService
-//                    .isRepoChecked(userId);
-
             final GithubRepo githubRepo = githubRepoService
                     .findByUser(userId);
 
@@ -375,7 +365,6 @@ public class QuestionController {
                     answer,
                     requestUser,
                     answerIsLiked,
-//                    repoChecked,
                     githubRepo);
 
             answerResponseDtoList.add(responseDto);

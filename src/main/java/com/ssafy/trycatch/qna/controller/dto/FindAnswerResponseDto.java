@@ -22,7 +22,6 @@ public class FindAnswerResponseDto implements Serializable {
             Answer answer,
             User user,
             Boolean isLiked,
-//            Boolean repoChecked,
             GithubRepo githubRepo
     ) {
 
@@ -44,38 +43,7 @@ public class FindAnswerResponseDto implements Serializable {
                 .likeCount(answer.getLikes())
                 .isLiked(isLiked)
                 .accepted(answer.getChosen())
-                .repoChecked(githubRepo.getDoCommit())
-                .doCommit(githubRepo.getDoCommit())
-                .repoName(githubRepo.getRepoName())
-                .build();
-    }
-
-    public static FindAnswerResponseDto from(
-            Answer answer,
-//            Boolean repoChecked,
-            GithubRepo githubRepo
-    ) {
-
-        final User author = answer.getUser();
-        final long timestamp = answer.getCreatedAt()
-                                       .atZone(TZ_SEOUL)
-                                       .toInstant()
-                                       .toEpochMilli();
-
-        return FindAnswerResponseDto.builder()
-                .answerId(answer.getId())
-                .author(SimpleUserDto.builder()
-                                .author(author)
-                                .build())
-                .content(answer.getContent())
-                .timestamp(timestamp)
-                .updatedAt(answer.getUpdatedAt()
-                                 .toEpochMilli())
-                .likeCount(answer.getLikes())
-                .isLiked(false)
-                .accepted(answer.getChosen())
-                .repoChecked(githubRepo.getDoCommit())
-                .doCommit(githubRepo.getDoCommit())
+                .repoChecked(githubRepo.getRepoChecked())
                 .repoName(githubRepo.getRepoName())
                 .build();
     }
@@ -107,6 +75,34 @@ public class FindAnswerResponseDto implements Serializable {
                 .build();
     }
 
+    public static FindAnswerResponseDto from(
+            Answer answer,
+            GithubRepo githubRepo
+    ) {
+
+        final User author = answer.getUser();
+        final long timestamp = answer.getCreatedAt()
+                                       .atZone(TZ_SEOUL)
+                                       .toInstant()
+                                       .toEpochMilli();
+
+        return FindAnswerResponseDto.builder()
+                .answerId(answer.getId())
+                .author(SimpleUserDto.builder()
+                                .author(author)
+                                .build())
+                .content(answer.getContent())
+                .timestamp(timestamp)
+                .updatedAt(answer.getUpdatedAt()
+                                 .toEpochMilli())
+                .likeCount(answer.getLikes())
+                .isLiked(false)
+                .accepted(answer.getChosen())
+                .repoChecked(githubRepo.getRepoChecked())
+                .repoName(githubRepo.getRepoName())
+                .build();
+    }
+
     private final Long answerId;
     private final SimpleUserDto author;
     private final String content;
@@ -116,7 +112,6 @@ public class FindAnswerResponseDto implements Serializable {
     private final Boolean isLiked;
     private final Boolean accepted;
     private final Boolean repoChecked;
-    private final Boolean doCommit;
     private final String repoName;
 
     @Builder
@@ -130,7 +125,6 @@ public class FindAnswerResponseDto implements Serializable {
             Boolean isLiked,
             Boolean accepted,
             Boolean repoChecked,
-            Boolean doCommit,
             String repoName
     ) {
         this.answerId = answerId;
@@ -142,7 +136,6 @@ public class FindAnswerResponseDto implements Serializable {
         this.isLiked = isLiked;
         this.accepted = accepted;
         this.repoChecked = repoChecked;
-        this.doCommit = doCommit;
         this.repoName = repoName;
     }
 }

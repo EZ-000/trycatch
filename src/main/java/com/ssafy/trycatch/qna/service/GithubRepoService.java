@@ -18,23 +18,18 @@ public class GithubRepoService extends CrudService<GithubRepo, Long, GithubRepoR
         super(githubRepoRepository);
     }
 
-    public Boolean isRepoChecked(Long userId) {
-        return repository.existsByUserId(userId);
-    }
-
     public GithubRepo findByUser(Long userId) {
         return repository.findByUserId(userId)
                 .orElse(new GithubRepo());
     }
 
     @Transactional
-    public void updateGithubRepo(Long userId, String repoName, Boolean doCommit) {
+    public void updateGithubRepo(Long userId, String repoName, Boolean repoChecked) {
         final GithubRepo githubRepo = repository.findByUserId(userId)
                 .orElse(new GithubRepo());
 
-        githubRepo.setUserId(userId);
         githubRepo.setRepoName(repoName);
-        githubRepo.setDoCommit(doCommit);
+        githubRepo.setRepoChecked(repoChecked);
         repository.save(githubRepo);
     }
 }
