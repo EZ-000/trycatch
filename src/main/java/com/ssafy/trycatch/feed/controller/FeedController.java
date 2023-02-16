@@ -1,24 +1,5 @@
 package com.ssafy.trycatch.feed.controller;
 
-import static org.springframework.data.domain.Sort.Direction.*;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.AbstractPageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ssafy.trycatch.common.annotation.AuthUserElseGuest;
 import com.ssafy.trycatch.common.domain.Company;
 import com.ssafy.trycatch.common.service.BookmarkService;
@@ -32,9 +13,22 @@ import com.ssafy.trycatch.feed.service.exception.FeedNotFoundException;
 import com.ssafy.trycatch.user.domain.SubscriptionRepository;
 import com.ssafy.trycatch.user.domain.User;
 import com.ssafy.trycatch.user.service.exceptions.UserNotFoundException;
-
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AbstractPageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Slf4j
 @RestController
@@ -92,6 +86,7 @@ public class FeedController {
     }
 
     // localhost:8080/v1/feed/search?query=qr
+    @SuppressWarnings("all")
     @GetMapping("/search")
     public ResponseEntity<SearchFeedResponseDto> search(
             @ApiParam(hidden = true)
@@ -101,33 +96,115 @@ public class FeedController {
 
         final String query = requestDto.getQuery();
         final FeedSortOption sortOption = requestDto.getSort();
-        final Sort sort = sortOption == FeedSortOption.user ? Sort.unsorted() :  Sort.by(DESC, sortOption.name);
+        final Sort sort = sortOption == FeedSortOption.user ? Sort.unsorted() : Sort.by(DESC, sortOption.name);
         final Pageable pageable = newPageable(requestDto.getPage(), requestDto.getSize(), sort);
 
-        Collection<ESFeed> feedPage;
-        if (requestDto.getSort() == FeedSortOption.user) {
-            // 나와의 관련도순
-            Long userId = requestUser.getId();
-//            Long userId = 1L;
-            if (StringUtils.hasText(query)) {
-                feedPage = feedService.searchByQueryAndUser(userId, query, pageable).toList();
-            } else {
-                feedPage = feedService.searchByUser(userId, pageable).toList();
-            }
-        } else if (StringUtils.hasText(query)) {
-            if (requestDto.getAdvanced()) {
-                // 고급 검색
-                feedPage = feedService.advanceSearch(query, pageable).toList();
-            } else {
-                // 일반 검색
-                feedPage = feedService.commonSearch(query, pageable).toList();
-            }
-        } else {
-            feedPage = feedService.findAll(pageable).toList();
+        final boolean recommend = requestDto.getSort().equals(FeedSortOption.user);
+        final boolean hasQuery = StringUtils.hasText(query);
+        final boolean advanced = requestDto.getAdvanced();
+        final boolean subscribeOnly = requestDto.getSubscribe();
+
+        Page<ESFeed> feedPage;
+        // T T T T
+        if ( hasQuery && recommend && subscribeOnly && advanced ) {
+            feedPage = feedService.TrueQueryTrueVectorTrueSubscribeTrueAdvanced(
+                    requestUser, query, pageable
+            );
+        }
+        // T T T F
+        else if ( hasQuery && recommend && subscribeOnly && !advanced ) {
+            feedPage = feedService.TrueQueryTrueVectorTrueSubscribeFalseAdvanced(
+                    requestUser, query, pageable
+            );
+        }
+        // T T F T
+        else if ( hasQuery && recommend && !subscribeOnly && advanced ) {
+            feedPage = feedService.TrueQueryTrueVectorFalseSubscribeTrueAdvanced(
+                    requestUser, query, pageable
+            );
+        }
+        // T T F F
+        else if ( hasQuery && recommend && !subscribeOnly && !advanced ) {
+            feedPage = feedService.TrueQueryTrueVectorFalseSubscribeFalseAdvanced(
+                    requestUser, query, pageable
+            );
+        }
+        // T F T T
+        else if ( hasQuery && !recommend && subscribeOnly && advanced ) {
+            feedPage = feedService.TrueQueryFalseVectorTrueSubscribeTrueAdvanced(
+                    requestUser, query, pageable
+            );
+        }
+        // T F T F
+        else if ( hasQuery && !recommend && subscribeOnly && !advanced ) {
+            feedPage = feedService.TrueQueryFalseVectorTrueSubscribeFalseAdvanced(
+                    requestUser, query, pageable
+            );
+        }
+        // T F F T
+        else if ( hasQuery && !recommend && !subscribeOnly && advanced ) {
+            feedPage = feedService.TrueQueryFalseVectorFalseSubscribeTrueAdvanced(
+                    query, pageable
+            );
+        }
+        // T F F F
+        else if ( hasQuery && !recommend && !subscribeOnly && !advanced ) {
+            feedPage = feedService.TrueQueryFalseVectorFalseSubscribeFalseAdvanced(
+                    query, pageable
+            );
+        }
+        // F T T T
+        else if ( !hasQuery && recommend && subscribeOnly && advanced ) {
+            feedPage = feedService.FalseQueryTrueVectorTrueSubscribeTrueAdvanced(
+                    requestUser, pageable
+            );
+        }
+        // F T T F
+        else if ( !hasQuery && recommend && subscribeOnly && !advanced ) {
+            feedPage = feedService.FalseQueryTrueVectorTrueSubscribeFalseAdvanced(
+                    requestUser, pageable
+            );
+        }
+        // F T F T
+        else if ( !hasQuery && recommend && !subscribeOnly && advanced ) {
+            feedPage = feedService.FalseQueryTrueVectorFalseSubscribeTrueAdvanced(
+                    requestUser, pageable
+            );
+        }
+        // F T F F
+        else if ( !hasQuery && recommend && !subscribeOnly && !advanced ) {
+            feedPage = feedService.FalseQueryTrueVectorFalseSubscribeFalseAdvanced(
+                    requestUser, pageable
+            );
+        }
+        // F F T T
+        else if ( !hasQuery && !recommend && subscribeOnly && advanced ) {
+            feedPage = feedService.FalseQueryFalseVectorTrueSubscribeTrueAdvanced(
+                    requestUser, pageable
+            );
+        }
+        // F F T F
+        else if ( !hasQuery && !recommend && subscribeOnly && !advanced ) {
+            feedPage = feedService.FalseQueryFalseVectorTrueSubscribeFalseAdvanced(
+                    requestUser, pageable
+            );
+        }
+        // F F F T
+        else if ( !hasQuery && !recommend && !subscribeOnly && advanced ) {
+            feedPage = feedService.FalseQueryFalseVectorFalseSubscribeTrueAdvanced(
+                    pageable
+            );
+        }
+        // F F F F
+        // !recommend && !hasQuery && !advanced && !subscribeOnly
+        else {
+            feedPage = feedService.FalseQueryFalseVectorFalseSubscribeFalseAdvanced(
+                    pageable
+            );
         }
 
         return ResponseEntity.ok(SearchFeedResponseDto.of(
-                feedPage, feedService, bookmarkService, requestUser));
+                feedPage.toList(), feedService, bookmarkService, requestUser));
     }
 
     @PostMapping("/read")
