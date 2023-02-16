@@ -12,6 +12,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     Optional<Company> findByNameEn(String nameEn);
 
+    Optional<Company> findByName(String name);
+
     @Query(value = "SELECT  b.company_id, COUNT(*) AS cnt\n"
         + "FROM    `read` a, feed b, company c\n"
         + "WHERE   a.feed_id = b.id\n"
