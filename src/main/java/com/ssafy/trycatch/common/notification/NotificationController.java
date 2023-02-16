@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,19 +41,20 @@ public class NotificationController {
 		this.notificationService = notificationService;
 	}
 
-	@GetMapping(value = "/connect", consumes = MediaType.ALL_VALUE)
-	public SseEmitter subscribe(@RequestParam String token) {
+	@GetMapping(value = "/connect", consumes = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public ResponseEntity<SseEmitter> subscribe(@RequestParam String token,
+		HttpServletResponse response) {
 		// 토큰에서 userId값 확인
 		Long userId = Long.parseLong(tokenService.getUid(token));
 
 		// SseEmitter 생성
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
-		try {
-			notificationService.send(sseEmitter, "connect", "dummy");
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		}
+		// try {
+		// 	notificationService.send(sseEmitter, "connect", "dummy");
+		// } catch (IOException e) {
+		// 	log.info(e.getMessage());
+		// }
 
 		// 임시처리, 누수 의심 disable 처리
 
@@ -62,17 +65,32 @@ public class NotificationController {
 		sseEmitter.onTimeout(() -> sseEmitters.remove(userId));
 		sseEmitter.onError((e) -> sseEmitters.remove(userId));
 
-		return sseEmitter;
+		response.setHeader("Connection","keep-alive");
+		response.setHeader("Cache-Control","no-cache");
+		response.setHeader("X-Accel-Buffering","no");
+
+		return ResponseEntity.ok(sseEmitter);
 	}
 
 	@GetMapping("/notification")
 	public ResponseEntity<String> savedNotification(
-		@AuthUserElseGuest User requestUser
+		@AuthUserElseGuest User requestUser,
+		HttpServletResponse response
 	) {
 		final Long userId = requestUser.getId();
 		SseEmitter sseEmitter = sseEmitters.get(userId);
-		notificationService.sendSaved(sseEmitter, userId);
-		return ResponseEntity.ok("");
+
+		response.setHeader("Connection","keep-alive");
+		response.setHeader("Cache-Control","no-cache");
+		response.setHeader("X-Accel-Buffering","no");
+
+		try {
+			notificationService.sendSaved(sseEmitter, userId);
+			return ResponseEntity.ok().build();
+		} catch (IOException e) {
+			log.info(e.getMessage());
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 	@PutMapping("/notification")
