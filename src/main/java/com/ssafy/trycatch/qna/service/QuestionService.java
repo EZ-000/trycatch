@@ -86,6 +86,12 @@ public class QuestionService {
                                  .orElseThrow(QuestionNotFoundException::new);
     }
 
+    public Long findQuestionIdByIdOrNull(Long questionId) {
+        return questionRepository.findById(questionId)
+                    .orElse(new Question())
+                    .getId();
+    }
+
     @IncreaseViewCount
     public Question findQuestionByIdWithViewCount(Long questionId) {
         return questionRepository.findById(questionId)
