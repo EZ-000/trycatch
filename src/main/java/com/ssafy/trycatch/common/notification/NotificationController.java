@@ -74,12 +74,23 @@ public class NotificationController {
 
 	@GetMapping("/notification")
 	public ResponseEntity<String> savedNotification(
-		@AuthUserElseGuest User requestUser
+		@AuthUserElseGuest User requestUser,
+		HttpServletResponse response
 	) {
 		final Long userId = requestUser.getId();
 		SseEmitter sseEmitter = sseEmitters.get(userId);
-		notificationService.sendSaved(sseEmitter, userId);
-		return ResponseEntity.ok("");
+
+		response.setHeader("Connection","keep-alive");
+		response.setHeader("Cache-Control","no-cache");
+		response.setHeader("X-Accel-Buffering","no");
+
+		try {
+			notificationService.sendSaved(sseEmitter, userId);
+			return ResponseEntity.ok("");
+		} catch (IOException e) {
+			log.info(e.getMessage());
+			return ResponseEntity.ok("");
+		}
 	}
 
 	@PutMapping("/notification")
