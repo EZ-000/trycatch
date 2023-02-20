@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends PagingAndSortingRepository<Question, Long> {
-    List<Question> findByCategoryNameAndHiddenOrderByCreatedAtDesc(
-            QuestionCategory categoryName, Boolean hidden, Pageable pageable);
+    List<Question> findByCategoryNameAndHiddenIsFalseOrderByCreatedAtDesc(
+            QuestionCategory categoryName, Pageable pageable);
 
     List<Question> findAllByOrderByLikesDesc(Pageable pageable);
 
