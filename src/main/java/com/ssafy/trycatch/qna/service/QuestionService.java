@@ -100,7 +100,7 @@ public class QuestionService {
 
     public List<Question> findAllQuestionsByCategory(QuestionCategory questionCategory, Pageable pageable) {
         return questionRepository
-                .findByCategoryNameOrderByCreatedAtDesc(questionCategory, pageable);
+                .findByCategoryNameAndHiddenOrderByCreatedAtDesc(questionCategory, false, pageable);
     }
 
     @Transactional
