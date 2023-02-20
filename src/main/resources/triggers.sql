@@ -18,5 +18,5 @@ CREATE TRIGGER NEW_USER
 -- 새로운 유저 등록 시 자동으로 github_repo 테이블에 repo_name이 등록되는 트리거
 CREATE TRIGGER INSERT_REPO_DEFAULT
 AFTER INSERT ON user FOR EACH ROW
-INSERT INTO github_repo(user_id, repo_name, do_commit)
+INSERT INTO github_repo(user_id, repo_name, repo_checked)
 SELECT NEW.id, '', false;
