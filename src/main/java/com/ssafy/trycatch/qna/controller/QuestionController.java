@@ -97,35 +97,35 @@ public class QuestionController {
         final List<FindQuestionResponseDto> responseDtoList = new ArrayList<>();
 
         for (Question question : questions) {
+            if (question.getHidden().equals(false)) {
+                final long targetId = question.getId();
+                final boolean isLiked = likesService.isLikedByUserAndTarget(
+                        requestUser.getId(),
+                        targetId,
+                        QUESTION);
 
-            final long targetId = question.getId();
-            final boolean isLiked = likesService.isLikedByUserAndTarget(
-                    requestUser.getId(),
-                    targetId,
-                    QUESTION);
+                final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
+                        requestUser.getId(),
+                        targetId,
+                        QUESTION);
 
-            final boolean isBookmarked = bookmarkService.isBookmarkByUserAndTarget(
-                    requestUser.getId(),
-                    targetId,
-                    QUESTION);
+                final User author = question.getUser();
+                final SimpleUserDto userInQNADto = SimpleUserDto.builder()
+                        .author(author)
+                        .requestUser(requestUser)
+                        .build();
 
-            final User author = question.getUser();
-            final SimpleUserDto userInQNADto = SimpleUserDto.builder()
-                    .author(author)
-                    .requestUser(requestUser)
-                    .build();
+                final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
+                        question,
+                        userInQNADto,
+                        requestUser,
+                        isLiked,
+                        isBookmarked,
+                        likesService);
 
-            final FindQuestionResponseDto responseDto = FindQuestionResponseDto.from(
-                    question,
-                    userInQNADto,
-                    requestUser,
-                    isLiked,
-                    isBookmarked,
-                    likesService);
-
-            responseDtoList.add(responseDto);
+                responseDtoList.add(responseDto);
+            }
         }
-
         return ResponseEntity.ok(responseDtoList);
     }
 
