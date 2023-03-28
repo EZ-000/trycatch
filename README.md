@@ -1,4 +1,4 @@
-[![horizontal_logo_light_theme](/image/horizontal_logo_light_theme.svg)](https://try-catch.kr)
+[![horizontal_logo_light_theme](/horizontal_logo_light_theme.svg)](https://try-catch.kr)
 
 
 # [트라이캐치(Try-Catch)](https://try-catch.kr/)
